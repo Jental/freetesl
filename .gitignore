@@ -1,0 +1,14 @@
+# .NET
+obj/*
+bin/*
+.vs/*
+
+# Unity
+Library/*
+Temp/*
+Logs/*
+UserSettings/*
+
+# Private assets
+Assets/CardImages/*
+Assets/Resources/*

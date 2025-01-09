@@ -9,18 +9,28 @@ namespace Assets.Scripts
     public class DisplayCard: MonoBehaviour
     {
         public Card? displayCard = null;
+        public bool showFront = false;
 
         public TextMeshProUGUI nameText;
         public TextMeshProUGUI descriptionText;
         public RawImage image;
 
+        public Image frontEl;
+        public RawImage backEl;
+
         private void Update()
         {
-            if (displayCard != null)
+            frontEl.gameObject.SetActive(showFront);
+            backEl.gameObject.SetActive(!showFront);
+
+            if (showFront)
             {
-                nameText.text = (string)displayCard.cardName.Clone();
-                descriptionText.text = (string)displayCard.description.Clone();
-                image.texture = displayCard.image.texture;
+                if (displayCard != null)
+                {
+                    nameText.text = (string)displayCard.cardName.Clone();
+                    descriptionText.text = (string)displayCard.description.Clone();
+                    image.texture = displayCard.image.texture;
+                }
             }
         }
 

@@ -62,6 +62,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\DisplayCard.cs" />
+    <Compile Include="Assets\Scripts\HandCreator.cs" />
     <Compile Include="Assets\Scripts\Card.cs" />
   </ItemGroup>
   <ItemGroup>

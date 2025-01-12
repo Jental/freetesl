@@ -8,7 +8,7 @@ namespace Assets.Scripts
 {
     public class DisplayCard: MonoBehaviour
     {
-        public Card? displayCard = null;
+        public CardInstance? displayCard = null;
         public bool showFront = false;
 
         public TextMeshProUGUI nameText;
@@ -18,7 +18,7 @@ namespace Assets.Scripts
         public Image frontEl;
         public RawImage backEl;
 
-        private void Update()
+        protected void Update()
         {
             frontEl.gameObject.SetActive(showFront);
             backEl.gameObject.SetActive(!showFront);
@@ -27,9 +27,9 @@ namespace Assets.Scripts
             {
                 if (displayCard != null)
                 {
-                    nameText.text = (string)displayCard.cardName.Clone();
-                    descriptionText.text = (string)displayCard.description.Clone();
-                    image.texture = displayCard.image.texture;
+                    nameText.text = (string)displayCard.Card.cardName.Clone();
+                    descriptionText.text = (string)displayCard.Card.description.Clone();
+                    image.texture = displayCard.Card.image.texture;
                 }
             }
         }

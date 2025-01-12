@@ -61,6 +61,7 @@
     <Analyzer Include="E:\Program Files\Unity\6000.0.32f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.UIToolkit.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\CardInstance.cs" />
     <Compile Include="Assets\Scripts\DisplayCard.cs" />
     <Compile Include="Assets\Scripts\HandCreator.cs" />
     <Compile Include="Assets\Scripts\Card.cs" />

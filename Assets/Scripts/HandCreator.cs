@@ -15,22 +15,27 @@ namespace Assets.Scripts
         public DisplayCard cardPrefab;
 
         private Dictionary<int, Card> allCards;
-        private List<Card> cardsToShow = new List<Card>();
+        private List<CardInstance> cardsToShow = new List<CardInstance>();
         private System.Random rnd = new System.Random();
         private Timer addCardTimer;
+        private bool changesArePresent = false;
 
-
-        private void Start()
+        protected void Start()
         {
             allCards = Resources.LoadAll<Card>("CardObjects").ToDictionary(c => c.id, c => c);
 
             addCardTimer = new Timer((_) => AddCard(), null, TimeSpan.FromSeconds(0), TIMER_TICK);
         }
 
-        private void Update()
+        protected void Update()
         {
             lock (this)
             {
+                if (!changesArePresent)
+                {
+                    return;
+                }
+
                 var children = gameObject.transform.GetComponentsInChildren<DisplayCard>();
                 foreach (var dc in children)
                 {
@@ -64,6 +69,8 @@ namespace Assets.Scripts
                         cardRect.localScale = new Vector3(1, 1, 1);
                     }
                 }
+
+                changesArePresent = false;
             }
         }
 
@@ -79,7 +86,9 @@ namespace Assets.Scripts
 
                 int cardIdx = rnd.Next(allCards.Count);
                 var card = allCards.ElementAt(cardIdx).Value;
-                cardsToShow.Add(card);
+                var cardInstance = new CardInstance(card, Guid.NewGuid());
+                cardsToShow.Add(cardInstance);
+                changesArePresent = true;
             }
         }
     }

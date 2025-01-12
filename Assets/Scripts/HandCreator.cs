@@ -9,7 +9,7 @@ namespace Assets.Scripts
     public class HandCreator : MonoBehaviour
     {
         private const float CARD_ASPECT_RATIO = 0.6f;
-        private const float OWERFLOW = 0.4f;
+        private const float OVERFLOW = 0.3f;
         private static readonly TimeSpan TIMER_TICK = TimeSpan.FromSeconds(10);
 
         public DisplayCard cardPrefab;
@@ -49,7 +49,7 @@ namespace Assets.Scripts
                     float cardHeight = handRect.rect.height;
                     float cardWidth = cardHeight * CARD_ASPECT_RATIO;
                     float cardWidthShare = cardWidth / handRect.rect.width;
-                    float totalCardWidthShare = cardWidthShare * CARD_ASPECT_RATIO * cardsToShow.Count;
+                    float totalCardWidthShare = cardWidthShare * (1 - OVERFLOW) * cardsToShow.Count + cardWidthShare * OVERFLOW;
                     float marginWidthShare = Math.Max(0.0f, (1 - totalCardWidthShare) / 2.0f);
 
                     for (int i = 0; i < cardsToShow.Count; i++)
@@ -62,8 +62,8 @@ namespace Assets.Scripts
                         dc.showFront = true;
 
                         var cardRect = dc.gameObject.GetComponent<RectTransform>();
-                        cardRect.anchorMin = new Vector2(marginWidthShare + cardWidthShare * i * (1 - OWERFLOW), 0);
-                        cardRect.anchorMax = new Vector2(marginWidthShare + cardWidthShare * (i * (1 - OWERFLOW) + 1), 1);
+                        cardRect.anchorMin = new Vector2(marginWidthShare + cardWidthShare * i * (1 - OVERFLOW), 0);
+                        cardRect.anchorMax = new Vector2(marginWidthShare + cardWidthShare * (i * (1 - OVERFLOW) + 1), 1);
                         cardRect.offsetMin = new Vector2(0, 0);
                         cardRect.offsetMax = new Vector2(0, 0);
                         cardRect.localScale = new Vector3(1, 1, 1);

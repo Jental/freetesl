@@ -71,6 +71,7 @@
     <Compile Include="Assets\Scripts\MatchService.cs" />
     <Compile Include="Assets\Scripts\Card.cs" />
     <Compile Include="Assets\Scripts\Networking.cs" />
+    <Compile Include="Assets\Scripts\Constants.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />

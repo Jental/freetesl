@@ -65,6 +65,7 @@
     <Compile Include="Assets\DTO\JoinMatchDTO.cs" />
     <Compile Include="Assets\DTO\PlayerMatchStateDTO.cs" />
     <Compile Include="Assets\Scripts\CardInstance.cs" />
+    <Compile Include="Assets\Scripts\AvatarBehaviour.cs" />
     <Compile Include="Assets\Scripts\DisplayCard.cs" />
     <Compile Include="Assets\DTO\CardInstanceDTO.cs" />
     <Compile Include="Assets\Scripts\HandCreator.cs" />

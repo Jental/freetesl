@@ -12,9 +12,6 @@ namespace Assets.Scripts
 {
     public class MatchService : MonoBehaviour
     {
-        private const string MATCH_STATE_UPDATE_METHOD_NAME = "matchStateUpdate";
-        private const string MATCH_JOIN_METHOD_NAME = "join";
-
         public GameObject? HandGameObject = null;
         public DisplayCard? CardPrefab;
 
@@ -31,7 +28,7 @@ namespace Assets.Scripts
         {
             allCards = Resources.LoadAll<Card>("CardObjects").ToDictionary(c => c.id, c => c);
 
-            var uss = Networking.Instance.Subscribe(MATCH_STATE_UPDATE_METHOD_NAME, OnMatchStateUpdateAsync);
+            var uss = Networking.Instance.Subscribe(Constants.MethodNames.MATCH_STATE_UPDATE, OnMatchStateUpdateAsync);
             unsubscribers.Add(uss);
 
             _ = destroyCancellationToken;
@@ -107,7 +104,7 @@ namespace Assets.Scripts
         private async Task JoinMatchAsync()
         {
             var joinDTO = new JoinMatchDTO { playerID = 1 };
-            await Networking.Instance.SendMessageAsync(MATCH_JOIN_METHOD_NAME, joinDTO, destroyCancellationToken);
+            await Networking.Instance.SendMessageAsync(Constants.MethodNames.MATCH_JOIN, joinDTO, destroyCancellationToken);
         }
 
         private async Task OnMatchStateUpdateAsync(string message, CancellationToken cancellationToken)

@@ -61,6 +61,7 @@
     <Analyzer Include="E:\Program Files\Unity\6000.0.32f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.UIToolkit.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\ManaDisplayBehaviour.cs" />
     <Compile Include="Assets\DTO\ServerMessageDTO.cs" />
     <Compile Include="Assets\DTO\JoinMatchDTO.cs" />
     <Compile Include="Assets\DTO\PlayerMatchStateDTO.cs" />
@@ -73,6 +74,7 @@
     <Compile Include="Assets\Scripts\Card.cs" />
     <Compile Include="Assets\Scripts\Networking.cs" />
     <Compile Include="Assets\Scripts\Constants.cs" />
+    <Compile Include="Assets\Scripts\AWithMatchStateSubscribtionBehaviour.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />

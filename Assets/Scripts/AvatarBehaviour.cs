@@ -11,7 +11,7 @@ using UnityEngine.UI;
 
 namespace Assets.Scripts
 {
-    public class AvatarBehaviour : MonoBehaviour
+    public class AvatarBehaviour : AWithMatchStateSubscribtionBehaviour
     {
         public TextMeshProUGUI? healthText = null;
         public GameObject? healthSectorPrefab = null;
@@ -21,31 +21,15 @@ namespace Assets.Scripts
         private const float HEALTH_START_ANGLE = 152.25f;
         private const float HEALTH_STEP_ANGLE = 10.5f;
 
-        private List<Action> unsubscribers = new List<Action>();
-        private bool changesArePresent = false;
+
         private int health = 0;
         private byte runes = 0;
 
-        void Start()
+        protected override void UpdateImpl()
         {
-            var uss = Networking.Instance.Subscribe(Constants.MethodNames.MATCH_STATE_UPDATE, OnMatchStateUpdateAsync);
-            unsubscribers.Add(uss);
+            this.healthText!.text = health.ToString();
 
-            _ = destroyCancellationToken;
-        }
-
-        void Update()
-        {
-            if (!changesArePresent) return;
-
-            if (this.healthText == null) throw new InvalidOperationException($"{nameof(healthText)} gameObject is expected to be set");
-            if (this.healthSectorPrefab == null) throw new InvalidOperationException($"{nameof(healthSectorPrefab)} prefab is expected to be set");
-            if (this.healthBarGameObject == null) throw new InvalidOperationException($"{nameof(healthBarGameObject)} gameObject is expected to be set");
-            if (this.runesGameObject == null) throw new InvalidOperationException($"{nameof(runesGameObject)} gameObject is expected to be set");
-
-            this.healthText.text = health.ToString();
-
-            var currentHealthSectors = healthBarGameObject.transform.GetComponentsInChildren<RawImage>();
+            var currentHealthSectors = healthBarGameObject!.transform.GetComponentsInChildren<RawImage>();
             foreach (var dc in currentHealthSectors)
             {
                 Destroy(dc.gameObject);
@@ -56,7 +40,7 @@ namespace Assets.Scripts
             {
                 var angle = HEALTH_START_ANGLE - i * HEALTH_STEP_ANGLE;
                 var sector = Instantiate(healthSectorPrefab, new Vector3(0, 0, 0), Quaternion.Euler(new Vector3(0, 0, angle)));
-                sector.transform.parent = healthBarGameObject.transform;
+                sector!.transform.parent = healthBarGameObject.transform;
 
                 var sectorRect = sector.GetComponent<RectTransform>();
                 sectorRect.anchorMin = new Vector2(0, 0);
@@ -66,24 +50,27 @@ namespace Assets.Scripts
                 sectorRect.localScale = new Vector3(1, 1, 1);
             }
 
-            var runeObjects = runesGameObject.transform.GetComponentsInChildren<RawImage>();
+            var runeObjects = runesGameObject!.transform.GetComponentsInChildren<RawImage>();
             for (byte i = 0; i < runeObjects.Length; i++)
             {
                 runeObjects[i].gameObject.SetActive(i < runes);
             }
-
-            changesArePresent = false;
         }
 
-        private async Task OnMatchStateUpdateAsync(string message, CancellationToken cancellationToken)
+        protected override void VerifyFields()
         {
-            ServerMessageDTO<PlayerMatchStateDTO> dto = JsonUtility.FromJson<ServerMessageDTO<PlayerMatchStateDTO>>(message);
-            Debug.Log($"AvatarBehaviour.OnMatchStateUpdateAsync: Health and runes: {dto.body.health}, {dto.body.runes}");
+            if (this.healthText == null) throw new InvalidOperationException($"{nameof(healthText)} gameObject is expected to be set");
+            if (this.healthSectorPrefab == null) throw new InvalidOperationException($"{nameof(healthSectorPrefab)} prefab is expected to be set");
+            if (this.healthBarGameObject == null) throw new InvalidOperationException($"{nameof(healthBarGameObject)} gameObject is expected to be set");
+            if (this.runesGameObject == null) throw new InvalidOperationException($"{nameof(runesGameObject)} gameObject is expected to be set");
+        }
 
-            this.health = dto.body.health;
-            this.runes = dto.body.runes;
+        protected override Task OnMatchStateUpdateAsync(PlayerMatchStateDTO dto, CancellationToken cancellationToken)
+        {
+            this.health = dto.health;
+            this.runes = dto.runes;
 
-            changesArePresent = true;
+            return Task.CompletedTask;
         }
     }
 }

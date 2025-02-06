@@ -9,5 +9,7 @@ namespace Assets.DTO
         public CardInstanceDTO[] hand;
         public int health;
         public byte runes;
+        public int mana;
+        public int maxMana;
     }
 }

@@ -4,6 +4,7 @@
     {
         public const float CARD_ASPECT_RATIO = 0.6f;
         public const float HAND_CARD_OVERFLOW = 0.3f;
+        public const float LANE_CARDS_GAP = 15;
 
         public static class MethodNames
         {

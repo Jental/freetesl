@@ -76,6 +76,7 @@
     <Compile Include="Assets\Scripts\Card.cs" />
     <Compile Include="Assets\Scripts\Networking.cs" />
     <Compile Include="Assets\Scripts\Constants.cs" />
+    <Compile Include="Assets\Scripts\LaneCardsBehaviour.cs" />
     <Compile Include="Assets\Scripts\AWithMatchStateSubscribtionBehaviour.cs" />
   </ItemGroup>
   <ItemGroup>

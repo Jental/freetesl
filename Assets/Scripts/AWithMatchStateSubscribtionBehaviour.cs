@@ -14,7 +14,7 @@ namespace Assets.Scripts
         private List<Action> unsubscribers = new List<Action>();
         private bool changesArePresent = false;
 
-        void Start()
+        protected void Start()
         {
             var uss = Networking.Instance.Subscribe(Constants.MethodNames.MATCH_STATE_UPDATE, OnMatchStateUpdateAsync);
             unsubscribers.Add(uss);
@@ -22,7 +22,7 @@ namespace Assets.Scripts
             _ = destroyCancellationToken;
         }
 
-        void Update()
+        protected void Update()
         {
             if (!changesArePresent) return;
 

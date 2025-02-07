@@ -9,6 +9,7 @@
         {
             public const string MATCH_STATE_UPDATE = "matchStateUpdate";
             public const string MATCH_JOIN = "join";
+            public const string END_TURN = "endTurn";
         }
     }
 }

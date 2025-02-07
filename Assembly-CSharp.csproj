@@ -70,6 +70,8 @@
     <Compile Include="Assets\Scripts\DisplayCard.cs" />
     <Compile Include="Assets\DTO\CardInstanceDTO.cs" />
     <Compile Include="Assets\Scripts\HandCreator.cs" />
+    <Compile Include="Assets\Scripts\EndTurnButtonBehaviour.cs" />
+    <Compile Include="Assets\DTO\EndTurnDTO.cs" />
     <Compile Include="Assets\Scripts\MatchService.cs" />
     <Compile Include="Assets\Scripts\Card.cs" />
     <Compile Include="Assets\Scripts\Networking.cs" />

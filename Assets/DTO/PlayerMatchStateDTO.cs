@@ -11,5 +11,6 @@ namespace Assets.DTO
         public byte runes;
         public int mana;
         public int maxMana;
+        public bool ownTurn;
     }
 }

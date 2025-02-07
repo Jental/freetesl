@@ -103,8 +103,8 @@ namespace Assets.Scripts
 
         private async Task JoinMatchAsync()
         {
-            var joinDTO = new JoinMatchDTO { playerID = 1 };
-            await Networking.Instance.SendMessageAsync(Constants.MethodNames.MATCH_JOIN, joinDTO, destroyCancellationToken);
+            var dto = new JoinMatchDTO { playerID = 1 };
+            await Networking.Instance.SendMessageAsync(Constants.MethodNames.MATCH_JOIN, dto, destroyCancellationToken);
         }
 
         private async Task OnMatchStateUpdateAsync(string message, CancellationToken cancellationToken)

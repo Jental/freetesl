@@ -63,13 +63,13 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\ManaDisplayBehaviour.cs" />
     <Compile Include="Assets\DTO\ServerMessageDTO.cs" />
+    <Compile Include="Assets\Scripts\HandBehaviour.cs" />
     <Compile Include="Assets\DTO\JoinMatchDTO.cs" />
     <Compile Include="Assets\DTO\PlayerMatchStateDTO.cs" />
     <Compile Include="Assets\Scripts\CardInstance.cs" />
     <Compile Include="Assets\Scripts\AvatarBehaviour.cs" />
     <Compile Include="Assets\Scripts\DisplayCard.cs" />
     <Compile Include="Assets\DTO\CardInstanceDTO.cs" />
-    <Compile Include="Assets\Scripts\HandCreator.cs" />
     <Compile Include="Assets\Scripts\EndTurnButtonBehaviour.cs" />
     <Compile Include="Assets\DTO\EndTurnDTO.cs" />
     <Compile Include="Assets\Scripts\MatchService.cs" />

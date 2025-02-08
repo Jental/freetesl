@@ -41,7 +41,15 @@ namespace Assets.Scripts
             ServerMessageDTO<PlayerMatchStateDTO> dto = JsonUtility.FromJson<ServerMessageDTO<PlayerMatchStateDTO>>(message);
             Debug.Log($"AvatarBehaviour.OnMatchStateUpdateAsync: Health and runes: {dto.body.health}, {dto.body.runes}");
 
-            await OnMatchStateUpdateAsync(dto.body, cancellationToken);
+            try
+            {
+                await OnMatchStateUpdateAsync(dto.body, cancellationToken);
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+                return;
+            }
 
             changesArePresent = true;
         }

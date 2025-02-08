@@ -23,7 +23,7 @@ namespace Assets.Scripts
 
             ownTurn = false;
 
-            var dto = new EndTurnDTO { playerID = 1 };
+            var dto = new EndTurnDTO { playerID = Constants.TEST_PLAYER_ID };
             await Networking.Instance.SendMessageAsync(Constants.MethodNames.END_TURN, dto, destroyCancellationToken);
         }
 

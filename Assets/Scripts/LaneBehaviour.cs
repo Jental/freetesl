@@ -1,6 +1,8 @@
 #nullable enable
 
+using Assets.DTO;
 using System;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -10,6 +12,11 @@ namespace Assets.Scripts
     {
         public LaneCardsBehaviour? LaneOwnCardsGameObject = null;
         public GameObject? HandGameObject = null;
+
+        protected void Start()
+        {
+            _ = destroyCancellationToken;
+        }
 
         public void OnDrop(PointerEventData eventData)
         {
@@ -27,6 +34,16 @@ namespace Assets.Scripts
 
             Destroy(dropped.gameObject);
             Destroy(dropped);
+
+            _ = Task.Run(async () =>
+            {
+                var dto = new MoveCardToLaneDTO {
+                    playerID = Constants.TEST_PLAYER_ID,
+                    cardInstanceID = cardInstance.ID.ToString(),
+                    laneID = Constants.LEFT_LANE_ID,
+                };
+                await Networking.Instance.SendMessageAsync(Constants.MethodNames.MOVE_CARD_TO_LANE, dto, destroyCancellationToken);
+            });
         }
     }
 }

@@ -16,7 +16,7 @@ namespace Assets.Scripts
 
         private async Task JoinMatchAsync()
         {
-            var dto = new JoinMatchDTO { playerID = 1 };
+            var dto = new JoinMatchDTO { playerID = Constants.TEST_PLAYER_ID };
             await Networking.Instance.SendMessageAsync(Constants.MethodNames.MATCH_JOIN, dto, destroyCancellationToken);
         }
     }

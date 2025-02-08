@@ -39,7 +39,6 @@ namespace Assets.Scripts
         private async Task OnMatchStateUpdateAsync(string message, CancellationToken cancellationToken)
         {
             ServerMessageDTO<PlayerMatchStateDTO> dto = JsonUtility.FromJson<ServerMessageDTO<PlayerMatchStateDTO>>(message);
-            Debug.Log($"AvatarBehaviour.OnMatchStateUpdateAsync: Health and runes: {dto.body.health}, {dto.body.runes}");
 
             try
             {

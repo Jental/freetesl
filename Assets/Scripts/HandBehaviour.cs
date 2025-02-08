@@ -59,7 +59,9 @@ namespace Assets.Scripts
                 {
                     var card = cardsToShow[i];
 
-                    var dc = Instantiate(CardPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+                    var dc =
+                        Instantiate(CardPrefab, new Vector3(0, 0, 0), Quaternion.identity)
+                        ?? throw new InvalidOperationException("Failed to instantiate a card prefab");
                     dc.transform.parent = gameObject.transform;
                     dc.displayCard = card;
                     dc.showFront = true;

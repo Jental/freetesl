@@ -16,6 +16,9 @@ namespace Assets.Scripts
         public TextMeshProUGUI? nameText = null;
         public TextMeshProUGUI? descriptionText = null;
         public RawImage? image = null;
+        public TextMeshProUGUI? powerTextGameObject = null;
+        public TextMeshProUGUI? healthTextGameObject = null;
+        public TextMeshProUGUI? costTextGameObject = null;
 
         public Image? frontEl = null;
         public RawImage? backEl = null;
@@ -38,6 +41,9 @@ namespace Assets.Scripts
             if (nameText == null) throw new InvalidOperationException($"{nameof(nameText)} gameObject is expected to be set");
             if (descriptionText == null) throw new InvalidOperationException($"{nameof(descriptionText)} gameObject is expected to be set");
             if (image == null) throw new InvalidOperationException($"{nameof(image)} gameObject is expected to be set");
+            if (powerTextGameObject == null) throw new InvalidOperationException($"{nameof(powerTextGameObject)} gameObject is expected to be set");
+            if (healthTextGameObject == null) throw new InvalidOperationException($"{nameof(healthTextGameObject)} gameObject is expected to be set");
+            if (costTextGameObject == null) throw new InvalidOperationException($"{nameof(costTextGameObject)} gameObject is expected to be set");
 
             frontEl.gameObject.SetActive(showFront);
             backEl.gameObject.SetActive(!showFront);
@@ -49,6 +55,9 @@ namespace Assets.Scripts
                     nameText.text = (string)displayCard.Card.cardName.Clone();
                     descriptionText.text = (string)displayCard.Card.description.Clone();
                     image.texture = displayCard.Card.image.texture;
+                    powerTextGameObject.text = displayCard.Card.power.ToString();
+                    healthTextGameObject.text = displayCard.Card.health.ToString();
+                    costTextGameObject.text = displayCard.Card.cost.ToString();
                 }
             }
         }

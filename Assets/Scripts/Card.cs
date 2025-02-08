@@ -8,6 +8,9 @@ namespace Assets.Scripts
         public int id;
         public string cardName;
         public string description;
+        public int power;
+        public int health;
+        public int cost;
         public Sprite image;
     }
 }

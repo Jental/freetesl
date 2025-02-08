@@ -1206,6 +1206,9 @@ MonoBehaviour:
   nameText: {fileID: 2381841375072051398}
   descriptionText: {fileID: 3194195746291649246}
   image: {fileID: 8881656751256159414}
+  powerTextGameObject: {fileID: 2626598743310741684}
+  healthTextGameObject: {fileID: 6543556418742025102}
+  costTextGameObject: {fileID: 4642235890713727489}
   frontEl: {fileID: 8788814036357659813}
   backEl: {fileID: 5433108344257652964}
   canvas: {fileID: 0}

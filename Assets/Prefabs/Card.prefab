@@ -1202,13 +1202,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64abceb3055817241b59fd54ccb58dc1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  displayCard: {fileID: 0}
   showFront: 0
   nameText: {fileID: 2381841375072051398}
   descriptionText: {fileID: 3194195746291649246}
   image: {fileID: 8881656751256159414}
   frontEl: {fileID: 8788814036357659813}
   backEl: {fileID: 5433108344257652964}
+  canvas: {fileID: 0}
 --- !u!1 &5142725544409839675
 GameObject:
   m_ObjectHideFlags: 0

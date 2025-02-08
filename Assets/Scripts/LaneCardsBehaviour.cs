@@ -87,5 +87,11 @@ namespace Assets.Scripts
         {
             if (this.CardPrefab == null) throw new InvalidOperationException($"{nameof(CardPrefab)} prefab is expected to be set");
         }
+
+        public void AddCard(CardInstance cardInstance)
+        {
+            cardsToShow.Add(cardInstance);
+            changesArePresent = true;
+        }
     }
 }

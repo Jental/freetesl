@@ -78,6 +78,7 @@
     <Compile Include="Assets\Scripts\Constants.cs" />
     <Compile Include="Assets\Scripts\LaneCardsBehaviour.cs" />
     <Compile Include="Assets\Scripts\AWithMatchStateSubscribtionBehaviour.cs" />
+    <Compile Include="Assets\Scripts\LaneBehaviour.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />

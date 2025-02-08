@@ -11,8 +11,8 @@ namespace Assets.Scripts
 {
     public abstract class AWithMatchStateSubscribtionBehaviour : MonoBehaviour
     {
-        private List<Action> unsubscribers = new List<Action>();
-        private bool changesArePresent = false;
+        protected List<Action> unsubscribers = new List<Action>();
+        protected bool changesArePresent = false;
 
         protected void Start()
         {

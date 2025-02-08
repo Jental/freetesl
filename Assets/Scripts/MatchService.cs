@@ -14,6 +14,7 @@ namespace Assets.Scripts
     {
         public GameObject? HandGameObject = null;
         public DisplayCard? CardPrefab;
+        public Canvas? Canvas = null;
 
         private List<Action> unsubscribers = new List<Action>();
         private bool changesArePresent = false;
@@ -79,6 +80,7 @@ namespace Assets.Scripts
                         dc.transform.parent = HandGameObject.transform;
                         dc.displayCard = card;
                         dc.showFront = true;
+                        dc.canvas = Canvas ?? throw new InvalidOperationException($"{nameof(Canvas)} is expected to be set");
 
                         var cardRect = dc.gameObject.GetComponent<RectTransform>();
                         cardRect.anchorMin = new Vector2(marginWidthShare + cardWidthShare * i * (1 - Constants.HAND_CARD_OVERFLOW), 0);

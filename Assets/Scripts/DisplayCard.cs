@@ -1,25 +1,44 @@
-﻿using TMPro;
-using UnityEngine;
-using UnityEngine.UI;
+﻿#nullable enable
 
-#nullable enable
+using System;
+using TMPro;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace Assets.Scripts
 {
-    public class DisplayCard: MonoBehaviour
+    public class DisplayCard: MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler
     {
         public CardInstance? displayCard = null;
         public bool showFront = false;
 
-        public TextMeshProUGUI nameText;
-        public TextMeshProUGUI descriptionText;
-        public RawImage image;
+        public TextMeshProUGUI? nameText = null;
+        public TextMeshProUGUI? descriptionText = null;
+        public RawImage? image = null;
 
-        public Image frontEl;
-        public RawImage backEl;
+        public Image? frontEl = null;
+        public RawImage? backEl = null;
+
+        public Canvas? canvas = null;
+
+        private RectTransform? rectTransform;
+        private Image? imageComponent;
+
+        protected void Awake()
+        {
+            rectTransform = GetComponent<RectTransform>();
+            imageComponent = GetComponent<Image>();
+        }
 
         protected void Update()
         {
+            if (frontEl == null) throw new InvalidOperationException($"{nameof(frontEl)} gameObject is expected to be set");
+            if (backEl == null) throw new InvalidOperationException($"{nameof(backEl)} gameObject is expected to be set");
+            if (nameText == null) throw new InvalidOperationException($"{nameof(nameText)} gameObject is expected to be set");
+            if (descriptionText == null) throw new InvalidOperationException($"{nameof(descriptionText)} gameObject is expected to be set");
+            if (image == null) throw new InvalidOperationException($"{nameof(image)} gameObject is expected to be set");
+
             frontEl.gameObject.SetActive(showFront);
             backEl.gameObject.SetActive(!showFront);
 
@@ -34,5 +53,26 @@ namespace Assets.Scripts
             }
         }
 
+        public void OnDrag(PointerEventData eventData)
+        {
+            if (rectTransform == null) throw new InvalidOperationException("RectTransform component is expected to be added");
+            if (canvas == null) throw new InvalidOperationException($"{nameof(canvas)} gameObject is expected to be set");
+
+            rectTransform.anchoredPosition += eventData.delta / canvas.scaleFactor;
+        }
+
+        public void OnBeginDrag(PointerEventData eventData)
+        {
+            if (imageComponent == null) throw new InvalidOperationException("Image component is expected to be added");
+
+            imageComponent.raycastTarget = false;
+        }
+
+        public void OnEndDrag(PointerEventData eventData)
+        {
+            if (imageComponent == null) throw new InvalidOperationException("Image component is expected to be added");
+
+            imageComponent.raycastTarget = true;
+        }
     }
 }

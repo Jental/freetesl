@@ -121,19 +121,18 @@ namespace Assets.Services
                     cancellationToken.ThrowIfCancellationRequested();
 
                     WebSocketReceiveResult result;
-                    List<ArraySegment<byte>> chunks = new List<ArraySegment<byte>>();
-                    int totalCount = 0;
+                    List<string> chunks = new List<string>();
                     do
                     {
                         var chunk = new ArraySegment<byte>(new byte[1024]);
                         result = await webSocket.ReceiveAsync(chunk, cancellationToken);
-                        chunks.Add(chunk);
-                        totalCount = totalCount + result.Count;
+                        string messagePartStr = Encoding.UTF8.GetString(chunk.Array, 0, result.Count);
+                        chunks.Add(messagePartStr);
+                        // Debug.Log($"Received message part: '{messagePartStr}'. Count: {result.Count}");
                     }
                     while (!result.EndOfMessage && webSocket.State == WebSocketState.Open);
 
-                    var messageBytes = chunks.SelectMany(c => c).ToArray();
-                    string messageStr = Encoding.UTF8.GetString(messageBytes, 0, totalCount);
+                    string messageStr = string.Join(string.Empty, chunks);
                     try
                     {
                         ServerMessageDTO<object> message = JsonUtility.FromJson<ServerMessageDTO<object>>(messageStr);
@@ -148,12 +147,12 @@ namespace Assets.Services
                         }
                         else
                         {
-                            Debug.LogWarning($"Received message with unsupported method: '{message.method}'; message: {messageStr}");
+                            Debug.LogError($"Received message with unsupported method: '{message.method}'; message: {messageStr}");
                         }
                     }
                     catch (Exception)
                     {
-                        Debug.LogWarning($"Received message in unknown format: {messageStr}");
+                        Debug.LogError($"Received message in unknown format: {messageStr}");
                     }
                 }
 

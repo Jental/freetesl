@@ -1,29 +1,30 @@
 #nullable enable
 
 using Assets.DTO;
+using Assets.Models;
 using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Assets.Scripts
+namespace Assets.Behaviours
 {
-    public class AvatarBehaviour : AWithMatchStateSubscribtionBehaviour
+    public class AvatarBehaviour : AWithMatchStateAndInformationSubscribtionBehaviour
     {
         public TextMeshProUGUI? healthText = null;
         public GameObject? healthSectorPrefab = null;
         public GameObject? healthBarGameObject = null;
         public GameObject? runesGameObject = null;
+        public RawImage? imageGameObject = null;
 
         private const float HEALTH_START_ANGLE = 152.25f;
         private const float HEALTH_STEP_ANGLE = 10.5f;
 
-
         private int health = 0;
         private byte runes = 0;
+        private string? imageName = null;
 
         protected override void UpdateImpl()
         {
@@ -55,6 +56,9 @@ namespace Assets.Scripts
             {
                 runeObjects[i].gameObject.SetActive(i < runes);
             }
+
+            string imageNameNotNull = imageName ?? "DBH_NPC_CRDL_02_022_avatar_png";
+            this.imageGameObject!.texture = Resources.Load<Texture>($"Player/{imageNameNotNull}");
         }
 
         protected override void VerifyFields()
@@ -63,12 +67,25 @@ namespace Assets.Scripts
             if (this.healthSectorPrefab == null) throw new InvalidOperationException($"{nameof(healthSectorPrefab)} prefab is expected to be set");
             if (this.healthBarGameObject == null) throw new InvalidOperationException($"{nameof(healthBarGameObject)} gameObject is expected to be set");
             if (this.runesGameObject == null) throw new InvalidOperationException($"{nameof(runesGameObject)} gameObject is expected to be set");
+            if (this.imageGameObject == null) throw new InvalidOperationException($"{nameof(imageGameObject)} gameObject is expected to be set");
         }
 
-        protected override Task OnMatchStateUpdateAsync(PlayerMatchStateDTO dto, CancellationToken cancellationToken)
+        protected override Task OnMatchStateUpdateAsync(PlayerMatchStateDTO dto, bool isPlayersTurn, CancellationToken cancellationToken)
         {
             this.health = dto.health;
             this.runes = dto.runes;
+
+            return Task.CompletedTask;
+        }
+
+        protected override Task OnMatchUnformationUpdateAsync(MatchInformationDTO dto, CancellationToken cancellationToken)
+        {
+            this.imageName = playerType switch
+            {
+                PlayerType.Self => dto.player.avatarName,
+                PlayerType.Opponent => dto.opponent.avatarName,
+                _ => throw new InvalidOperationException($"Unsupported {nameof(playerType)}: '{playerType}'")
+            };
 
             return Task.CompletedTask;
         }

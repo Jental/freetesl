@@ -1,12 +1,14 @@
 #nullable enable
 
+using Assets.Common;
 using Assets.DTO;
+using Assets.Services;
 using System;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace Assets.Scripts
+namespace Assets.Behaviours
 {
     public class LaneBehaviour : MonoBehaviour, IDropHandler
     {
@@ -25,7 +27,7 @@ namespace Assets.Scripts
             Debug.Log("OnDrop");
 
             var dropped = eventData.pointerDrag;
-            var displayCard = dropped.GetComponent<DisplayCard>();
+            var displayCard = dropped.GetComponent<CardBehaviour>();
             var cardInstance =
                 displayCard.displayCard
                 ?? throw new InvalidOperationException($"{displayCard.displayCard} property of a dropped item is expected to be set");

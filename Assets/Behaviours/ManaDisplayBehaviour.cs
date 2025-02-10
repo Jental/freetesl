@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using TMPro;
 
-namespace Assets.Scripts
+namespace Assets.Behaviours
 {
     public class ManaDisplayBehaviour : AWithMatchStateSubscribtionBehaviour
     {
@@ -15,7 +15,7 @@ namespace Assets.Scripts
         private int mana = 0;
         private int maxMana = 0;
 
-        protected override Task OnMatchStateUpdateAsync(PlayerMatchStateDTO dto, CancellationToken cancellationToken)
+        protected override Task OnMatchStateUpdateAsync(PlayerMatchStateDTO dto, bool isPlayersTurn, CancellationToken cancellationToken)
         {
             this.maxMana = dto.maxMana;
             this.mana = dto.mana;

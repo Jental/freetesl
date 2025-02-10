@@ -10,7 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace Assets.Scripts
+namespace Assets.Services
 {
     public class Networking : IDisposable
     {
@@ -24,9 +24,9 @@ namespace Assets.Scripts
         /// Subscriptions to received messages.
         /// key - method of a message
         /// value - list of handlers
-        /// handler - async function with message and cancellationToken parameters
+        /// handler - async function with methodName, message and cancellationToken parameters
         /// </summary>
-        private Dictionary<string, List<Func<string, CancellationToken, Task>>> subscriptions = new Dictionary<string, List<Func<string, CancellationToken, Task>>>();
+        private Dictionary<string, List<Func<string, string, CancellationToken, Task>>> subscriptions = new Dictionary<string, List<Func<string, string, CancellationToken, Task>>>();
 
         public static Networking Instance
         {
@@ -71,23 +71,40 @@ namespace Assets.Scripts
         }
 
         /// <summary>
-        /// Subscribes to a method
+        /// Subscribes to methods
         /// </summary>
-        /// <param name="method">method field of a message</param>
-        /// <param name="handler">async function with message and cancellationToken parameters</param>
+        /// <param name="methods">method field of a message</param>
+        /// <param name="handler">async function with methodName, message and cancellationToken parameters</param>
         /// <returns>unsubscriber</returns>
-        public Action Subscribe(string method, Func<string, CancellationToken, Task> handler)
+        public Action Subscribe(string[] methods, Func<string, string, CancellationToken, Task> handler)
         {
-            if (!subscriptions.ContainsKey(method))
+            foreach (var method in methods)
             {
-                subscriptions.Add(method, new List<Func<string, CancellationToken, Task>>());
+                if (!subscriptions.ContainsKey(method))
+                {
+                    subscriptions.Add(method, new List<Func<string, string, CancellationToken, Task>>());
+                }
+                subscriptions[method].Add(handler);
             }
-            subscriptions[method].Add(handler);
 
             return () =>
             {
-                subscriptions[method].Remove(handler);
+                foreach (var method in methods)
+                {
+                    subscriptions[method].Remove(handler);
+                }
             };
+        }
+
+        /// <summary>
+        /// Subscribes to methods
+        /// </summary>
+        /// <param name="methods">method field of a message</param>
+        /// <param name="handler">async function with methodName, message and cancellationToken parameters</param>
+        /// <returns>unsubscriber</returns>
+        public Action Subscribe(string method, Func<string, string, CancellationToken, Task> handler)
+        {
+            return Subscribe(new string[1] { method }, handler);
         }
 
         private void ConnectAndListen(CancellationToken cancellationToken)
@@ -126,7 +143,7 @@ namespace Assets.Scripts
                         {
                             foreach (var sub in subscriptions[message.method])
                             {
-                                _ = Task.Run(async () => await sub(messageStr, cancellationToken)); // async/await can be skipped there, but I left them to signal, that sub is async fn
+                                _ = Task.Run(async () => await sub(message.method, messageStr, cancellationToken)); // async/await can be skipped there, but I left them to signal, that sub is async fn
                             }
                         }
                         else

@@ -1,14 +1,15 @@
 ﻿#nullable enable
 
+using Assets.Models;
 using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace Assets.Scripts
+namespace Assets.Behaviours
 {
-    public class DisplayCard: MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler
+    public class CardBehaviour: MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler
     {
         public CardInstance? displayCard = null;
         public bool showFront = false;

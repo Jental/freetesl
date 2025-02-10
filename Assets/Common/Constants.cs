@@ -1,4 +1,4 @@
-﻿namespace Assets.Scripts
+﻿namespace Assets.Common
 {
     public static class Constants
     {
@@ -12,6 +12,7 @@
         public static class MethodNames
         {
             public const string MATCH_STATE_UPDATE = "matchStateUpdate";
+            public const string MATCH_INFORMATION_UPDATE = "matchInformationUpdate";
             public const string MATCH_JOIN = "join";
             public const string END_TURN = "endTurn";
             public const string MOVE_CARD_TO_LANE = "moveCardToLane";

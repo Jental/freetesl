@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Assets.Scripts
+namespace Assets.Models
 {
     [CreateAssetMenu(fileName = "NewCard", menuName = "Card")]
     public class Card : ScriptableObject

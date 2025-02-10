@@ -1,10 +1,11 @@
 #nullable enable
 
+using Assets.Common;
 using Assets.DTO;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace Assets.Scripts
+namespace Assets.Services
 {
     public class MatchService : MonoBehaviour
     {

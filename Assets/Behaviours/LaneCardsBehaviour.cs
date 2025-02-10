@@ -1,6 +1,8 @@
 #nullable enable
 
+using Assets.Common;
 using Assets.DTO;
+using Assets.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,11 +10,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace Assets.Scripts
+namespace Assets.Behaviours
 {
     public class LaneCardsBehaviour : AWithMatchStateSubscribtionBehaviour
     {
-        public DisplayCard? CardPrefab = null;
+        public CardBehaviour? CardPrefab = null;
 
         private List<CardInstance> cardsToShow = new List<CardInstance>();
         private Dictionary<int, Card>? allCards = null;
@@ -26,7 +28,7 @@ namespace Assets.Scripts
             allCards = Resources.LoadAll<Card>("CardObjects").ToDictionary(c => c.id, c => c);
         }
 
-        protected override Task OnMatchStateUpdateAsync(PlayerMatchStateDTO dto, CancellationToken cancellationToken)
+        protected override Task OnMatchStateUpdateAsync(PlayerMatchStateDTO dto, bool isPlayersTurn, CancellationToken cancellationToken)
         {
             try
             {
@@ -45,7 +47,7 @@ namespace Assets.Scripts
 
         protected override void UpdateImpl()
         {
-            var children = gameObject.transform.GetComponentsInChildren<DisplayCard>();
+            var children = gameObject.transform.GetComponentsInChildren<CardBehaviour>();
             foreach (var dc in children)
             {
                 Destroy(dc.gameObject);

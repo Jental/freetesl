@@ -1,6 +1,8 @@
 #nullable enable
 
+using Assets.Common;
 using Assets.DTO;
+using Assets.Services;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,28 +10,28 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace Assets.Scripts
+namespace Assets.Behaviours
 {
     public class EndTurnButtonBehaviour : AWithMatchStateSubscribtionBehaviour, IPointerClickHandler
     {
         public GameObject? ActivePlayButtonPrefab = null;
         public GameObject? InactivePlayButtonPrefab = null;
 
-        private bool ownTurn = false;
+        private bool isPlayersTurn = false;
 
         public async void OnPointerClick(PointerEventData eventData)
         {
-            if (!ownTurn) { return; }
+            if (!isPlayersTurn) { return; }
 
-            ownTurn = false;
+            isPlayersTurn = false;
 
             var dto = new EndTurnDTO { playerID = Constants.TEST_PLAYER_ID };
             await Networking.Instance.SendMessageAsync(Constants.MethodNames.END_TURN, dto, destroyCancellationToken);
         }
 
-        protected override Task OnMatchStateUpdateAsync(PlayerMatchStateDTO dto, CancellationToken cancellationToken)
+        protected override Task OnMatchStateUpdateAsync(PlayerMatchStateDTO dto, bool isPlayersTurn, CancellationToken cancellationToken)
         {
-            this.ownTurn = dto.ownTurn;
+            this.isPlayersTurn = isPlayersTurn;
             return Task.CompletedTask;
         }
 
@@ -42,7 +44,7 @@ namespace Assets.Scripts
                 Destroy(dc);
             }
 
-            var playButtonPrefab = ownTurn ? ActivePlayButtonPrefab : InactivePlayButtonPrefab;
+            var playButtonPrefab = isPlayersTurn ? ActivePlayButtonPrefab : InactivePlayButtonPrefab;
             var playButton = Instantiate(playButtonPrefab, new Vector3(0, 0, 0), Quaternion.identity);
             playButton!.transform.parent = gameObject.transform;
 

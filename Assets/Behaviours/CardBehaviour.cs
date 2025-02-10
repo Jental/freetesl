@@ -13,6 +13,7 @@ namespace Assets.Behaviours
     {
         public CardInstance? displayCard = null;
         public bool showFront = false;
+        public bool isFloating = false;
 
         public TextMeshProUGUI? nameText = null;
         public TextMeshProUGUI? descriptionText = null;
@@ -23,11 +24,13 @@ namespace Assets.Behaviours
 
         public Image? frontEl = null;
         public RawImage? backEl = null;
+        public Image? shadowEl = null;
 
         public Canvas? canvas = null;
 
         private RectTransform? rectTransform;
         private Image? imageComponent;
+        private Vector2? anchoredPoitionBeforeDrag;
 
         protected void Awake()
         {
@@ -39,6 +42,7 @@ namespace Assets.Behaviours
         {
             if (frontEl == null) throw new InvalidOperationException($"{nameof(frontEl)} gameObject is expected to be set");
             if (backEl == null) throw new InvalidOperationException($"{nameof(backEl)} gameObject is expected to be set");
+            if (shadowEl == null) throw new InvalidOperationException($"{nameof(shadowEl)} gameObject is expected to be set");
             if (nameText == null) throw new InvalidOperationException($"{nameof(nameText)} gameObject is expected to be set");
             if (descriptionText == null) throw new InvalidOperationException($"{nameof(descriptionText)} gameObject is expected to be set");
             if (image == null) throw new InvalidOperationException($"{nameof(image)} gameObject is expected to be set");
@@ -48,6 +52,7 @@ namespace Assets.Behaviours
 
             frontEl.gameObject.SetActive(showFront);
             backEl.gameObject.SetActive(!showFront);
+            shadowEl.gameObject.SetActive(isFloating);
 
             if (showFront)
             {
@@ -73,8 +78,16 @@ namespace Assets.Behaviours
 
         public void OnBeginDrag(PointerEventData eventData)
         {
+            if (rectTransform == null) throw new InvalidOperationException("RectTransform component is expected to be added");
             if (imageComponent == null) throw new InvalidOperationException("Image component is expected to be added");
 
+            if (displayCard == null || !displayCard.IsActive)
+            {
+                eventData.pointerDrag = null;
+                return;
+            }
+
+            this.anchoredPoitionBeforeDrag = rectTransform.anchoredPosition;
             imageComponent.raycastTarget = false;
         }
 
@@ -83,6 +96,16 @@ namespace Assets.Behaviours
             if (imageComponent == null) throw new InvalidOperationException("Image component is expected to be added");
 
             imageComponent.raycastTarget = true;
+        }
+
+        public void ReturnBack()
+        {
+            if (rectTransform == null) throw new InvalidOperationException("RectTransform component is expected to be added");
+
+            if (this.anchoredPoitionBeforeDrag != null)
+            {
+                rectTransform.anchoredPosition = anchoredPoitionBeforeDrag.Value;
+            }
         }
     }
 }

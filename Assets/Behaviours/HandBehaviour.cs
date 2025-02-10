@@ -33,7 +33,8 @@ namespace Assets.Behaviours
         {
             cardsToShow = dto.hand.Select(c => new CardInstance(
                 AllCardsNotNull[c.cardID],
-                c.CardInstanceGuid ?? throw new InvalidOperationException($"Card instance id is null or is not a guid: '{c.cardInstanceID}'")
+                c.CardInstanceGuid ?? throw new InvalidOperationException($"Card instance id is null or is not a guid: '{c.cardInstanceID}'"),
+                c.isActive
             )).ToList();
 
             return Task.CompletedTask;
@@ -67,6 +68,7 @@ namespace Assets.Behaviours
                     dc.transform.parent = gameObject.transform;
                     dc.displayCard = card;
                     dc.showFront = true;
+                    dc.isFloating = false;
                     dc.canvas = Canvas!;
 
                     var cardRect = dc.gameObject.GetComponent<RectTransform>();

@@ -215,6 +215,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerType: 0
   CardPrefab: {fileID: 7072099467386631815, guid: 71d2c6cd74e2f2048b01df2ef930f295, type: 3}
+  Canvas: {fileID: 1107542193}
 --- !u!1 &204983603
 GameObject:
   m_ObjectHideFlags: 0
@@ -1041,9 +1042,9 @@ RectTransform:
   - {fileID: 2114956007}
   - {fileID: 1334726649}
   - {fileID: 569722533}
-  - {fileID: 1046936926}
   - {fileID: 2083152161}
   - {fileID: 1015960396}
+  - {fileID: 1046936926}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}

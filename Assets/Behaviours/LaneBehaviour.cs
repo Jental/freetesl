@@ -31,6 +31,15 @@ namespace Assets.Behaviours
             var cardInstance =
                 displayCard.displayCard
                 ?? throw new InvalidOperationException($"{displayCard.displayCard} property of a dropped item is expected to be set");
+            
+            var currentParentHandComponent = displayCard.gameObject.GetComponentInParent<HandBehaviour>();
+            if (currentParentHandComponent == null)
+            {
+                displayCard.ReturnBack();
+                return;
+            }
+
+            cardInstance.IsActive = false;
 
             LaneOwnCardsGameObject.AddCard(cardInstance);
 

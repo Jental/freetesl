@@ -15,6 +15,7 @@ namespace Assets.Behaviours
     public class LaneCardsBehaviour : AWithMatchStateSubscribtionBehaviour
     {
         public CardBehaviour? CardPrefab = null;
+        public Canvas? Canvas = null;
 
         private List<CardInstance> cardsToShow = new List<CardInstance>();
         private Dictionary<int, Card>? allCards = null;
@@ -34,7 +35,8 @@ namespace Assets.Behaviours
             {
                 cardsToShow = dto.leftLaneCards.Select(c => new CardInstance(
                     AllCardsNotNull[c.cardID],
-                    c.CardInstanceGuid ?? throw new InvalidOperationException($"Card instance id is null or is not a guid: '{c.cardInstanceID}'")
+                    c.CardInstanceGuid ?? throw new InvalidOperationException($"Card instance id is null or is not a guid: '{c.cardInstanceID}'"),
+                    c.isActive
                 )).ToList();
             }
             catch (Exception e)
@@ -57,9 +59,9 @@ namespace Assets.Behaviours
             if (cardsToShow.Count > 0)
             {
                 var gameObjectRect = gameObject.GetComponent<RectTransform>();
-                float cardHeight = gameObjectRect.rect.height;
-                float cardWidth = cardHeight * Constants.CARD_ASPECT_RATIO;
-                float gameObjectWidth = cardsToShow.Count * cardWidth + (cardsToShow.Count - 1) * Constants.LANE_CARDS_GAP;
+                float generalCardHeight = gameObjectRect.rect.height;
+                float generalCardWidth = generalCardHeight * Constants.CARD_ASPECT_RATIO;
+                float gameObjectWidth = cardsToShow.Count * generalCardWidth + (cardsToShow.Count - 1) * Constants.LANE_CARDS_GAP;
                 gameObjectRect.anchorMin = new Vector2(0.5f, 0.0f);
                 gameObjectRect.anchorMax = new Vector2(0.5f, 1.0f);
                 gameObjectRect.sizeDelta = new Vector2(gameObjectWidth, 0.0f);
@@ -75,12 +77,16 @@ namespace Assets.Behaviours
                     dc.transform.parent = gameObject.transform;
                     dc.displayCard = card;
                     dc.showFront = true;
+                    dc.isFloating = card.IsActive;
+                    dc.canvas = Canvas;
 
                     var cardRect = dc.gameObject.GetComponent<RectTransform>();
                     cardRect.anchorMin = new Vector2(0, 0.5f);
                     cardRect.anchorMax = new Vector2(0, 0.5f);
-                    var cardHOffset = i * (cardWidth + Constants.LANE_CARDS_GAP) + cardWidth / 2;
+                    var cardHOffset = i * (generalCardWidth + Constants.LANE_CARDS_GAP) + generalCardWidth / 2;
                     cardRect.anchoredPosition = new Vector2(cardHOffset, 0.0f);
+                    float cardHeight = card.IsActive ? generalCardHeight : (generalCardHeight - 5.0f);
+                    float cardWidth = cardHeight * Constants.CARD_ASPECT_RATIO;
                     cardRect.sizeDelta = new Vector2(cardWidth, cardHeight);
                     cardRect.localScale = new Vector3(1, 1, 1);
                 }
@@ -90,11 +96,17 @@ namespace Assets.Behaviours
         protected override void VerifyFields()
         {
             if (this.CardPrefab == null) throw new InvalidOperationException($"{nameof(CardPrefab)} prefab is expected to be set");
+            if (this.Canvas == null) throw new InvalidOperationException($"{nameof(Canvas)} gameObject is expected to be set");
         }
 
         public void AddCard(CardInstance cardInstance)
         {
             cardsToShow.Add(cardInstance);
+            changesArePresent = true;
+        }
+
+        public void Redraw()
+        {
             changesArePresent = true;
         }
     }

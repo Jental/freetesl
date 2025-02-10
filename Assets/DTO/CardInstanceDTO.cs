@@ -7,7 +7,7 @@ namespace Assets.DTO
     {
         public int cardID;
         public string cardInstanceID;
-        public int isActive;
+        public bool isActive;
 
         private Guid? cardInstanceGuid = null;
 

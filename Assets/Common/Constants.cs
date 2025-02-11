@@ -16,6 +16,8 @@
             public const string MATCH_JOIN = "join";
             public const string END_TURN = "endTurn";
             public const string MOVE_CARD_TO_LANE = "moveCardToLane";
+            public const string HIT_FACE = "hitFace";
+            public const string MATCH_END = "matchEnd";
         }
     }
 }

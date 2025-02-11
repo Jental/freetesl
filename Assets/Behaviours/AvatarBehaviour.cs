@@ -1,17 +1,20 @@
 #nullable enable
 
+using Assets.Common;
 using Assets.DTO;
 using Assets.Models;
+using Assets.Services;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace Assets.Behaviours
 {
-    public class AvatarBehaviour : AWithMatchStateAndInformationSubscribtionBehaviour
+    public class AvatarBehaviour : AWithMatchStateAndInformationSubscribtionBehaviour, IDropHandler
     {
         public TextMeshProUGUI? healthText = null;
         public GameObject? healthSectorPrefab = null;
@@ -88,6 +91,33 @@ namespace Assets.Behaviours
             };
 
             return Task.CompletedTask;
+        }
+
+        public void OnDrop(PointerEventData eventData)
+        {
+            Debug.Log("AvatarBehaviour.OnDrop");
+
+            var dropped = eventData.pointerDrag;
+            var displayCard = dropped.GetComponent<CardBehaviour>();
+            var cardInstance =
+                displayCard.displayCard
+                ?? throw new InvalidOperationException($"{displayCard.displayCard} property of a dropped item is expected to be set");
+
+            var currentParentLaneCardsComponent = displayCard.gameObject.GetComponentInParent<LaneCardsBehaviour>();
+            if (currentParentLaneCardsComponent == null)
+            {
+                return;
+            }
+
+            _ = Task.Run(async () =>
+            {
+                var dto = new HitFaceDTO
+                {
+                    playerID = Constants.TEST_PLAYER_ID,
+                    cardInstanceID = cardInstance.ID.ToString(),
+                };
+                await Networking.Instance.SendMessageAsync(Constants.MethodNames.HIT_FACE, dto, destroyCancellationToken);
+            });
         }
     }
 }

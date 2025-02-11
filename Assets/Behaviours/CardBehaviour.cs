@@ -27,6 +27,7 @@ namespace Assets.Behaviours
         public Image? shadowEl = null;
 
         public Canvas? canvas = null;
+        public LineRenderer? line = null;
 
         private RectTransform? rectTransform;
         private Image? imageComponent;
@@ -73,13 +74,22 @@ namespace Assets.Behaviours
             if (rectTransform == null) throw new InvalidOperationException("RectTransform component is expected to be added");
             if (canvas == null) throw new InvalidOperationException($"{nameof(canvas)} gameObject is expected to be set");
 
-            rectTransform.anchoredPosition += eventData.delta / canvas.scaleFactor;
+            if (line != null)
+            {
+                var currentPosition = new Vector3(eventData.position.x / canvas.scaleFactor, eventData.position.y / canvas.scaleFactor, -2.0f);
+                line.SetPosition(1, currentPosition);
+            }
+            else
+            {
+                rectTransform.anchoredPosition += eventData.delta / canvas.scaleFactor;
+            }
         }
 
         public void OnBeginDrag(PointerEventData eventData)
         {
             if (rectTransform == null) throw new InvalidOperationException("RectTransform component is expected to be added");
             if (imageComponent == null) throw new InvalidOperationException("Image component is expected to be added");
+            if (canvas == null) throw new InvalidOperationException($"{nameof(canvas)} gameObject is expected to be set");
 
             if (displayCard == null || !displayCard.IsActive)
             {
@@ -89,6 +99,13 @@ namespace Assets.Behaviours
 
             this.anchoredPoitionBeforeDrag = rectTransform.anchoredPosition;
             imageComponent.raycastTarget = false;
+
+            if (line != null)
+            {
+                line.enabled = true;
+                var pressPosition = new Vector3(eventData.pressPosition.x / canvas.scaleFactor, eventData.pressPosition.y / canvas.scaleFactor, -2.0f);
+                line.SetPosition(0, pressPosition);
+            }
         }
 
         public void OnEndDrag(PointerEventData eventData)
@@ -96,6 +113,11 @@ namespace Assets.Behaviours
             if (imageComponent == null) throw new InvalidOperationException("Image component is expected to be added");
 
             imageComponent.raycastTarget = true;
+
+            if (line != null)
+            {
+                line.enabled = false;
+            }
         }
 
         public void ReturnBack()

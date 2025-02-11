@@ -16,6 +16,7 @@ namespace Assets.Behaviours
     {
         public CardBehaviour? CardPrefab = null;
         public Canvas? Canvas = null;
+        public LineRenderer? Line = null;
 
         private List<CardInstance> cardsToShow = new List<CardInstance>();
         private Dictionary<int, Card>? allCards = null;
@@ -79,6 +80,7 @@ namespace Assets.Behaviours
                     dc.showFront = true;
                     dc.isFloating = card.IsActive;
                     dc.canvas = Canvas;
+                    dc.line = Line;
 
                     var cardRect = dc.gameObject.GetComponent<RectTransform>();
                     cardRect.anchorMin = new Vector2(0, 0.5f);

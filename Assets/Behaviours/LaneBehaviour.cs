@@ -24,7 +24,7 @@ namespace Assets.Behaviours
         {
             if (LaneOwnCardsGameObject == null) throw new InvalidOperationException($"{LaneOwnCardsGameObject} gameObject is expected to be set");
 
-            Debug.Log("OnDrop");
+            Debug.Log("LaneBehaviour.OnDrop");
 
             var dropped = eventData.pointerDrag;
             var displayCard = dropped.GetComponent<CardBehaviour>();

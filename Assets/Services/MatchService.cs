@@ -12,6 +12,7 @@ namespace Assets.Services
         void Start()
         {
             _ = destroyCancellationToken;
+            _ = GlobalStorage.Instance;
             _ = Task.Run(async () => await JoinMatchAsync());
         }
 

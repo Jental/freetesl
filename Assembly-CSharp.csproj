@@ -85,6 +85,7 @@
     <Compile Include="Assets\Behaviours\EndTurnButtonBehaviour.cs" />
     <Compile Include="Assets\Behaviours\LaneBehaviour.cs" />
     <Compile Include="Assets\DTO\PlayerInformationDTO.cs" />
+    <Compile Include="Assets\Services\GlobalStorage.cs" />
     <Compile Include="Assets\Models\PlayerType.cs" />
     <Compile Include="Assets\Behaviours\AWithMatchStateAndInformationSubscribtionBehaviour.cs" />
   </ItemGroup>

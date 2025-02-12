@@ -1,6 +1,7 @@
 ﻿#nullable enable
 
 using Assets.Models;
+using Assets.Services;
 using System;
 using TMPro;
 using UnityEngine;
@@ -28,6 +29,7 @@ namespace Assets.Behaviours
 
         private Canvas? canvasGameObject = null;
         private LineRenderer? actionLineGameObject = null;
+        private ManaDisplayBehaviour? manaDisplayGameObject = null;
 
         private RectTransform? rectTransform;
         private Image? imageComponent;
@@ -111,13 +113,34 @@ namespace Assets.Behaviours
 
             if (isDraggedAsCard)
             {
+                if (cardInstance.Cost > GlobalStorage.Instance.PlayerMatchStateDTO.mana)
+                {
+                    Debug.Log("CardBehaviour.OnBeginDrag: aborted (not enough mana)");
+                    eventData.pointerDrag = null;
+                }
                 imageComponent.raycastTarget = false;
+            }
+            else if (parentHandComponent == null)
+            {
+                var parentLaneCardsComponent = gameObject.GetComponentInParent<LaneCardsBehaviour>();
+                if (parentLaneCardsComponent != null && parentLaneCardsComponent.playerType == PlayerType.Self)
+                {
+                    actionLineGameObject.enabled = true;
+                    var pressPosition = new Vector3(eventData.pressPosition.x / canvasGameObject.scaleFactor, eventData.pressPosition.y / canvasGameObject.scaleFactor, -2.0f);
+                    actionLineGameObject.SetPosition(0, pressPosition);
+                }
+                else
+                {
+                    Debug.Log("CardBehaviour.OnBeginDrag: aborted (invalid drag source)");
+                    eventData.pointerDrag = null;
+                    return;
+                }
             }
             else
             {
-                actionLineGameObject.enabled = true;
-                var pressPosition = new Vector3(eventData.pressPosition.x / canvasGameObject.scaleFactor, eventData.pressPosition.y / canvasGameObject.scaleFactor, -2.0f);
-                actionLineGameObject.SetPosition(0, pressPosition);
+                Debug.Log("CardBehaviour.OnBeginDrag: aborted (invalid drag source - opponent's hand)");
+                eventData.pointerDrag = null;
+                return;
             }
         }
 

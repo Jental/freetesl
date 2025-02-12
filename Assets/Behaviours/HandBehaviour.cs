@@ -33,6 +33,9 @@ namespace Assets.Behaviours
             cardsToShow = dto.hand.Select(c => new CardInstance(
                 AllCardsNotNull[c.cardID],
                 c.CardInstanceGuid ?? throw new InvalidOperationException($"Card instance id is null or is not a guid: '{c.cardInstanceID}'"),
+                c.power,
+                c.health,
+                c.cost,
                 c.isActive
             )).ToList();
 

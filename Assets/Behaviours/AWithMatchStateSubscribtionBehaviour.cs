@@ -42,10 +42,10 @@ namespace Assets.Behaviours
 
         protected async Task OnMatchStateUpdateAsync(string methodName, string message, CancellationToken cancellationToken)
         {
-            ServerMessageDTO<MatchStateDTO> dto = JsonUtility.FromJson<ServerMessageDTO<MatchStateDTO>>(message);
-
             try
             {
+                ServerMessageDTO<MatchStateDTO> dto = JsonUtility.FromJson<ServerMessageDTO<MatchStateDTO>>(message);
+
                 (var playerState, bool isPlayersTurn) = playerType switch
                 {
                     PlayerType.Self => (dto.body.player, dto.body.ownTurn),

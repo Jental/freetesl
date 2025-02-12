@@ -8,6 +8,9 @@ namespace Assets.DTO
         public int cardID;
         public string cardInstanceID;
         public bool isActive;
+        public int power;
+        public int health;
+        public int cost;
 
         private Guid? cardInstanceGuid = null;
 

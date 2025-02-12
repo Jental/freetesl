@@ -15,8 +15,6 @@ namespace Assets.Behaviours
     public class LaneCardsBehaviour : AWithMatchStateSubscribtionBehaviour
     {
         public CardBehaviour? CardPrefab = null;
-        private Canvas? Canvas = null;
-        private LineRenderer? Line = null;
 
         private List<CardInstance> cardsToShow = new List<CardInstance>();
         private Dictionary<int, Card>? allCards = null;
@@ -31,10 +29,8 @@ namespace Assets.Behaviours
             allCards = Resources.LoadAll<Card>("CardObjects").ToDictionary(c => c.id, c => c);
         }
 
-        public void Init(Canvas canvas, LineRenderer lineRenderer, LaneBehaviour laneGameObject)
+        public void Init(LaneBehaviour laneGameObject)
         {
-            this.Canvas = canvas;
-            this.Line = lineRenderer;
             if (laneGameObject != null)
             {
                 laneID = laneGameObject.LaneID;
@@ -94,11 +90,9 @@ namespace Assets.Behaviours
                         Instantiate(CardPrefab, new Vector3(0, 0, 0), Quaternion.identity)
                         ?? throw new InvalidOperationException("Failed to instantiate a card prefab");
                     dc.transform.parent = gameObject.transform;
-                    dc.displayCard = card;
+                    dc.cardInstance = card;
                     dc.showFront = true;
                     dc.isFloating = card.IsActive;
-                    dc.canvas = Canvas;
-                    dc.line = Line;
 
                     var cardRect = dc.gameObject.GetComponent<RectTransform>();
                     cardRect.anchorMin = new Vector2(0, 0.5f);
@@ -116,7 +110,6 @@ namespace Assets.Behaviours
         protected override void VerifyFields()
         {
             if (this.CardPrefab == null) throw new InvalidOperationException($"{nameof(CardPrefab)} prefab is expected to be passed. Call '{nameof(Init)}' method");
-            if (this.Canvas == null) throw new InvalidOperationException($"{nameof(Canvas)} gameObject is expected to be passed. Call '{nameof(Init)}' method");
             if (this.laneID == null) throw new InvalidOperationException($"{nameof(laneID)} parameter is expected to be passed. Call '{nameof(Init)}' method");
         }
 

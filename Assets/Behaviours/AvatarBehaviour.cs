@@ -100,8 +100,8 @@ namespace Assets.Behaviours
             var dropped = eventData.pointerDrag;
             var displayCard = dropped.GetComponent<CardBehaviour>();
             var cardInstance =
-                displayCard.displayCard
-                ?? throw new InvalidOperationException($"{displayCard.displayCard} property of a dropped item is expected to be set");
+                displayCard.cardInstance
+                ?? throw new InvalidOperationException($"{displayCard.cardInstance} property of a dropped item is expected to be set");
 
             var currentParentLaneCardsComponent = displayCard.gameObject.GetComponentInParent<LaneCardsBehaviour>();
             if (currentParentLaneCardsComponent == null)

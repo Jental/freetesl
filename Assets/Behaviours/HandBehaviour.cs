@@ -15,7 +15,6 @@ namespace Assets.Behaviours
     public class HandBehaviour : AWithMatchStateSubscribtionBehaviour
     {
         public CardBehaviour? CardPrefab = null;
-        public Canvas? Canvas = null;
 
         private List<CardInstance> cardsToShow = new List<CardInstance>();
         private Dictionary<int, Card>? allCards = null;
@@ -66,10 +65,9 @@ namespace Assets.Behaviours
                         Instantiate(CardPrefab, new Vector3(0, 0, 0), Quaternion.identity)
                         ?? throw new InvalidOperationException("Failed to instantiate a card prefab");
                     dc.transform.parent = gameObject.transform;
-                    dc.displayCard = card;
+                    dc.cardInstance = card;
                     dc.showFront = playerType == PlayerType.Self;
                     dc.isFloating = false;
-                    dc.canvas = Canvas!;
 
                     var cardRect = dc.gameObject.GetComponent<RectTransform>();
                     cardRect.anchorMin = new Vector2(marginWidthShare + cardWidthShare * i * (1 - Constants.HAND_CARD_OVERFLOW), 0);
@@ -84,7 +82,6 @@ namespace Assets.Behaviours
         protected override void VerifyFields()
         {
             if (this.CardPrefab == null) throw new InvalidOperationException($"{nameof(CardPrefab)} prefab is expected to be set");
-            if (this.Canvas == null) throw new InvalidOperationException($"{nameof(Canvas)} gameObject is expected to be set");
         }
     }
 }

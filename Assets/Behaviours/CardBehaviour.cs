@@ -9,9 +9,9 @@ using UnityEngine.UI;
 
 namespace Assets.Behaviours
 {
-    public class CardBehaviour: MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler
+    public class CardBehaviour: MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler, IDropHandler
     {
-        public CardInstance? displayCard = null;
+        public CardInstance? cardInstance = null;
         public bool showFront = false;
         public bool isFloating = false;
 
@@ -26,17 +26,21 @@ namespace Assets.Behaviours
         public RawImage? backEl = null;
         public Image? shadowEl = null;
 
-        public Canvas? canvas = null;
-        public LineRenderer? line = null;
+        private Canvas? canvasGameObject = null;
+        private LineRenderer? actionLineGameObject = null;
 
         private RectTransform? rectTransform;
         private Image? imageComponent;
         private Vector2? anchoredPoitionBeforeDrag;
+        private bool isDraggedAsCard = false; // if dragging drags card itself (true) or just shows an arrow (false)
 
         protected void Awake()
         {
             rectTransform = GetComponent<RectTransform>();
             imageComponent = GetComponent<Image>();
+
+            canvasGameObject = GameObject.Find("Canvas")?.GetComponent<Canvas>();
+            actionLineGameObject = GameObject.Find("ActionLine")?.GetComponent<LineRenderer>();
         }
 
         protected void Update()
@@ -57,14 +61,14 @@ namespace Assets.Behaviours
 
             if (showFront)
             {
-                if (displayCard != null)
+                if (cardInstance != null)
                 {
-                    nameText.text = (string)displayCard.Card.cardName.Clone();
-                    descriptionText.text = (string)displayCard.Card.description.Clone();
-                    image.texture = displayCard.Card.image.texture;
-                    powerTextGameObject.text = displayCard.Card.power.ToString();
-                    healthTextGameObject.text = displayCard.Card.health.ToString();
-                    costTextGameObject.text = displayCard.Card.cost.ToString();
+                    nameText.text = (string)cardInstance.Card.cardName.Clone();
+                    descriptionText.text = (string)cardInstance.Card.description.Clone();
+                    image.texture = cardInstance.Card.image.texture;
+                    powerTextGameObject.text = cardInstance.Card.power.ToString();
+                    healthTextGameObject.text = cardInstance.Card.health.ToString();
+                    costTextGameObject.text = cardInstance.Card.cost.ToString();
                 }
             }
         }
@@ -72,61 +76,87 @@ namespace Assets.Behaviours
         public void OnDrag(PointerEventData eventData)
         {
             if (rectTransform == null) throw new InvalidOperationException("RectTransform component is expected to be added");
-            if (canvas == null) throw new InvalidOperationException($"{nameof(canvas)} gameObject is expected to be set");
+            if (canvasGameObject == null) throw new InvalidOperationException($"{nameof(canvasGameObject)} gameObject is expected to be set");
+            if (actionLineGameObject == null) throw new InvalidOperationException($"{nameof(actionLineGameObject)} gameObject is expected to be set");
 
-            if (line != null)
+            if (isDraggedAsCard)
             {
-                var currentPosition = new Vector3(eventData.position.x / canvas.scaleFactor, eventData.position.y / canvas.scaleFactor, -2.0f);
-                line.SetPosition(1, currentPosition);
+                rectTransform.anchoredPosition += eventData.delta / canvasGameObject.scaleFactor;
             }
             else
             {
-                rectTransform.anchoredPosition += eventData.delta / canvas.scaleFactor;
+                var currentPosition = new Vector3(eventData.position.x / canvasGameObject.scaleFactor, eventData.position.y / canvasGameObject.scaleFactor, -2.0f);
+                actionLineGameObject.SetPosition(1, currentPosition);
             }
         }
 
         public void OnBeginDrag(PointerEventData eventData)
         {
+            Debug.Log("CardBehaviour.OnBeginDrag");
             if (rectTransform == null) throw new InvalidOperationException("RectTransform component is expected to be added");
             if (imageComponent == null) throw new InvalidOperationException("Image component is expected to be added");
-            if (canvas == null) throw new InvalidOperationException($"{nameof(canvas)} gameObject is expected to be set");
+            if (canvasGameObject == null) throw new InvalidOperationException($"{nameof(canvasGameObject)} gameObject is expected to be set");
+            if (actionLineGameObject == null) throw new InvalidOperationException($"{nameof(actionLineGameObject)} gameObject is expected to be set");
 
-            if (displayCard == null || !displayCard.IsActive)
+            if (cardInstance == null || !cardInstance.IsActive)
             {
+                Debug.Log("CardBehaviour.OnBeginDrag: aborted (card not active)");
                 eventData.pointerDrag = null;
                 return;
             }
 
             this.anchoredPoitionBeforeDrag = rectTransform.anchoredPosition;
-            imageComponent.raycastTarget = false;
+            var parentHandComponent = gameObject.GetComponentInParent<HandBehaviour>();
+            isDraggedAsCard = parentHandComponent != null && parentHandComponent.playerType == PlayerType.Self;
 
-            if (line != null)
+            if (isDraggedAsCard)
             {
-                line.enabled = true;
-                var pressPosition = new Vector3(eventData.pressPosition.x / canvas.scaleFactor, eventData.pressPosition.y / canvas.scaleFactor, -2.0f);
-                line.SetPosition(0, pressPosition);
+                imageComponent.raycastTarget = false;
+            }
+            else
+            {
+                actionLineGameObject.enabled = true;
+                var pressPosition = new Vector3(eventData.pressPosition.x / canvasGameObject.scaleFactor, eventData.pressPosition.y / canvasGameObject.scaleFactor, -2.0f);
+                actionLineGameObject.SetPosition(0, pressPosition);
             }
         }
 
         public void OnEndDrag(PointerEventData eventData)
         {
+            Debug.Log("CardBehaviour.OnEndDrag");
             if (imageComponent == null) throw new InvalidOperationException("Image component is expected to be added");
+            if (actionLineGameObject == null) throw new InvalidOperationException($"{nameof(actionLineGameObject)} gameObject is expected to be set");
 
-            imageComponent.raycastTarget = true;
-
-            if (line != null)
+            if (isDraggedAsCard)
             {
-                line.enabled = false;
+                imageComponent.raycastTarget = true;
             }
+            else
+            {
+                actionLineGameObject.enabled = false;
+            }
+        }
+
+        public void OnDrop(PointerEventData eventData)
+        {
+            Debug.Log("CardBehaviour.OnDrop");
         }
 
         public void ReturnBack()
         {
             if (rectTransform == null) throw new InvalidOperationException("RectTransform component is expected to be added");
+            if (actionLineGameObject == null) throw new InvalidOperationException($"{nameof(actionLineGameObject)} gameObject is expected to be set");
 
-            if (this.anchoredPoitionBeforeDrag != null)
+            if (isDraggedAsCard)
             {
-                rectTransform.anchoredPosition = anchoredPoitionBeforeDrag.Value;
+                if (this.anchoredPoitionBeforeDrag != null)
+                {
+                    rectTransform.anchoredPosition = anchoredPoitionBeforeDrag.Value;
+                }
+            }
+            else
+            {
+                actionLineGameObject.enabled = false;
             }
         }
     }

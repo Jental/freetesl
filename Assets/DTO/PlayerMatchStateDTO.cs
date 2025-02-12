@@ -12,5 +12,6 @@ namespace Assets.DTO
         public int mana;
         public int maxMana;
         public CardInstanceDTO[] leftLaneCards;
+        public CardInstanceDTO[] rightLaneCards;
     }
 }

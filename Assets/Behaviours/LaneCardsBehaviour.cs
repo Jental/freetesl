@@ -15,11 +15,12 @@ namespace Assets.Behaviours
     public class LaneCardsBehaviour : AWithMatchStateSubscribtionBehaviour
     {
         public CardBehaviour? CardPrefab = null;
-        public Canvas? Canvas = null;
-        public LineRenderer? Line = null;
+        private Canvas? Canvas = null;
+        private LineRenderer? Line = null;
 
         private List<CardInstance> cardsToShow = new List<CardInstance>();
         private Dictionary<int, Card>? allCards = null;
+        private byte? laneID;
 
         private Dictionary<int, Card> AllCardsNotNull => allCards ?? throw new InvalidOperationException("All cards collection is not initialized");
 
@@ -30,11 +31,28 @@ namespace Assets.Behaviours
             allCards = Resources.LoadAll<Card>("CardObjects").ToDictionary(c => c.id, c => c);
         }
 
+        public void Init(Canvas canvas, LineRenderer lineRenderer, LaneBehaviour laneGameObject)
+        {
+            this.Canvas = canvas;
+            this.Line = lineRenderer;
+            if (laneGameObject != null)
+            {
+                laneID = laneGameObject.LaneID;
+            }
+        }
+
         protected override Task OnMatchStateUpdateAsync(PlayerMatchStateDTO dto, bool isPlayersTurn, CancellationToken cancellationToken)
         {
             try
             {
-                cardsToShow = dto.leftLaneCards.Select(c => new CardInstance(
+                var cardsDTO = laneID switch
+                {
+                    Constants.LEFT_LANE_ID => dto.leftLaneCards,
+                    Constants.RIGHT_LANE_ID => dto.rightLaneCards,
+                    _ => throw new InvalidOperationException($"Invalid lane id: '{laneID}'")
+                };
+
+                cardsToShow = cardsDTO.Select(c => new CardInstance(
                     AllCardsNotNull[c.cardID],
                     c.CardInstanceGuid ?? throw new InvalidOperationException($"Card instance id is null or is not a guid: '{c.cardInstanceID}'"),
                     c.isActive
@@ -97,8 +115,9 @@ namespace Assets.Behaviours
 
         protected override void VerifyFields()
         {
-            if (this.CardPrefab == null) throw new InvalidOperationException($"{nameof(CardPrefab)} prefab is expected to be set");
-            if (this.Canvas == null) throw new InvalidOperationException($"{nameof(Canvas)} gameObject is expected to be set");
+            if (this.CardPrefab == null) throw new InvalidOperationException($"{nameof(CardPrefab)} prefab is expected to be passed. Call '{nameof(Init)}' method");
+            if (this.Canvas == null) throw new InvalidOperationException($"{nameof(Canvas)} gameObject is expected to be passed. Call '{nameof(Init)}' method");
+            if (this.laneID == null) throw new InvalidOperationException($"{nameof(laneID)} parameter is expected to be passed. Call '{nameof(Init)}' method");
         }
 
         public void AddCard(CardInstance cardInstance)

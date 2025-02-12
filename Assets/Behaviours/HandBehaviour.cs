@@ -67,7 +67,7 @@ namespace Assets.Behaviours
                         ?? throw new InvalidOperationException("Failed to instantiate a card prefab");
                     dc.transform.parent = gameObject.transform;
                     dc.displayCard = card;
-                    dc.showFront = true;
+                    dc.showFront = playerType == PlayerType.Self;
                     dc.isFloating = false;
                     dc.canvas = Canvas!;
 

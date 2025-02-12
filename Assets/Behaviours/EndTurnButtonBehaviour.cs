@@ -44,7 +44,7 @@ namespace Assets.Behaviours
                 Destroy(dc);
             }
 
-            var playButtonPrefab = isPlayersTurn ? ActivePlayButtonPrefab : InactivePlayButtonPrefab;
+            var playButtonPrefab = isPlayersTurn && playerType == Models.PlayerType.Self ? ActivePlayButtonPrefab : InactivePlayButtonPrefab;
             var playButton = Instantiate(playButtonPrefab, new Vector3(0, 0, 0), Quaternion.identity);
             playButton!.transform.parent = gameObject.transform;
 

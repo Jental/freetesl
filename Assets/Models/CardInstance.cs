@@ -7,7 +7,7 @@ namespace Assets.Models
         public Card Card { get; private set; }
         public Guid ID { get; private set; }
         public int Power { get; private set; }
-        public int Health { get; private set; }
+        public int Health { get; set; }
         public int Cost { get; private set; }
         public bool IsActive { get; set; }
 

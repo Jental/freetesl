@@ -7,6 +7,7 @@ namespace Assets.DTO
     {
         public CardInstanceDTO[] deck;
         public CardInstanceDTO[] hand;
+        public CardInstanceDTO[] discardPile;
         public int health;
         public byte runes;
         public int mana;

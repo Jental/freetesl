@@ -18,7 +18,7 @@ namespace Assets.Behaviours
 
         private List<CardInstance> cardsToShow = new List<CardInstance>();
         private Dictionary<int, Card>? allCards = null;
-        private byte? laneID;
+        public byte? laneID;
 
         private Dictionary<int, Card> AllCardsNotNull => allCards ?? throw new InvalidOperationException("All cards collection is not initialized");
 

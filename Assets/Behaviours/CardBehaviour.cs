@@ -1,8 +1,11 @@
 ﻿#nullable enable
 
+using Assets.Common;
+using Assets.DTO;
 using Assets.Models;
 using Assets.Services;
 using System;
+using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -43,6 +46,8 @@ namespace Assets.Behaviours
 
             canvasGameObject = GameObject.Find("Canvas")?.GetComponent<Canvas>();
             actionLineGameObject = GameObject.Find("ActionLine")?.GetComponent<LineRenderer>();
+
+            _ = destroyCancellationToken;
         }
 
         protected void Update()
@@ -68,10 +73,44 @@ namespace Assets.Behaviours
                     nameText.text = (string)cardInstance.Card.cardName.Clone();
                     descriptionText.text = (string)cardInstance.Card.description.Clone();
                     image.texture = cardInstance.Card.image.texture;
-                    powerTextGameObject.text = cardInstance.Card.power.ToString();
-                    healthTextGameObject.text = cardInstance.Card.health.ToString();
-                    costTextGameObject.text = cardInstance.Card.cost.ToString();
+                    powerTextGameObject.text = cardInstance.Power.ToString();
+                    healthTextGameObject.text = cardInstance.Health.ToString();
+                    costTextGameObject.text = cardInstance.Cost.ToString();
                 }
+            }
+        }
+
+        private static CardDragSource GetCardDragSource(GameObject draggedCard)
+        {
+            var parentHandComponent = draggedCard.GetComponentInParent<HandBehaviour>();
+            var parentLaneCardsComponent = draggedCard.GetComponentInParent<LaneCardsBehaviour>();
+
+            if (parentHandComponent != null)
+            {
+                return
+                    parentHandComponent.playerType == PlayerType.Self
+                    ? CardDragSource.Hand
+                    : CardDragSource.Other; // opponent's hand
+            }
+            else if (parentLaneCardsComponent != null)
+            {
+                if (parentLaneCardsComponent.playerType != PlayerType.Self)
+                {
+                    return CardDragSource.Other; // opponent's lane
+                }
+                else
+                {
+                    return parentLaneCardsComponent.laneID switch
+                    {
+                        Constants.LEFT_LANE_ID => CardDragSource.LeftLane,
+                        Constants.RIGHT_LANE_ID => CardDragSource.RightLane,
+                        _ => CardDragSource.Other,
+                    };
+                }
+            }
+            else
+            {
+                return CardDragSource.Other;
             }
         }
 
@@ -107,40 +146,37 @@ namespace Assets.Behaviours
                 return;
             }
 
-            this.anchoredPoitionBeforeDrag = rectTransform.anchoredPosition;
-            var parentHandComponent = gameObject.GetComponentInParent<HandBehaviour>();
-            isDraggedAsCard = parentHandComponent != null && parentHandComponent.playerType == PlayerType.Self;
+            var cardDragSource = GetCardDragSource(gameObject);
 
-            if (isDraggedAsCard)
+            if (cardDragSource == CardDragSource.Other)
+            {
+                Debug.Log("CardBehaviour.OnBeginDrag: aborted (invalid drag source)");
+                eventData.pointerDrag = null;
+                return;
+            }
+
+            if (cardDragSource == CardDragSource.Hand)
             {
                 if (cardInstance.Cost > GlobalStorage.Instance.PlayerMatchStateDTO.mana)
                 {
                     Debug.Log("CardBehaviour.OnBeginDrag: aborted (not enough mana)");
                     eventData.pointerDrag = null;
-                }
-                imageComponent.raycastTarget = false;
-            }
-            else if (parentHandComponent == null)
-            {
-                var parentLaneCardsComponent = gameObject.GetComponentInParent<LaneCardsBehaviour>();
-                if (parentLaneCardsComponent != null && parentLaneCardsComponent.playerType == PlayerType.Self)
-                {
-                    actionLineGameObject.enabled = true;
-                    var pressPosition = new Vector3(eventData.pressPosition.x / canvasGameObject.scaleFactor, eventData.pressPosition.y / canvasGameObject.scaleFactor, -2.0f);
-                    actionLineGameObject.SetPosition(0, pressPosition);
-                }
-                else
-                {
-                    Debug.Log("CardBehaviour.OnBeginDrag: aborted (invalid drag source)");
-                    eventData.pointerDrag = null;
                     return;
                 }
             }
+
+            isDraggedAsCard = cardDragSource == CardDragSource.Hand; // TODO: check cart type for actions later
+
+            if (isDraggedAsCard)
+            {
+                this.anchoredPoitionBeforeDrag = rectTransform.anchoredPosition;
+                imageComponent.raycastTarget = false;
+            }
             else
             {
-                Debug.Log("CardBehaviour.OnBeginDrag: aborted (invalid drag source - opponent's hand)");
-                eventData.pointerDrag = null;
-                return;
+                actionLineGameObject.enabled = true;
+                var pressPosition = new Vector3(eventData.pressPosition.x / canvasGameObject.scaleFactor, eventData.pressPosition.y / canvasGameObject.scaleFactor, -2.0f);
+                actionLineGameObject.SetPosition(0, pressPosition);
             }
         }
 
@@ -160,11 +196,6 @@ namespace Assets.Behaviours
             }
         }
 
-        public void OnDrop(PointerEventData eventData)
-        {
-            Debug.Log("CardBehaviour.OnDrop");
-        }
-
         public void ReturnBack()
         {
             if (rectTransform == null) throw new InvalidOperationException("RectTransform component is expected to be added");
@@ -181,6 +212,57 @@ namespace Assets.Behaviours
             {
                 actionLineGameObject.enabled = false;
             }
+        }
+
+        public void OnDrop(PointerEventData eventData)
+        {
+            Debug.Log("CardBehaviour.OnDrop");
+            if (cardInstance == null) throw new InvalidOperationException($"{nameof(cardInstance)} field is expected to be filled");
+
+            // TODO: this method should be updated with actions introduction
+
+            var dropped = eventData.pointerDrag;
+            var cardDragSource = GetCardDragSource(dropped);
+
+            if (cardDragSource != CardDragSource.LeftLane && cardDragSource != CardDragSource.RightLane)
+            {
+                Debug.Log("CardBehaviour.OnDrop: drop not accepted - only lane sources are allowed");
+                return;
+            }
+
+            var sourceDisplayCard = dropped.GetComponent<CardBehaviour>();
+            var sourceCardInstance =
+                sourceDisplayCard.cardInstance
+                ?? throw new InvalidOperationException($"{sourceDisplayCard.cardInstance} property of a dropped item is expected to be set");
+            
+            var sourceParentLaneCardsComponent = dropped.GetComponentInParent<LaneCardsBehaviour>();
+            var targetParentLaneCardsComponent = gameObject.GetComponentInParent<LaneCardsBehaviour>();
+
+            if (targetParentLaneCardsComponent.playerType != PlayerType.Opponent)
+            {
+                Debug.Log("CardBehaviour.OnDrop: drop not accepted - only opponent cards are allowed");
+                return;
+            }
+
+            if (targetParentLaneCardsComponent.laneID != sourceParentLaneCardsComponent.laneID)
+            {
+                Debug.Log("CardBehaviour.OnDrop: drop not accepted - other lane");
+                return;
+            }
+
+            cardInstance.Health = cardInstance.Health - sourceCardInstance.Power;
+            cardInstance.IsActive = false;
+
+            _ = Task.Run(async () =>
+            {
+                var dto = new HitCardDTO
+                {
+                    playerID = Constants.TEST_PLAYER_ID,
+                    cardInstanceID = sourceCardInstance.ID.ToString(),
+                    opponentCardInstanceID = cardInstance.ID.ToString(),
+                };
+                await Networking.Instance.SendMessageAsync(Constants.MethodNames.HIT_CARD, dto, destroyCancellationToken);
+            });
         }
     }
 }

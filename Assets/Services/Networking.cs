@@ -142,12 +142,21 @@ namespace Assets.Services
                         {
                             foreach (var sub in subscriptions[message.method])
                             {
-                                _ = Task.Run(async () => await sub(message.method, messageStr, cancellationToken)); // async/await can be skipped there, but I left them to signal, that sub is async fn
+                                // _ = Task.Run(async () => await sub(message.method, messageStr, cancellationToken)); // async/await can be skipped there, but I left them to signal, that sub is async fn
+                                await sub(message.method, messageStr, cancellationToken);
+                                // switched to one-threaded message hadling for now
+                                // TODO: return back to multithreaded, probably Rx will be required
+                                // Scenario failed in simple multithreaded version (one commented out above):
+                                //   3 updates are sent from be: allCards, allCardInstances, matchStateUpdate
+                                //   allCardInstances and matchStateUpdated are handled in parallel
+                                //   => at a moment HandBehaviour.OnMatchStateUpdate executed, GlobalStorage.AllCardInstances are not ready yet
+                                // I see, that Rx may help us - HandBehaviour.OnMatchStateUpdate will be run on both allCardInstances and matchStateUpdate updates from BE
+                                // Maybe something like this can be done manually in case it would be difficult to add Rx lib
                             }
                         }
                         else
                         {
-                            Debug.LogError($"Received message with unsupported method: '{message.method}'; message: {messageStr}");
+                            Debug.Log($"Received message with unsupported method: '{message.method}'; message: {messageStr}");
                         }
                     }
                     catch (Exception)

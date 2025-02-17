@@ -2,6 +2,7 @@
 
 using Assets.Common;
 using Assets.DTO;
+using Assets.Enums;
 using Assets.Models;
 using Assets.Services;
 using System;
@@ -32,7 +33,6 @@ namespace Assets.Behaviours
 
         private Canvas? canvasGameObject = null;
         private LineRenderer? actionLineGameObject = null;
-        private ManaDisplayBehaviour? manaDisplayGameObject = null;
 
         private RectTransform? rectTransform;
         private Image? imageComponent;
@@ -70,9 +70,9 @@ namespace Assets.Behaviours
             {
                 if (cardInstance != null)
                 {
-                    nameText.text = (string)cardInstance.Card.cardName.Clone();
-                    descriptionText.text = (string)cardInstance.Card.description.Clone();
-                    image.texture = cardInstance.Card.image.texture;
+                    nameText.text = (string)cardInstance.Card.ScriptableObject.cardName.Clone();
+                    descriptionText.text = (string)cardInstance.Card.ScriptableObject.description.Clone();
+                    image.texture = cardInstance.Card.ScriptableObject.image.texture;
                     powerTextGameObject.text = cardInstance.Power.ToString();
                     healthTextGameObject.text = cardInstance.Health.ToString();
                     costTextGameObject.text = cardInstance.Cost.ToString();

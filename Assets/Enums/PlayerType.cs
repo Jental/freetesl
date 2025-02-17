@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Assets.Models
+namespace Assets.Enums
 {
     [Serializable]
     public enum PlayerType

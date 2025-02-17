@@ -5,14 +5,12 @@ namespace Assets.DTO
     [Serializable]
     public record PlayerMatchStateDTO
     {
-        public CardInstanceDTO[] deck;
-        public CardInstanceDTO[] hand;
-        public CardInstanceDTO[] discardPile;
         public int health;
         public byte runes;
         public int mana;
         public int maxMana;
-        public CardInstanceDTO[] leftLaneCards;
-        public CardInstanceDTO[] rightLaneCards;
+        public CardInstanceStateDTO[] hand;
+        public CardInstanceStateDTO[] leftLaneCards;
+        public CardInstanceStateDTO[] rightLaneCards;
     }
 }

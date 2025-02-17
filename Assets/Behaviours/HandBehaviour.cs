@@ -2,7 +2,9 @@
 
 using Assets.Common;
 using Assets.DTO;
+using Assets.Enums;
 using Assets.Models;
+using Assets.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,27 +19,15 @@ namespace Assets.Behaviours
         public CardBehaviour? CardPrefab = null;
 
         private List<CardInstance> cardsToShow = new List<CardInstance>();
-        private Dictionary<int, Card>? allCards = null;
-
-        private Dictionary<int, Card> AllCardsNotNull => allCards ?? throw new InvalidOperationException("All cards collection is not initialized");
-
-        protected new void Start()
-        {
-            base.Start();
-
-            allCards = Resources.LoadAll<Card>("CardObjects").ToDictionary(c => c.id, c => c);
-        }
 
         protected override Task OnMatchStateUpdateAsync(PlayerMatchStateDTO dto, bool isPlayersTurn, CancellationToken cancellationToken)
         {
-            cardsToShow = dto.hand.Select(c => new CardInstance(
-                AllCardsNotNull[c.cardID],
-                c.CardInstanceGuid ?? throw new InvalidOperationException($"Card instance id is null or is not a guid: '{c.cardInstanceID}'"),
-                c.power,
-                c.health,
-                c.cost,
-                c.isActive
-            )).ToList();
+            cardsToShow = dto.hand.Select(ciState =>
+            {
+                var cardInstance = GlobalStorage.Instance.AllCardInstances[ciState.CardInstanceGuid];
+                cardInstance.IsActive = ciState.isActive; // not very happy about mutating here, but it seems reasonable logic-wise
+                return cardInstance;
+            }).ToList();
 
             return Task.CompletedTask;
         }

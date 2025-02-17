@@ -2,6 +2,7 @@
 
 using Assets.Common;
 using Assets.DTO;
+using Assets.Enums;
 using Assets.Models;
 using Assets.Services;
 using System;

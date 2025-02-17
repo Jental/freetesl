@@ -5,14 +5,10 @@ using System;
 namespace Assets.DTO
 {
     [Serializable]
-    public record CardInstanceDTO
+    public record CardInstanceStateDTO
     {
-        public int cardID;
         public string cardInstanceID;
-        public int power;
-        public int health;
-        public int cost;
-        public byte[] keywords;
+        public bool isActive;
 
         private Guid? cardInstanceGuid = null;
 

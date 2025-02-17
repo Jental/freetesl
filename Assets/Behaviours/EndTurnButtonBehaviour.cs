@@ -2,6 +2,7 @@
 
 using Assets.Common;
 using Assets.DTO;
+using Assets.Enums;
 using Assets.Services;
 using System;
 using System.Threading;
@@ -44,7 +45,7 @@ namespace Assets.Behaviours
                 Destroy(dc);
             }
 
-            var playButtonPrefab = isPlayersTurn && playerType == Models.PlayerType.Self ? ActivePlayButtonPrefab : InactivePlayButtonPrefab;
+            var playButtonPrefab = isPlayersTurn && playerType == PlayerType.Self ? ActivePlayButtonPrefab : InactivePlayButtonPrefab;
             var playButton = Instantiate(playButtonPrefab, new Vector3(0, 0, 0), Quaternion.identity);
             playButton!.transform.parent = gameObject.transform;
 

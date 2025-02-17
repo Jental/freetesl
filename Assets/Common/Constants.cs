@@ -11,6 +11,8 @@
 
         public static class MethodNames
         {
+            public const string ALL_CARDS_UPDATE = "allCards";
+            public const string ALL_CARD_INSTANCES_UPDATE = "allCardInstances";
             public const string MATCH_STATE_UPDATE = "matchStateUpdate";
             public const string MATCH_INFORMATION_UPDATE = "matchInformationUpdate";
             public const string MATCH_JOIN = "join";

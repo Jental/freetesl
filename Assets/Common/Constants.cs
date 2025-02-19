@@ -21,6 +21,7 @@
             public const string HIT_FACE = "hitFace";
             public const string HIT_CARD = "hitCard";
             public const string MATCH_END = "matchEnd";
+            public const string LOGIN = "login";
         }
     }
 }

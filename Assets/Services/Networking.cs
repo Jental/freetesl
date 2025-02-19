@@ -4,6 +4,7 @@ using Assets.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
@@ -14,8 +15,11 @@ namespace Assets.Services
 {
     public class Networking : IDisposable
     {
+        private const string SERVER_URL = "localhost:8080";
+
         private static object lockObj = new object();
         private static Networking? instance = null;
+        private readonly HttpClient httpClient;
         private readonly ClientWebSocket webSocket;
         private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
         private bool disposedValue;
@@ -45,6 +49,8 @@ namespace Assets.Services
 
         private Networking()
         {
+            httpClient = new HttpClient() { BaseAddress = new Uri($"http://{SERVER_URL}") };
+
             webSocket = new ClientWebSocket();
             ConnectAndListen(cancellationTokenSource.Token);
         }
@@ -109,7 +115,7 @@ namespace Assets.Services
 
         private void ConnectAndListen(CancellationToken cancellationToken)
         {
-            Uri serverUri = new Uri("ws://localhost:8080/ws");
+            Uri serverUri = new Uri($"ws://{SERVER_URL}/ws");
 
             _ = Task.Run(async () =>
             {
@@ -193,6 +199,23 @@ namespace Assets.Services
             {
                 Debug.LogException(e);
             }
+        }
+
+        public async Task<R?> PostAsync<T, R>(string methodName, T body, CancellationToken cancellationToken)
+        {
+            var json = JsonUtility.ToJson(body);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            
+            var response = await httpClient.PostAsync(methodName, content, cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            string str = await response.Content.ReadAsStringAsync();
+            var respDTO = JsonUtility.FromJson<R>(str);
+            if (respDTO == null)
+            {
+                Debug.LogError($"Networking.PostAsync: [{methodName}]: received message in unknown format");
+            }
+            return respDTO;
         }
     }
 }

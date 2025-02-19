@@ -70,6 +70,8 @@
     <Compile Include="Assets\DTO\MatchStateDTO.cs" />
     <Compile Include="Assets\Mappers\MatchMappers.cs" />
     <Compile Include="Assets\DTO\CardInstanceDTO.cs" />
+    <Compile Include="Assets\DTO\LoginResponseDTO.cs" />
+    <Compile Include="Assets\Behaviours\LoginPopupBehaviour.cs" />
     <Compile Include="Assets\Behaviours\AvatarBehaviour.cs" />
     <Compile Include="Assets\Behaviours\ManaDisplayBehaviour.cs" />
     <Compile Include="Assets\Models\CardScriptableObject.cs" />
@@ -83,6 +85,7 @@
     <Compile Include="Assets\Models\Card.cs" />
     <Compile Include="Assets\Services\MatchService.cs" />
     <Compile Include="Assets\Behaviours\AWithMatchStateSubscribtionBehaviour.cs" />
+    <Compile Include="Assets\DTO\LoginDTO.cs" />
     <Compile Include="Assets\Models\CardInstance.cs" />
     <Compile Include="Assets\Behaviours\CardBehaviour.cs" />
     <Compile Include="Assets\DTO\HitCardDTO.cs" />

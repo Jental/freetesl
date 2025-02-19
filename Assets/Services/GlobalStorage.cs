@@ -26,6 +26,8 @@ namespace Assets.Services
         private Dictionary<int, Card> allCards = new Dictionary<int, Card>();
         private Dictionary<Guid, CardInstance> allCardInstances = new Dictionary<Guid, CardInstance>();
 
+        public string? Token { get; set; } = null;
+
         private GlobalStorage() {
             unsubscribers.Add(
                 Networking.Instance.Subscribe(Constants.MethodNames.ALL_CARDS_UPDATE, OnCardsUpdateAsync)

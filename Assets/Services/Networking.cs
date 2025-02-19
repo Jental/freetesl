@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
@@ -50,9 +51,7 @@ namespace Assets.Services
         private Networking()
         {
             httpClient = new HttpClient() { BaseAddress = new Uri($"http://{SERVER_URL}") };
-
             webSocket = new ClientWebSocket();
-            ConnectAndListen(cancellationTokenSource.Token);
         }
 
         protected virtual void Dispose(bool disposing)
@@ -113,13 +112,32 @@ namespace Assets.Services
             return Subscribe(new string[1] { method }, handler);
         }
 
-        private void ConnectAndListen(CancellationToken cancellationToken)
+        public void ConnectAndListen(CancellationToken cancellationToken)
         {
+            Debug.Log("Networking.ConnectAndListen");
+
             Uri serverUri = new Uri($"ws://{SERVER_URL}/ws");
 
             _ = Task.Run(async () =>
             {
-                webSocket.ConnectAsync(serverUri, cancellationToken).Wait();
+                var token = GlobalStorage.Instance.Token;
+                if (token == null)
+                {
+                    Debug.LogError("Networking.ConnectAndListen: Unathorized");
+                    return;
+                }
+
+                try
+                {
+                    webSocket.Options.SetRequestHeader("Authorization", $"Bearer {token}");
+                    await webSocket.ConnectAsync(serverUri, cancellationToken);
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError(e);
+                    return;
+                }
+
                 Debug.Log("WebSocket connection opened");
 
                 while (webSocket.State == WebSocketState.Open)

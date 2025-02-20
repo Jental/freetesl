@@ -40,7 +40,7 @@ namespace Assets.Behaviours
 
         protected void Update()
         {
-            UpdateCanvasActivity();
+            // UpdateCanvasActivity();
 
             if (loginCanvas!.isActiveAndEnabled)
             {

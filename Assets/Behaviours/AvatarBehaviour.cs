@@ -114,7 +114,6 @@ namespace Assets.Behaviours
             {
                 var dto = new HitFaceDTO
                 {
-                    playerID = Constants.TEST_PLAYER_ID,
                     cardInstanceID = cardInstance.ID.ToString(),
                 };
                 await Networking.Instance.SendMessageAsync(Constants.MethodNames.HIT_FACE, dto, destroyCancellationToken);

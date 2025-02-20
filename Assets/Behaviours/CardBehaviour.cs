@@ -257,7 +257,6 @@ namespace Assets.Behaviours
             {
                 var dto = new HitCardDTO
                 {
-                    playerID = Constants.TEST_PLAYER_ID,
                     cardInstanceID = sourceCardInstance.ID.ToString(),
                     opponentCardInstanceID = cardInstance.ID.ToString(),
                 };

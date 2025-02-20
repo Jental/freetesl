@@ -56,7 +56,6 @@ namespace Assets.Behaviours
             _ = Task.Run(async () =>
             {
                 var dto = new MoveCardToLaneDTO {
-                    playerID = Constants.TEST_PLAYER_ID,
                     cardInstanceID = cardInstance.ID.ToString(),
                     laneID = LaneID,
                 };

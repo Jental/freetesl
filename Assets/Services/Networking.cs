@@ -219,6 +219,31 @@ namespace Assets.Services
             }
         }
 
+        public async Task SendMessageAsync(string methodName, CancellationToken cancellationToken)
+        {
+            var message = new ServerMessageDTO
+            {
+                method = methodName,
+            };
+            string json = JsonUtility.ToJson(message);
+            ArraySegment<byte> sendBuffer = new ArraySegment<byte>(Encoding.UTF8.GetBytes(json));
+            try
+            {
+                // There should be a better way to do it with ManualResetEvent or TaskCompletionSource
+                while (webSocket.State != WebSocketState.Open)
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+                    await Task.Delay(500);
+                }
+                await webSocket.SendAsync(sendBuffer, WebSocketMessageType.Text, true, cancellationToken);
+                Debug.Log($"Sent message with a method: '{methodName}': {json}");
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+            }
+        }
+
         public async Task<R?> PostAsync<T, R>(string methodName, T body, CancellationToken cancellationToken)
         {
             var json = JsonUtility.ToJson(body);

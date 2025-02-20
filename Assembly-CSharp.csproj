@@ -63,7 +63,6 @@
   <ItemGroup>
     <Compile Include="Assets\Behaviours\LaneCardsBehaviour.cs" />
     <Compile Include="Assets\DTO\ServerMessageDTO.cs" />
-    <Compile Include="Assets\DTO\JoinMatchDTO.cs" />
     <Compile Include="Assets\DTO\PlayerMatchStateDTO.cs" />
     <Compile Include="Assets\Services\Networking.cs" />
     <Compile Include="Assets\DTO\MatchInformationDTO.cs" />
@@ -79,7 +78,6 @@
     <Compile Include="Assets\Behaviours\HandBehaviour.cs" />
     <Compile Include="Assets\Enums\CardType.cs" />
     <Compile Include="Assets\Enums\Keyword.cs" />
-    <Compile Include="Assets\DTO\EndTurnDTO.cs" />
     <Compile Include="Assets\DTO\HitFaceDTO.cs" />
     <Compile Include="Assets\Common\Constants.cs" />
     <Compile Include="Assets\Models\Card.cs" />

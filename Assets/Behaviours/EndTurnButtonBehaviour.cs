@@ -26,8 +26,7 @@ namespace Assets.Behaviours
 
             isPlayersTurn = false;
 
-            var dto = new EndTurnDTO { playerID = Constants.TEST_PLAYER_ID };
-            await Networking.Instance.SendMessageAsync(Constants.MethodNames.END_TURN, dto, destroyCancellationToken);
+            await Networking.Instance.SendMessageAsync(Constants.MethodNames.END_TURN, destroyCancellationToken);
         }
 
         protected override Task OnMatchStateUpdateAsync(PlayerMatchStateDTO dto, bool isPlayersTurn, CancellationToken cancellationToken)

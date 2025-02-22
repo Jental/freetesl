@@ -8,6 +8,7 @@ Library/*
 Temp/*
 Logs/*
 UserSettings/*
+Build/*
 
 # Private assets
 Assets/CardImages/*

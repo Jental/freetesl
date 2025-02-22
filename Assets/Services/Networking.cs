@@ -10,6 +10,7 @@ using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web;
 using UnityEngine;
 
 namespace Assets.Services
@@ -244,19 +245,44 @@ namespace Assets.Services
             }
         }
 
-        public async Task<R?> PostAsync<T, R>(string methodName, T body, CancellationToken cancellationToken)
+        public async Task<R?> GetAsync<R>(string relativeUrl, Dictionary<string, string> parameters, CancellationToken cancellationToken)
         {
-            var json = JsonUtility.ToJson(body);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
-            
-            var response = await httpClient.PostAsync(methodName, content, cancellationToken);
+            var fullUrl = relativeUrl;
+            if (parameters.Count > 0)
+            {
+                string parametersStr = string.Join("&", parameters.Select(p => $"{p.Key}={HttpUtility.UrlEncode(p.Value)}"));
+                fullUrl = $"{relativeUrl}?{parametersStr}";
+            }
+
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", GlobalStorage.Instance.Token);
+
+            var response = await httpClient.GetAsync(fullUrl, cancellationToken);
             response.EnsureSuccessStatusCode();
 
             string str = await response.Content.ReadAsStringAsync();
             var respDTO = JsonUtility.FromJson<R>(str);
             if (respDTO == null)
             {
-                Debug.LogError($"Networking.PostAsync: [{methodName}]: received message in unknown format");
+                Debug.LogError($"Networking.PostAsync: [{relativeUrl}]: received message in unknown format");
+            }
+            return respDTO;
+        }
+
+        public async Task<R?> PostAsync<T, R>(string relativeUrl, T body, CancellationToken cancellationToken)
+        {
+            var json = JsonUtility.ToJson(body);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", GlobalStorage.Instance.Token);
+
+            var response = await httpClient.PostAsync(relativeUrl, content, cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            string str = await response.Content.ReadAsStringAsync();
+            var respDTO = JsonUtility.FromJson<R>(str);
+            if (respDTO == null)
+            {
+                Debug.LogError($"Networking.PostAsync: [{relativeUrl}]: received message in unknown format");
             }
             return respDTO;
         }

@@ -20,6 +20,7 @@ namespace Assets.Behaviours
         [SerializeField] private TMP_InputField? passwordGameObject;
         [SerializeField] private Button? sendButtonGameObject;
         [SerializeField] private Canvas? loginCanvas;
+        [SerializeField] private Canvas? joinMatchCanvas;
         [SerializeField] private Canvas? matchCanvas;
 
         public int inputFocused = 0;
@@ -31,6 +32,7 @@ namespace Assets.Behaviours
             if (loginGameObject == null) throw new InvalidOperationException($"{nameof(loginGameObject)} game object is expected to be set");
             if (passwordGameObject == null) throw new InvalidOperationException($"{nameof(passwordGameObject)} game object is expected to be set");
             if (loginCanvas == null) throw new InvalidOperationException($"{nameof(loginCanvas)} game object is expected to be set");
+            if (joinMatchCanvas == null) throw new InvalidOperationException($"{nameof(joinMatchCanvas)} game object is expected to be set");
             if (matchCanvas == null) throw new InvalidOperationException($"{nameof(matchCanvas)} game object is expected to be set");
 
             _ = destroyCancellationToken;
@@ -40,7 +42,7 @@ namespace Assets.Behaviours
 
         protected void Update()
         {
-            // UpdateCanvasActivity();
+            UpdateCanvasActivity();
 
             if (loginCanvas!.isActiveAndEnabled)
             {
@@ -83,10 +85,17 @@ namespace Assets.Behaviours
             {
                 case 0:
                     loginCanvas!.gameObject.SetActive(true);
+                    joinMatchCanvas!.gameObject.SetActive(false);
                     matchCanvas!.gameObject.SetActive(false);
                     break;
                 case 1:
                     loginCanvas!.gameObject.SetActive(false);
+                    joinMatchCanvas!.gameObject.SetActive(true);
+                    matchCanvas!.gameObject.SetActive(false);
+                    break;
+                case 2:
+                    loginCanvas!.gameObject.SetActive(false);
+                    joinMatchCanvas!.gameObject.SetActive(false);
                     matchCanvas!.gameObject.SetActive(true);
                     break;
                 default:

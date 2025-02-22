@@ -61,9 +61,13 @@
     <Analyzer Include="E:\Program Files\Unity\6000.0.32f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.UIToolkit.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Enums\PlayerState.cs" />
     <Compile Include="Assets\Behaviours\LaneCardsBehaviour.cs" />
     <Compile Include="Assets\DTO\ServerMessageDTO.cs" />
+    <Compile Include="Assets\Mappers\GeneralMappers.cs" />
     <Compile Include="Assets\DTO\PlayerMatchStateDTO.cs" />
+    <Compile Include="Assets\Behaviours\PlayerListItemBehaviour.cs" />
+    <Compile Include="Assets\Models\Player.cs" />
     <Compile Include="Assets\Services\Networking.cs" />
     <Compile Include="Assets\DTO\MatchInformationDTO.cs" />
     <Compile Include="Assets\DTO\MatchStateDTO.cs" />
@@ -87,6 +91,7 @@
     <Compile Include="Assets\Models\CardInstance.cs" />
     <Compile Include="Assets\Behaviours\CardBehaviour.cs" />
     <Compile Include="Assets\DTO\HitCardDTO.cs" />
+    <Compile Include="Assets\DTO\ListDTO.cs" />
     <Compile Include="Assets\DTO\MatchEndDTO.cs" />
     <Compile Include="Assets\Behaviours\EndTurnButtonBehaviour.cs" />
     <Compile Include="Assets\Enums\PlayerType.cs" />
@@ -95,6 +100,7 @@
     <Compile Include="Assets\Services\GlobalStorage.cs" />
     <Compile Include="Assets\DTO\CardDTO.cs" />
     <Compile Include="Assets\DTO\CardInstanceStateDTO.cs" />
+    <Compile Include="Assets\Behaviours\PlayerListBehaviour.cs" />
     <Compile Include="Assets\Models\CardDragSource.cs" />
     <Compile Include="Assets\Behaviours\AWithMatchStateAndInformationSubscribtionBehaviour.cs" />
   </ItemGroup>

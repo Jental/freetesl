@@ -7,6 +7,7 @@
         public const float LANE_CARDS_GAP = 15;
         public const byte LEFT_LANE_ID = 0;
         public const byte RIGHT_LANE_ID = 1;
+        public const int BACKEND_POLLING_INTERVAL = 5; // in sec
 
         public static class MethodNames
         {
@@ -21,6 +22,9 @@
             public const string HIT_CARD = "hitCard";
             public const string MATCH_END = "matchEnd";
             public const string LOGIN = "login";
+            public const string GET_PLAYERS = "players";
+            public const string START_LOOKING_FOR_OPPONENT = "startLookingForOpponent";
+            public const string STOP_LOOKING_FOR_OPPONENT = "stopLookingForOpponent";
         }
     }
 }

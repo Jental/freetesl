@@ -110,15 +110,12 @@ namespace Assets.Behaviours
                 if (loginGameObject == null) throw new InvalidOperationException($"{nameof(loginGameObject)} game object is expected to be set");
                 if (passwordGameObject == null) throw new InvalidOperationException($"{nameof(passwordGameObject)} game object is expected to be set");
 
-                Debug.Log("LoginPopupBehaviour.OnSendButtonClick");
                 Debug.Log($"LoginPopupBehaviour.OnSendButtonClick: login: {loginGameObject.text}");
 
                 using var sha512 = SHA512.Create();
                 var passwordHash = GetStringFromHash(sha512.ComputeHash(Encoding.UTF8.GetBytes(passwordGameObject.text)));
                 var dto = new LoginDTO { login = loginGameObject.text, passwordSha512 = passwordHash };
                 var response = await Networking.Instance.PostAsync<LoginDTO, LoginResponseDTO>(Constants.MethodNames.LOGIN, dto, destroyCancellationToken);
-
-                Debug.Log($"token: '{response?.token}'; valid: '{response?.valid}'");
 
                 if (response != null && response.valid && response.token != null)
                 {

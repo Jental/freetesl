@@ -81,6 +81,7 @@
     <Compile Include="Assets\DTO\MoveCardToLaneDTO.cs" />
     <Compile Include="Assets\Behaviours\HandBehaviour.cs" />
     <Compile Include="Assets\Enums\CardType.cs" />
+    <Compile Include="Assets\Behaviours\LookingForOpponentBehaviour.cs" />
     <Compile Include="Assets\Enums\Keyword.cs" />
     <Compile Include="Assets\DTO\HitFaceDTO.cs" />
     <Compile Include="Assets\Common\Constants.cs" />

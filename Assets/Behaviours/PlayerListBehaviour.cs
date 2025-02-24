@@ -1,9 +1,7 @@
 #nullable enable
 
-using Assets.Behaviours;
 using Assets.Common;
 using Assets.DTO;
-using Assets.Enums;
 using Assets.Mappers;
 using Assets.Models;
 using Assets.Services;
@@ -22,6 +20,10 @@ namespace Assets.Behaviours
         [SerializeField] private PlayerListItemBehaviour? ListItemPrefab = null;
 
         private Player[] playersToShow = Array.Empty<Player>();
+        private int? selectedPlayerIdx;
+
+        private List<PlayerListItemBehaviour> itemGameObjects = new List<PlayerListItemBehaviour>();
+        private bool beChangesArePresent = false;
         private bool changesArePresent = false;
 
         protected void Start()
@@ -31,30 +33,64 @@ namespace Assets.Behaviours
 
             _ = destroyCancellationToken;
 
-            _ = Task.Run(async () => { await LoadPlayersAsync(destroyCancellationToken); });
+            if (Application.isPlaying)
+            {
+                StartPlayerListPolling(destroyCancellationToken);
+            }
         }
 
         protected void Update()
         {
-            if (!changesArePresent) { return; }
-            changesArePresent = false;
-
-            var children = ContentGameObject!.transform.GetComponentsInChildren<PlayerListItemBehaviour>();
-            foreach (var dc in children)
+            if (beChangesArePresent)
             {
-                Destroy(dc.gameObject);
-                Destroy(dc);
+                beChangesArePresent = false;
+
+                var children = ContentGameObject!.transform.GetComponentsInChildren<PlayerListItemBehaviour>();
+                foreach (var dc in children)
+                {
+                    Destroy(dc.gameObject);
+                    Destroy(dc);
+                }
+                itemGameObjects.Clear();
+
+                for (int i = 0; i < playersToShow.Length; i++)
+                {
+                    var player = playersToShow[i];
+                    var dc =
+                        Instantiate(ListItemPrefab, new Vector3(0, 0, 0), Quaternion.identity)
+                        ?? throw new InvalidOperationException("Failed to instantiate a player list item prefab");
+                    dc.transform.parent = ContentGameObject.transform;
+                    dc.Player = player;
+                    var savedIdx = i;
+                    dc.OnClick = () => OnItemClick(savedIdx);
+                    dc.GetComponent<RectTransform>().localScale = new Vector3(1, 1, 1);
+                    itemGameObjects.Add(dc);
+                }
             }
 
-            foreach (var player in playersToShow)
+            if (changesArePresent)
             {
-                var dc =
-                    Instantiate(ListItemPrefab, new Vector3(0, 0, 0), Quaternion.identity)
-                    ?? throw new InvalidOperationException("Failed to instantiate a player list item prefab");
-                dc.transform.parent = ContentGameObject.transform;
-                dc.player = player;
-                dc.GetComponent<RectTransform>().localScale = new Vector3(1, 1, 1);
+                for (int i = 0; i < itemGameObjects.Count; i++)
+                {
+                    var igo = itemGameObjects[i];
+                    igo.IsSelected = i == selectedPlayerIdx;
+                }
             }
+        }
+
+        public Player? SelectedPlayer =>
+            selectedPlayerIdx == null || selectedPlayerIdx >= playersToShow.Length 
+            ? null
+            : playersToShow[selectedPlayerIdx.Value];
+
+        private void StartPlayerListPolling(CancellationToken cancellationToken)
+        {
+            Timer t = new Timer(
+                async (_) => { await LoadPlayersAsync(cancellationToken); },
+                null,
+                TimeSpan.Zero,
+                TimeSpan.FromSeconds(Constants.BACKEND_POLLING_INTERVAL)
+            );
         }
 
         private async Task LoadPlayersAsync(CancellationToken cancellationToken)
@@ -62,9 +98,13 @@ namespace Assets.Behaviours
             ListDTO<PlayerInformationDTO>? dtos;
             try
             {
-                dtos = await Networking.Instance.GetAsync<ListDTO<PlayerInformationDTO>>("/players", new Dictionary<string, string>(), cancellationToken);
+                dtos = await Networking.Instance.GetAsync<ListDTO<PlayerInformationDTO>>(
+                    Constants.MethodNames.GET_PLAYERS,
+                    new Dictionary<string, string>(),
+                    cancellationToken
+                );
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Debug.LogException(e);
                 return;
@@ -76,7 +116,18 @@ namespace Assets.Behaviours
                 return;
             }
 
-            playersToShow = dtos.items.Select(GeneralMappers.MapFromPlayerInformationDTO).ToArray();
+            var newPlayersToShow = dtos.items.Select(GeneralMappers.MapFromPlayerInformationDTO).ToArray();
+            beChangesArePresent = !playersToShow.SequenceEqual(newPlayersToShow);
+            playersToShow = newPlayersToShow;
+        }
+
+        private void OnItemClick(int idx)
+        {
+            Debug.Log($"PlayerListBehaviour: OnItemClick: {idx}");
+            selectedPlayerIdx =
+                idx == selectedPlayerIdx
+                ? null
+                : idx;
             changesArePresent = true;
         }
     }

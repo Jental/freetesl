@@ -260,10 +260,11 @@ namespace Assets.Services
             response.EnsureSuccessStatusCode();
 
             string str = await response.Content.ReadAsStringAsync();
+            Debug.Log($"Networking.GetAsync: [{relativeUrl}]: resp: {str}");
             var respDTO = JsonUtility.FromJson<R>(str);
             if (respDTO == null)
             {
-                Debug.LogError($"Networking.PostAsync: [{relativeUrl}]: received message in unknown format");
+                Debug.LogError($"Networking.GetAsync: [{relativeUrl}]: received message in unknown format");
             }
             return respDTO;
         }
@@ -285,6 +286,14 @@ namespace Assets.Services
                 Debug.LogError($"Networking.PostAsync: [{relativeUrl}]: received message in unknown format");
             }
             return respDTO;
+        }
+
+        public async Task PostAsync(string relativeUrl, CancellationToken cancellationToken)
+        {
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", GlobalStorage.Instance.Token);
+
+            var response = await httpClient.PostAsync(relativeUrl, null, cancellationToken);
+            response.EnsureSuccessStatusCode();
         }
     }
 }

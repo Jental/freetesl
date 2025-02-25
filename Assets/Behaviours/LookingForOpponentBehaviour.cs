@@ -90,6 +90,7 @@ namespace Assets.Behaviours
             {
                 try
                 {
+                    await StopStatusPollingAsync();
                     await Networking.Instance.PostAsync(Constants.MethodNames.LOOKING_FOR_OPPONENT_STOP, destroyCancellationToken);
                 }
                 catch (Exception e)
@@ -139,12 +140,21 @@ namespace Assets.Behaviours
 
         private void StartStatusPolling(CancellationToken cancellationToken)
         {
+            Debug.Log("LookingForOpponentBehaviour.StartStatusPolling");
             statusPollingTimer = new Timer(
                 async (_) => { await GetStatusAsync(cancellationToken); },
                 null,
                 TimeSpan.Zero,
                 TimeSpan.FromSeconds(Constants.BACKEND_POLLING_INTERVAL)
             );
+        }
+
+        private async Task StopStatusPollingAsync()
+        {
+            Debug.Log("LookingForOpponentBehaviour.StopStatusPollingAsync");
+            statusPollingTimer!.Change(Timeout.Infinite, Timeout.Infinite);
+            await statusPollingTimer.DisposeAsync();
+            statusPollingTimer = null;
         }
 
         private async Task GetStatusAsync(CancellationToken cancellationToken)
@@ -170,17 +180,22 @@ namespace Assets.Behaviours
                 return;
             }
 
-            Debug.Log($"LookingForOpponentBehaviour.GetStatusAsync: Match id: {dto.id}");
-            if (dto.id != null)
+            if (!string.IsNullOrEmpty(dto.id))
             {
+                Debug.Log($"LookingForOpponentBehaviour.GetStatusAsync: Match id: {dto.id}");
+
                 if (statusPollingTimer == null) {
                     Debug.LogError($"LookingForOpponentBehaviour.GetStatusAsync: expected non-null timer");
                     return;
                 }
 
-                statusPollingTimer.Change(Timeout.Infinite, Timeout.Infinite);
-                await statusPollingTimer.DisposeAsync();
-                statusPollingTimer = null;
+                await StopStatusPollingAsync();
+
+                canvasService!.ActiveCanvas = AppCanvas.Match;
+            }
+            else
+            {
+                Debug.Log($"LookingForOpponentBehaviour.GetStatusAsync: Not ready");
             }
         }
     }

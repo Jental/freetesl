@@ -13,9 +13,9 @@
         {
             public const string ALL_CARDS_UPDATE = "allCards";
             public const string ALL_CARD_INSTANCES_UPDATE = "allCardInstances";
+            public const string MATCH_CREATE = "matchCreate";
             public const string MATCH_STATE_UPDATE = "matchStateUpdate";
             public const string MATCH_INFORMATION_UPDATE = "matchInformationUpdate";
-            public const string MATCH_JOIN = "join";
             public const string END_TURN = "endTurn";
             public const string MOVE_CARD_TO_LANE = "moveCardToLane";
             public const string HIT_FACE = "hitFace";
@@ -23,8 +23,9 @@
             public const string MATCH_END = "matchEnd";
             public const string LOGIN = "login";
             public const string GET_PLAYERS = "players";
-            public const string START_LOOKING_FOR_OPPONENT = "startLookingForOpponent";
-            public const string STOP_LOOKING_FOR_OPPONENT = "stopLookingForOpponent";
+            public const string LOOKING_FOR_OPPONENT_START = "lookingForOpponentStart";
+            public const string LOOKING_FOR_OPPONENT_STOP = "lookingForOpponentStop";
+            public const string LOOKING_FOR_OPPONENT_STATUS = "lookingForOpponentStatus";
         }
     }
 }

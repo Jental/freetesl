@@ -280,6 +280,7 @@ namespace Assets.Services
             response.EnsureSuccessStatusCode();
 
             string str = await response.Content.ReadAsStringAsync();
+            Debug.Log($"Networking.PostAsync: [{relativeUrl}]: resp: {str}");
             var respDTO = JsonUtility.FromJson<R>(str);
             if (respDTO == null)
             {

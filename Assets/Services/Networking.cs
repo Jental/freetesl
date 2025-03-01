@@ -17,12 +17,12 @@ namespace Assets.Services
 {
     public class Networking : IDisposable
     {
-        private const string SERVER_URL = "localhost:8080";
-
         private static object lockObj = new object();
         private static Networking? instance = null;
-        private readonly HttpClient httpClient;
+        private HttpClient? httpClient;
+        private string? relativeUrlPrefix = null;
         private readonly ClientWebSocket webSocket;
+        private Uri? websocketUrl;
         private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
         private bool disposedValue;
 
@@ -51,8 +51,26 @@ namespace Assets.Services
 
         private Networking()
         {
-            httpClient = new HttpClient() { BaseAddress = new Uri($"http://{SERVER_URL}") };
+            
             webSocket = new ClientWebSocket();
+        }
+
+        public void Init(string serverUrl)
+        {
+            int firstSlashIdx = serverUrl.IndexOf("/");
+            string baseUrl = firstSlashIdx < 0 ? serverUrl : serverUrl.Substring(0, firstSlashIdx);
+            if (firstSlashIdx >= 0 && firstSlashIdx != serverUrl.Length - 1)
+            {
+                relativeUrlPrefix = serverUrl.Substring(firstSlashIdx, serverUrl.Length - firstSlashIdx);
+                if (!relativeUrlPrefix.EndsWith("/"))
+                {
+                    relativeUrlPrefix = $"{relativeUrlPrefix}/";
+                }
+            }
+            Debug.Log($"Networking.Init: baserUrl: {baseUrl}; prefix: {relativeUrlPrefix}");
+
+            httpClient = new HttpClient() { BaseAddress = new Uri($"http://{baseUrl}") };
+            websocketUrl = new Uri($"ws://{serverUrl}/ws");
         }
 
         protected virtual void Dispose(bool disposing)
@@ -117,8 +135,6 @@ namespace Assets.Services
         {
             Debug.Log("Networking.ConnectAndListen");
 
-            Uri serverUri = new Uri($"ws://{SERVER_URL}/ws");
-
             _ = Task.Run(async () =>
             {
                 var token = GlobalStorage.Instance.Token;
@@ -131,7 +147,7 @@ namespace Assets.Services
                 try
                 {
                     webSocket.Options.SetRequestHeader("Authorization", $"Bearer {token}");
-                    await webSocket.ConnectAsync(serverUri, cancellationToken);
+                    await webSocket.ConnectAsync(websocketUrl, cancellationToken);
                 }
                 catch (Exception e)
                 {
@@ -247,7 +263,9 @@ namespace Assets.Services
 
         public async Task<R?> GetAsync<R>(string relativeUrl, Dictionary<string, string> parameters, CancellationToken cancellationToken)
         {
-            var fullUrl = relativeUrl;
+            if (httpClient == null) throw new InvalidOperationException("Networking is not initialized");
+
+            var fullUrl = relativeUrlPrefix == null ? relativeUrl : $"{relativeUrlPrefix}{relativeUrl}";
             if (parameters.Count > 0)
             {
                 string parametersStr = string.Join("&", parameters.Select(p => $"{p.Key}={HttpUtility.UrlEncode(p.Value)}"));
@@ -271,12 +289,15 @@ namespace Assets.Services
 
         public async Task<R?> PostAsync<T, R>(string relativeUrl, T body, CancellationToken cancellationToken)
         {
+            if (httpClient == null) throw new InvalidOperationException("Networking is not initialized");
+
             var json = JsonUtility.ToJson(body);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", GlobalStorage.Instance.Token);
 
-            var response = await httpClient.PostAsync(relativeUrl, content, cancellationToken);
+            var fullUrl = relativeUrlPrefix == null ? relativeUrl : $"{relativeUrlPrefix}{relativeUrl}";
+            var response = await httpClient.PostAsync(fullUrl, content, cancellationToken);
             response.EnsureSuccessStatusCode();
 
             string str = await response.Content.ReadAsStringAsync();
@@ -291,9 +312,12 @@ namespace Assets.Services
 
         public async Task PostAsync(string relativeUrl, CancellationToken cancellationToken)
         {
+            if (httpClient == null) throw new InvalidOperationException("Networking is not initialized");
+
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", GlobalStorage.Instance.Token);
 
-            var response = await httpClient.PostAsync(relativeUrl, null, cancellationToken);
+            var fullUrl = relativeUrlPrefix == null ? relativeUrl : $"{relativeUrlPrefix}{relativeUrl}";
+            var response = await httpClient.PostAsync(fullUrl, null, cancellationToken);
             response.EnsureSuccessStatusCode();
         }
     }

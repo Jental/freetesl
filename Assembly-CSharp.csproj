@@ -67,6 +67,8 @@
     <Compile Include="Assets\Mappers\GeneralMappers.cs" />
     <Compile Include="Assets\DTO\PlayerMatchStateDTO.cs" />
     <Compile Include="Assets\Behaviours\PlayerListItemBehaviour.cs" />
+    <Compile Include="Assets\Behaviours\ConfirmationDialogBehaviour.cs" />
+    <Compile Include="Assets\Behaviours\ExitConfirmationDialogBehaviour.cs" />
     <Compile Include="Assets\Models\Player.cs" />
     <Compile Include="Assets\DTO\MatchCreateDTO.cs" />
     <Compile Include="Assets\Enums\AppCanvas.cs" />
@@ -78,6 +80,7 @@
     <Compile Include="Assets\DTO\GuidIdDTO.cs" />
     <Compile Include="Assets\DTO\LoginResponseDTO.cs" />
     <Compile Include="Assets\Behaviours\LoginPopupBehaviour.cs" />
+    <Compile Include="Assets\Behaviours\MenuBehaviour.cs" />
     <Compile Include="Assets\Behaviours\AvatarBehaviour.cs" />
     <Compile Include="Assets\Behaviours\ManaDisplayBehaviour.cs" />
     <Compile Include="Assets\Models\CardScriptableObject.cs" />
@@ -87,6 +90,7 @@
     <Compile Include="Assets\Services\InitService.cs" />
     <Compile Include="Assets\Behaviours\LookingForOpponentBehaviour.cs" />
     <Compile Include="Assets\Enums\Keyword.cs" />
+    <Compile Include="Assets\Behaviours\OpenMenuButtonBehaviour.cs" />
     <Compile Include="Assets\DTO\HitFaceDTO.cs" />
     <Compile Include="Assets\Common\Constants.cs" />
     <Compile Include="Assets\Models\Card.cs" />
@@ -97,10 +101,12 @@
     <Compile Include="Assets\Behaviours\CardBehaviour.cs" />
     <Compile Include="Assets\DTO\HitCardDTO.cs" />
     <Compile Include="Assets\DTO\ListDTO.cs" />
+    <Compile Include="Assets\Behaviours\AConfirmationDialogBehaviour.cs" />
     <Compile Include="Assets\DTO\MatchEndDTO.cs" />
     <Compile Include="Assets\Behaviours\EndTurnButtonBehaviour.cs" />
     <Compile Include="Assets\Enums\PlayerType.cs" />
     <Compile Include="Assets\Services\CanvasService.cs" />
+    <Compile Include="Assets\Behaviours\ExitButtonBehaviour.cs" />
     <Compile Include="Assets\Behaviours\LaneBehaviour.cs" />
     <Compile Include="Assets\DTO\PlayerInformationDTO.cs" />
     <Compile Include="Assets\Services\GlobalStorage.cs" />

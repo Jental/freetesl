@@ -22,6 +22,7 @@
             public const string HIT_CARD = "hitCard";
             public const string MATCH_END = "matchEnd";
             public const string LOGIN = "login";
+            public const string LOGOUT = "logout";
             public const string GET_PLAYERS = "players";
             public const string LOOKING_FOR_OPPONENT_START = "lookingForOpponentStart";
             public const string LOOKING_FOR_OPPONENT_STOP = "lookingForOpponentStop";

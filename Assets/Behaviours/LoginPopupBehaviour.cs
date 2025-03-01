@@ -19,6 +19,7 @@ namespace Assets.Behaviours
     {
         [SerializeField] private TMP_InputField? loginGameObject;
         [SerializeField] private TMP_InputField? passwordGameObject;
+        [SerializeField] private TMP_Dropdown? serverSelectGameObject;
         [SerializeField] private Button? sendButtonGameObject;
         [SerializeField] private CanvasService? canvasService;
 
@@ -29,6 +30,7 @@ namespace Assets.Behaviours
             if (sendButtonGameObject == null) throw new InvalidOperationException($"{nameof(sendButtonGameObject)} game object is expected to be set");
             if (loginGameObject == null) throw new InvalidOperationException($"{nameof(loginGameObject)} game object is expected to be set");
             if (passwordGameObject == null) throw new InvalidOperationException($"{nameof(passwordGameObject)} game object is expected to be set");
+            if (serverSelectGameObject == null) throw new InvalidOperationException($"{nameof(serverSelectGameObject)} game object is expected to be set");
             if (canvasService == null) throw new InvalidOperationException($"{nameof(canvasService)} game object is expected to be set");
 
             _ = destroyCancellationToken;
@@ -76,6 +78,11 @@ namespace Assets.Behaviours
             {
                 Debug.Log($"LoginPopupBehaviour.OnSendButtonClick: login: {loginGameObject!.text}");
 
+                var selectedServerIdx = serverSelectGameObject!.value;
+                var serverUrl = serverSelectGameObject.options[selectedServerIdx].text;
+                Debug.Log($"LoginPopupBehaviour.OnSendButtonClick: server: {serverUrl}");
+                Networking.Instance.Init(serverUrl);
+
                 using var sha512 = SHA512.Create();
                 var passwordHash = GetStringFromHash(sha512.ComputeHash(Encoding.UTF8.GetBytes(passwordGameObject!.text)));
                 var dto = new LoginDTO { login = loginGameObject.text, passwordSha512 = passwordHash };
@@ -85,6 +92,12 @@ namespace Assets.Behaviours
                 {
                     GlobalStorage.Instance.Token = response.token;
                     canvasService!.ActiveCanvas = AppCanvas.JoinMatch;
+
+                    Debug.Log("LoginPopupBehaviour.OnSendButtonClick: logged in successfully");
+                }
+                else
+                {
+                    Debug.Log("LoginPopupBehaviour.OnSendButtonClick: failed to log in");
                 }
             });
         }

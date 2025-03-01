@@ -28,7 +28,7 @@ namespace Assets.Behaviours
                     await Networking.Instance.PostAsync(Constants.MethodNames.LOGOUT, destroyCancellationToken);
                 }
                 catch { }
-
+                GlobalStorage.Instance.Token = null;
                 Application.Quit();
             });
         }

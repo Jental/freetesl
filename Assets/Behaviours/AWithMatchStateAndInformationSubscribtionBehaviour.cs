@@ -20,7 +20,7 @@ namespace Assets.Behaviours
             unsubscribers.Add(uss);
         }
 
-        protected abstract Task OnMatchUnformationUpdateAsync(MatchInformationDTO dto, CancellationToken cancellationToken);
+        protected abstract Task OnMatchInformationUpdateAsync(MatchInformationDTO dto, CancellationToken cancellationToken);
 
         protected async Task OnMatchUnformationUpdateAsync(string methodName, string message, CancellationToken cancellationToken)
         {
@@ -28,7 +28,7 @@ namespace Assets.Behaviours
 
             try
             {
-                await OnMatchUnformationUpdateAsync(dto.body, cancellationToken);
+                await OnMatchInformationUpdateAsync(dto.body, cancellationToken);
             }
             catch (Exception e)
             {

@@ -82,7 +82,7 @@ namespace Assets.Behaviours
             return Task.CompletedTask;
         }
 
-        protected override Task OnMatchUnformationUpdateAsync(MatchInformationDTO dto, CancellationToken cancellationToken)
+        protected override Task OnMatchInformationUpdateAsync(MatchInformationDTO dto, CancellationToken cancellationToken)
         {
             this.imageName = playerType switch
             {

@@ -181,7 +181,7 @@ namespace Assets.Services
 
                         if (subscriptions.ContainsKey(message.method))
                         {
-                            foreach (var sub in subscriptions[message.method])
+                            foreach (var sub in subscriptions[message.method].Select(s => s).ToArray()) // cloning - for ability to unsubscribe inside handlers
                             {
                                 // _ = Task.Run(async () => await sub(message.method, messageStr, cancellationToken)); // async/await can be skipped there, but I left them to signal, that sub is async fn
                                 await sub(message.method, messageStr, cancellationToken);
@@ -200,9 +200,9 @@ namespace Assets.Services
                             Debug.Log($"Received message with unsupported method: '{message.method}'; message: {messageStr}");
                         }
                     }
-                    catch (Exception)
+                    catch (Exception e)
                     {
-                        Debug.LogError($"Received message in unknown format: {messageStr}");
+                        Debug.LogError($"Received message in unknown format: '{messageStr}'. Or some other error: {e}");
                     }
                 }
 

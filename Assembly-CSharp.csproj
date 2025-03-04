@@ -103,6 +103,7 @@
     <Compile Include="Assets\DTO\ListDTO.cs" />
     <Compile Include="Assets\Behaviours\AConfirmationDialogBehaviour.cs" />
     <Compile Include="Assets\DTO\MatchEndDTO.cs" />
+    <Compile Include="Assets\Behaviours\MatchEndCanvasBehaviour.cs" />
     <Compile Include="Assets\Behaviours\EndTurnButtonBehaviour.cs" />
     <Compile Include="Assets\Enums\PlayerType.cs" />
     <Compile Include="Assets\Services\CanvasService.cs" />

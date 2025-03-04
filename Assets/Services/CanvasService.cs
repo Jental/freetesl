@@ -1,5 +1,6 @@
 ﻿#nullable enable
 
+using Assets.Behaviours;
 using Assets.Enums;
 using System;
 using UnityEngine;
@@ -11,8 +12,9 @@ namespace Assets.Services
         [SerializeField] private Canvas? loginCanvas;
         [SerializeField] private Canvas? joinMatchCanvas;
         [SerializeField] private Canvas? matchCanvas;
+        [SerializeField] private MatchEndCanvasBehaviour? matchEndCanvas;
 
-        private Canvas[] canvases = Array.Empty<Canvas>();
+        private Component[] canvases = Array.Empty<Component>();
         private AppCanvas activeCanvas = AppCanvas.Login;
         private bool changesArePresent = false;
 
@@ -21,8 +23,9 @@ namespace Assets.Services
             if (loginCanvas == null) throw new InvalidOperationException($"{nameof(loginCanvas)} game object is expected to be set");
             if (joinMatchCanvas == null) throw new InvalidOperationException($"{nameof(joinMatchCanvas)} game object is expected to be set");
             if (matchCanvas == null) throw new InvalidOperationException($"{nameof(matchCanvas)} game object is expected to be set");
+            if (matchEndCanvas == null) throw new InvalidOperationException($"{nameof(matchEndCanvas)} game object is expected to be set");
 
-            canvases = new Canvas[] { loginCanvas, joinMatchCanvas, matchCanvas };
+            canvases = new Component[] { loginCanvas, joinMatchCanvas, matchCanvas, matchEndCanvas };
         }
 
         protected void Update()
@@ -45,6 +48,14 @@ namespace Assets.Services
             {
                 activeCanvas = value;
                 changesArePresent = true;
+            }
+        }
+
+        public bool MatchEndHasWon
+        {
+            set
+            {
+                matchEndCanvas!.HasWon = value;
             }
         }
     }

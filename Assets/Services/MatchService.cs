@@ -1,6 +1,7 @@
 #nullable enable
 
 using Assets.Common;
+using Assets.DTO;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -26,7 +27,19 @@ namespace Assets.Services
         private Task OnMatchEnd(string methodName, string message, CancellationToken cancellationToken)
         {
             Debug.Log("MatchService.OnMatchEnd");
-            canvasService.ActiveCanvas = Enums.AppCanvas.JoinMatch;
+            try
+            {
+                ServerMessageDTO<MatchEndDTO> dto = JsonUtility.FromJson<ServerMessageDTO<MatchEndDTO>>(message);
+                canvasService.MatchEndHasWon = dto.body.hasWon;
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+                return Task.CompletedTask;
+            }
+
+            
+            canvasService.ActiveCanvas = Enums.AppCanvas.MatchEnd;
 
             unsubscriber?.Invoke();
 

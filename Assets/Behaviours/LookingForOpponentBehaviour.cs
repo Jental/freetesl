@@ -7,9 +7,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Assets.Common;
 using Assets.DTO;
-using Assets.Mappers;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using Assets.Enums;
 
@@ -30,6 +28,8 @@ namespace Assets.Behaviours
 
         protected void Start()
         {
+            Debug.Log("LookingForOpponentBehaviour.Start");
+
             if (buttonsGameObject == null) throw new InvalidOperationException($"{nameof(buttonsGameObject)} game object is expected to be set");
             if (startLookingButtonGameObject == null) throw new InvalidOperationException($"{nameof(startLookingButtonGameObject)} game object is expected to be set");
             if (startMatchButtonGameObject == null) throw new InvalidOperationException($"{nameof(startMatchButtonGameObject)} game object is expected to be set");

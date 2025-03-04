@@ -5,5 +5,6 @@
         Login = 0,
         JoinMatch = 1,
         Match = 2,
+        MatchEnd = 3,
     }
 }

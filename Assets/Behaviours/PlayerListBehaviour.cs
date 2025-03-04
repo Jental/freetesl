@@ -25,6 +25,7 @@ namespace Assets.Behaviours
         private List<PlayerListItemBehaviour> itemGameObjects = new List<PlayerListItemBehaviour>();
         private bool beChangesArePresent = false;
         private bool changesArePresent = false;
+        private Timer? playersPollingTimer = null;
 
         protected void Start()
         {
@@ -32,11 +33,22 @@ namespace Assets.Behaviours
             if (this.ListItemPrefab == null) throw new InvalidOperationException($"{nameof(ListItemPrefab)} prefab is expected to be set");
 
             _ = destroyCancellationToken;
+        }
 
+        protected void OnEnable()
+        {
+            Debug.Log("PlayerListBehaviour.OnEnable");
             if (Application.isPlaying)
             {
                 StartPlayerListPolling(destroyCancellationToken);
             }
+        }
+
+        protected void OnDisable()
+        {
+            Debug.Log("PlayerListBehaviour.OnDisable");
+            selectedPlayerIdx = null;
+            StopPlayerListPolling().Wait();
         }
 
         protected void Update()
@@ -85,12 +97,22 @@ namespace Assets.Behaviours
 
         private void StartPlayerListPolling(CancellationToken cancellationToken)
         {
-            Timer t = new Timer(
+            playersPollingTimer = new Timer(
                 async (_) => { await LoadPlayersAsync(cancellationToken); },
                 null,
                 TimeSpan.Zero,
                 TimeSpan.FromSeconds(Constants.BACKEND_POLLING_INTERVAL)
             );
+        }
+
+        private async Task StopPlayerListPolling()
+        {
+            if (playersPollingTimer != null)
+            {
+                playersPollingTimer.Change(Timeout.Infinite, Timeout.Infinite);
+                await playersPollingTimer.DisposeAsync();
+                playersPollingTimer = null;
+            }
         }
 
         private async Task LoadPlayersAsync(CancellationToken cancellationToken)

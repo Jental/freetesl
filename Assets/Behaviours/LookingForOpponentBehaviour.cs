@@ -44,6 +44,13 @@ namespace Assets.Behaviours
             startMatchButtonGameObject.onClick.AddListener(OnStartMatchButtonClick);
         }
 
+        protected void OnDisable()
+        {
+            Debug.Log("LookingForOpponentBehaviour.OnDisable"); 
+            progressDialogVisible = false;
+            StopStatusPollingAsync().Wait();
+        }
+
         protected void Update()
         {
             if (progressDialogVisible)
@@ -152,9 +159,12 @@ namespace Assets.Behaviours
         private async Task StopStatusPollingAsync()
         {
             Debug.Log("LookingForOpponentBehaviour.StopStatusPollingAsync");
-            statusPollingTimer!.Change(Timeout.Infinite, Timeout.Infinite);
-            await statusPollingTimer.DisposeAsync();
-            statusPollingTimer = null;
+            if (statusPollingTimer != null)
+            {
+                statusPollingTimer!.Change(Timeout.Infinite, Timeout.Infinite);
+                await statusPollingTimer.DisposeAsync();
+                statusPollingTimer = null;
+            }
         }
 
         private async Task GetStatusAsync(CancellationToken cancellationToken)

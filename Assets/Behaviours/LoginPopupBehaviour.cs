@@ -91,6 +91,8 @@ namespace Assets.Behaviours
                 if (response != null && response.valid && response.token != null)
                 {
                     GlobalStorage.Instance.Token = response.token;
+                    GlobalStorage.Instance.PlayerLogin = loginGameObject.text;
+                    GlobalStorage.Instance.CurrentServer = serverUrl;
                     canvasService!.ActiveCanvas = AppCanvas.JoinMatch;
 
                     Debug.Log("LoginPopupBehaviour.OnSendButtonClick: logged in successfully");

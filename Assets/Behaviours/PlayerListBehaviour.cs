@@ -139,7 +139,7 @@ namespace Assets.Behaviours
             }
 
             var newPlayersToShow = dtos.items.Select(GeneralMappers.MapFromPlayerInformationDTO).ToArray();
-            beChangesArePresent = !playersToShow.SequenceEqual(newPlayersToShow);
+            beChangesArePresent = !playersToShow.SequenceEqual(newPlayersToShow) || playersToShow.Length != itemGameObjects.Count; // for case of unsync happened
             playersToShow = newPlayersToShow;
         }
 

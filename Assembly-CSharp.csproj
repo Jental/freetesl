@@ -111,6 +111,7 @@
     <Compile Include="Assets\Behaviours\LaneBehaviour.cs" />
     <Compile Include="Assets\DTO\PlayerInformationDTO.cs" />
     <Compile Include="Assets\Services\GlobalStorage.cs" />
+    <Compile Include="Assets\Behaviours\JoinMatchTopPanelBehaviour.cs" />
     <Compile Include="Assets\DTO\CardDTO.cs" />
     <Compile Include="Assets\DTO\CardInstanceStateDTO.cs" />
     <Compile Include="Assets\Behaviours\PlayerListBehaviour.cs" />

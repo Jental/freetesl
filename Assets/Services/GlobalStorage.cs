@@ -27,6 +27,8 @@ namespace Assets.Services
         private Dictionary<Guid, CardInstance> allCardInstances = new Dictionary<Guid, CardInstance>();
 
         public string? Token { get; set; } = null;
+        public string? PlayerLogin { get; set; } = null;
+        public string? CurrentServer { get; set; } = null;
 
         private GlobalStorage() {
             unsubscribers.Add(

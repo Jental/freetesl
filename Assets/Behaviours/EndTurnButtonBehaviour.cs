@@ -51,8 +51,8 @@ namespace Assets.Behaviours
             var playButtonRect = playButton.GetComponent<RectTransform>();
             playButtonRect.anchorMin = new Vector2(0.5f, 0.5f);
             playButtonRect.anchorMax = new Vector2(0.5f, 0.5f);
-            playButtonRect.anchoredPosition = new Vector2(2.5f, 0.0f);
-            playButtonRect.sizeDelta = new Vector2(18.765f, 20.85f);
+            playButtonRect.anchoredPosition = new Vector2(7.0f, 0.0f);
+            playButtonRect.sizeDelta = new Vector2(50.0f, 50.0f);
             playButtonRect.localScale = new Vector3(1, 1, 1);
         }
 

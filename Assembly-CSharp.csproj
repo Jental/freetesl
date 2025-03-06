@@ -69,8 +69,10 @@
     <Compile Include="Assets\Behaviours\PlayerListItemBehaviour.cs" />
     <Compile Include="Assets\Behaviours\ConfirmationDialogBehaviour.cs" />
     <Compile Include="Assets\Behaviours\ExitConfirmationDialogBehaviour.cs" />
+    <Compile Include="Assets\Behaviours\ConcedeConfirmationDialogBehaviour.cs" />
     <Compile Include="Assets\Models\Player.cs" />
     <Compile Include="Assets\DTO\MatchCreateDTO.cs" />
+    <Compile Include="Assets\Behaviours\OpenDialogButtonBehaviour.cs" />
     <Compile Include="Assets\Enums\AppCanvas.cs" />
     <Compile Include="Assets\Services\Networking.cs" />
     <Compile Include="Assets\DTO\MatchInformationDTO.cs" />
@@ -107,7 +109,6 @@
     <Compile Include="Assets\Behaviours\EndTurnButtonBehaviour.cs" />
     <Compile Include="Assets\Enums\PlayerType.cs" />
     <Compile Include="Assets\Services\CanvasService.cs" />
-    <Compile Include="Assets\Behaviours\ExitButtonBehaviour.cs" />
     <Compile Include="Assets\Behaviours\LaneBehaviour.cs" />
     <Compile Include="Assets\DTO\PlayerInformationDTO.cs" />
     <Compile Include="Assets\Services\GlobalStorage.cs" />

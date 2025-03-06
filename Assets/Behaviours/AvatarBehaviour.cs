@@ -6,6 +6,8 @@ using Assets.Enums;
 using Assets.Models;
 using Assets.Services;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using TMPro;
@@ -55,10 +57,36 @@ namespace Assets.Behaviours
                 sectorRect.localScale = new Vector3(1, 1, 1);
             }
 
-            var runeObjects = runesGameObject!.transform.GetComponentsInChildren<RawImage>();
-            for (byte i = 0; i < runeObjects.Length; i++)
+            //var runeObjects = runesGameObject!.transform.GetComponentsInChildren<RawImage>();
+            //Debug.Log($"Updating runes: {runeObjects.Length}");
+            //for (byte i = 0; i < runeObjects.Length; i++)
+            //{
+            //    runeObjects[i].gameObject.SetActive(i < runes);
+            //}
+
+            var runeObjects = runesGameObject!.GetComponentsInChildren<Image>().Select(img => img.gameObject).Where(rune => rune != runesGameObject).ToArray();
+            // var glyphObjects = runeObjects.Select(rune => rune.GetComponentInChildren<RawImage>()).ToArray();
+            var glyphImages = new List<RawImage>();
+            foreach (var rune in runeObjects)
             {
-                runeObjects[i].gameObject.SetActive(i < runes);
+                foreach (Transform t in rune.transform)
+                {
+                    var rimg = t.gameObject.GetComponent<RawImage>();
+                    glyphImages.Add(rimg);
+                }
+            }
+            if (runeObjects.Length > 0)
+            {
+                var g = runeObjects[0].GetComponentInChildren<RawImage>();
+                foreach (Transform t in runeObjects[0].transform) {
+                    var g1 = t.gameObject;
+                    var ri1 = g1.GetComponent<RawImage>();
+                }
+            }
+            Debug.Log($"Updating runes: {glyphImages.Count}");
+            for (byte i = 0; i < glyphImages.Count; i++)
+            {
+                glyphImages[i].gameObject.SetActive(i < runes);
             }
 
             string imageNameNotNull = imageName ?? "DBH_NPC_CRDL_02_022_avatar_png";
@@ -78,6 +106,8 @@ namespace Assets.Behaviours
         {
             this.health = dto.health;
             this.runes = dto.runes;
+
+            Debug.Log($"Received runes count: {dto.runes}");
 
             return Task.CompletedTask;
         }

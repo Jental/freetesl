@@ -18,6 +18,11 @@ namespace Assets.Behaviours
             if (buttonsBlock == null) throw new InvalidOperationException($"{nameof(buttonsBlock)} game object is expected to be set");
         }
 
+        protected void OnDisable()
+        {
+            isRendered = false;
+        }
+
         protected void Update()
         {
             if (!isRendered)

@@ -21,6 +21,7 @@
             public const string HIT_FACE = "hitFace";
             public const string HIT_CARD = "hitCard";
             public const string MATCH_END = "matchEnd";
+            public const string CONCEDE = "concede";
             public const string LOGIN = "login";
             public const string LOGOUT = "logout";
             public const string GET_PLAYERS = "players";

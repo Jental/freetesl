@@ -72,7 +72,6 @@
     <Compile Include="Assets\Behaviours\ConcedeConfirmationDialogBehaviour.cs" />
     <Compile Include="Assets\Models\Player.cs" />
     <Compile Include="Assets\DTO\MatchCreateDTO.cs" />
-    <Compile Include="Assets\Behaviours\OpenDialogButtonBehaviour.cs" />
     <Compile Include="Assets\Enums\AppCanvas.cs" />
     <Compile Include="Assets\Services\Networking.cs" />
     <Compile Include="Assets\DTO\MatchInformationDTO.cs" />
@@ -92,7 +91,6 @@
     <Compile Include="Assets\Services\InitService.cs" />
     <Compile Include="Assets\Behaviours\LookingForOpponentBehaviour.cs" />
     <Compile Include="Assets\Enums\Keyword.cs" />
-    <Compile Include="Assets\Behaviours\OpenMenuButtonBehaviour.cs" />
     <Compile Include="Assets\DTO\HitFaceDTO.cs" />
     <Compile Include="Assets\Common\Constants.cs" />
     <Compile Include="Assets\Models\Card.cs" />
@@ -114,6 +112,7 @@
     <Compile Include="Assets\Services\GlobalStorage.cs" />
     <Compile Include="Assets\Behaviours\JoinMatchTopPanelBehaviour.cs" />
     <Compile Include="Assets\DTO\CardDTO.cs" />
+    <Compile Include="Assets\Behaviours\OpenPopupButtonBehaviour.cs" />
     <Compile Include="Assets\DTO\CardInstanceStateDTO.cs" />
     <Compile Include="Assets\Behaviours\PlayerListBehaviour.cs" />
     <Compile Include="Assets\Models\CardDragSource.cs" />

@@ -57,15 +57,7 @@ namespace Assets.Behaviours
                 sectorRect.localScale = new Vector3(1, 1, 1);
             }
 
-            //var runeObjects = runesGameObject!.transform.GetComponentsInChildren<RawImage>();
-            //Debug.Log($"Updating runes: {runeObjects.Length}");
-            //for (byte i = 0; i < runeObjects.Length; i++)
-            //{
-            //    runeObjects[i].gameObject.SetActive(i < runes);
-            //}
-
             var runeObjects = runesGameObject!.GetComponentsInChildren<Image>().Select(img => img.gameObject).Where(rune => rune != runesGameObject).ToArray();
-            // var glyphObjects = runeObjects.Select(rune => rune.GetComponentInChildren<RawImage>()).ToArray();
             var glyphImages = new List<RawImage>();
             foreach (var rune in runeObjects)
             {

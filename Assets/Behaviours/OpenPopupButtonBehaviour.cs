@@ -6,13 +6,13 @@ using UnityEngine.UI;
 
 namespace Assets.Behaviours
 {
-    public class OpenDialogButtonBehaviour : MonoBehaviour
+    public class OpenPopupButtonBehaviour : MonoBehaviour
     {
-        [SerializeField] private GameObject? dialogGameObject = null;
+        [SerializeField] private GameObject? popupGameObject = null;
 
         protected void Start()
         {
-            if (dialogGameObject == null) throw new InvalidOperationException($"{nameof(dialogGameObject)} game object is expected to be set");
+            if (popupGameObject == null) throw new InvalidOperationException($"{nameof(popupGameObject)} game object is expected to be set");
 
             var buttonGameObject = GetComponent<Button>();
             if (buttonGameObject == null) throw new InvalidOperationException("Button component is expected to be present");
@@ -21,13 +21,15 @@ namespace Assets.Behaviours
 
         private void OnClick()
         {
+            Debug.Log("OpenPopupButtonBehaviour.OnClick");
+
             var popups = GameObject.FindGameObjectsWithTag("popup");
             foreach (var popup in popups)
             {
                 popup.SetActive(false);
             }
 
-            dialogGameObject!.SetActive(true);
+            popupGameObject!.SetActive(true);
         }
     }
 }

@@ -1,6 +1,9 @@
 #nullable enable
 
+using Assets.Common;
+using Assets.Services;
 using System;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Assets.Behaviours
@@ -18,7 +21,10 @@ namespace Assets.Behaviours
 
         private void OnOk()
         {
-            Debug.Log("ConcedeConfirmationDialogBehaviour.OnOk");
+            _ = Task.Run(async () =>
+            {
+                await Networking.Instance.SendMessageAsync(Constants.MethodNames.CONCEDE, destroyCancellationToken);
+            });
         }
     }
 }

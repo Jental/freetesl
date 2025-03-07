@@ -17,8 +17,10 @@ namespace Assets.Behaviours
     {
         public GameObject? ActivePlayButtonPrefab = null;
         public GameObject? InactivePlayButtonPrefab = null;
+        public CanvasService? CanvasService = null;
 
         private bool isPlayersTurn = false;
+        private bool hasTurnChangedSinceLastUpdate = false;
 
         public async void OnPointerClick(PointerEventData eventData)
         {
@@ -31,6 +33,7 @@ namespace Assets.Behaviours
 
         protected override Task OnMatchStateUpdateAsync(PlayerMatchStateDTO dto, bool isPlayersTurn, CancellationToken cancellationToken)
         {
+            this.hasTurnChangedSinceLastUpdate = this.hasTurnChangedSinceLastUpdate || this.isPlayersTurn != isPlayersTurn;
             this.isPlayersTurn = isPlayersTurn;
             return Task.CompletedTask;
         }
@@ -54,12 +57,21 @@ namespace Assets.Behaviours
             playButtonRect.anchoredPosition = new Vector2(7.0f, 0.0f);
             playButtonRect.sizeDelta = new Vector2(50.0f, 50.0f);
             playButtonRect.localScale = new Vector3(1, 1, 1);
+
+            if (hasTurnChangedSinceLastUpdate) {
+                hasTurnChangedSinceLastUpdate = false;
+                if (isPlayersTurn && playerType == PlayerType.Self)
+                {
+                    CanvasService!.ShowNotification("YOUR TURN");
+                }
+            }
         }
 
         protected override void VerifyFields()
         {
             if (this.ActivePlayButtonPrefab == null) throw new InvalidOperationException($"{nameof(ActivePlayButtonPrefab)} prefab is expected to be set");
             if (this.InactivePlayButtonPrefab == null) throw new InvalidOperationException($"{nameof(InactivePlayButtonPrefab)} prefab is expected to be set");
+            if (this.CanvasService == null) throw new InvalidOperationException($"{nameof(CanvasService)} game object is expected to be set");
         }
     }
 

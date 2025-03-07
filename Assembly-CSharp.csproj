@@ -117,6 +117,7 @@
     <Compile Include="Assets\Behaviours\PlayerListBehaviour.cs" />
     <Compile Include="Assets\Models\CardDragSource.cs" />
     <Compile Include="Assets\Behaviours\AWithMatchStateAndInformationSubscribtionBehaviour.cs" />
+    <Compile Include="Assets\Behaviours\NotificationBehaviour.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />

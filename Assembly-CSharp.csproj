@@ -83,6 +83,7 @@
     <Compile Include="Assets\Behaviours\LoginPopupBehaviour.cs" />
     <Compile Include="Assets\Behaviours\MenuBehaviour.cs" />
     <Compile Include="Assets\Behaviours\AvatarBehaviour.cs" />
+    <Compile Include="Assets\Enums\ServerErrorCode.cs" />
     <Compile Include="Assets\Behaviours\ManaDisplayBehaviour.cs" />
     <Compile Include="Assets\Models\CardScriptableObject.cs" />
     <Compile Include="Assets\DTO\MoveCardToLaneDTO.cs" />
@@ -99,6 +100,7 @@
     <Compile Include="Assets\DTO\LoginDTO.cs" />
     <Compile Include="Assets\Models\CardInstance.cs" />
     <Compile Include="Assets\Behaviours\CardBehaviour.cs" />
+    <Compile Include="Assets\Models\ServerErrorResponseException.cs" />
     <Compile Include="Assets\DTO\HitCardDTO.cs" />
     <Compile Include="Assets\DTO\ListDTO.cs" />
     <Compile Include="Assets\Behaviours\AConfirmationDialogBehaviour.cs" />
@@ -106,6 +108,7 @@
     <Compile Include="Assets\Behaviours\MatchEndCanvasBehaviour.cs" />
     <Compile Include="Assets\Behaviours\EndTurnButtonBehaviour.cs" />
     <Compile Include="Assets\Enums\PlayerType.cs" />
+    <Compile Include="Assets\DTO\ErrorDTO.cs" />
     <Compile Include="Assets\Services\CanvasService.cs" />
     <Compile Include="Assets\Behaviours\LaneBehaviour.cs" />
     <Compile Include="Assets\DTO\PlayerInformationDTO.cs" />

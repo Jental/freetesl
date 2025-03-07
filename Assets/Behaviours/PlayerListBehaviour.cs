@@ -95,6 +95,11 @@ namespace Assets.Behaviours
             ? null
             : playersToShow[selectedPlayerIdx.Value];
 
+        public void DeselectPlayer()
+        {
+            selectedPlayerIdx = null;
+        }
+
         private void StartPlayerListPolling(CancellationToken cancellationToken)
         {
             playersPollingTimer = new Timer(

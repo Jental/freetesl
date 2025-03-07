@@ -2,6 +2,7 @@
 
 using Assets.Behaviours;
 using Assets.DTO;
+using Assets.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -280,7 +281,29 @@ namespace Assets.Services
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", GlobalStorage.Instance.Token);
 
             var response = await httpClient.GetAsync(fullUrl, cancellationToken);
-            response.EnsureSuccessStatusCode();
+
+            try
+            {
+                response.EnsureSuccessStatusCode();
+            }
+            catch (Exception e)
+            {
+                if (response.Content != null)
+                {
+                    string? errorStr = await response.Content.ReadAsStringAsync();
+                    if (errorStr != null)
+                    {
+                        var errorRespDTO = JsonUtility.FromJson<ErrorDTO>(errorStr);
+                        if (errorRespDTO != null)
+                        {
+                            Debug.LogError($"Server returned error: '{errorRespDTO.message}'; error code: '{errorRespDTO.errorCode}'");
+                            throw new ServerErrorResponseException(errorRespDTO.errorCode, errorRespDTO.message);
+                        }
+                    }
+                }
+
+                throw e;
+            }
 
             string str = await response.Content.ReadAsStringAsync();
             Debug.Log($"Networking.GetAsync: [{relativeUrl}]: resp: {str}");
@@ -305,7 +328,29 @@ namespace Assets.Services
 
             var fullUrl = relativeUrlPrefix == null ? relativeUrl : $"{relativeUrlPrefix}{relativeUrl}";
             var response = await httpClient.PostAsync(fullUrl, content, cancellationToken);
-            response.EnsureSuccessStatusCode();
+
+            try
+            {
+                response.EnsureSuccessStatusCode();
+            }
+            catch (Exception e)
+            {
+                if (response.Content != null)
+                {
+                    string? errorStr = await response.Content.ReadAsStringAsync();
+                    if (errorStr != null)
+                    {
+                        var errorRespDTO = JsonUtility.FromJson<ErrorDTO>(errorStr);
+                        if (errorRespDTO != null)
+                        {
+                            Debug.LogError($"Server returned error: '{errorRespDTO.message}'; error code: '{errorRespDTO.errorCode}'");
+                            throw new ServerErrorResponseException(errorRespDTO.errorCode, errorRespDTO.message);
+                        }
+                    }
+                }
+
+                throw e;
+            }
 
             string str = await response.Content.ReadAsStringAsync();
             Debug.Log($"Networking.PostAsync: [{relativeUrl}]: resp: {str}");
@@ -327,7 +372,29 @@ namespace Assets.Services
 
             var fullUrl = relativeUrlPrefix == null ? relativeUrl : $"{relativeUrlPrefix}{relativeUrl}";
             var response = await httpClient.PostAsync(fullUrl, null, cancellationToken);
-            response.EnsureSuccessStatusCode();
+
+            try
+            {
+                response.EnsureSuccessStatusCode();
+            }
+            catch (Exception e)
+            {
+                if (response.Content != null)
+                {
+                    string? errorStr = await response.Content.ReadAsStringAsync();
+                    if (errorStr != null)
+                    {
+                        var errorRespDTO = JsonUtility.FromJson<ErrorDTO>(errorStr);
+                        if (errorRespDTO != null)
+                        {
+                            Debug.LogError($"Server returned error: '{errorRespDTO.message}'; error code: '{errorRespDTO.errorCode}'");
+                            throw new ServerErrorResponseException(errorRespDTO.errorCode, errorRespDTO.message);
+                        }
+                    }
+                }
+
+                throw e;
+            }
         }
     }
 }

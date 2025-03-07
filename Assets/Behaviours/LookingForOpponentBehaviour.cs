@@ -10,6 +10,7 @@ using Assets.DTO;
 using System.Collections.Generic;
 using System.Threading;
 using Assets.Enums;
+using Assets.Models;
 
 namespace Assets.Behaviours
 {
@@ -137,9 +138,14 @@ namespace Assets.Behaviours
                         canvasService!.ActiveCanvas = AppCanvas.Match;
                     }
                 }
+                catch (ServerErrorResponseException e)
+                {
+                    canvasService!.ShowError($"Failed to create a match: '{e.Message}'. ErrorCode: '{e.ErrorCode}'");
+                    return;
+                }
                 catch (Exception e)
                 {
-                    Debug.LogException(e);
+                    canvasService!.ShowError($"Failed to create a match: {e.Message}");
                     return;
                 }
             });

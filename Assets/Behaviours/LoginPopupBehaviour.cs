@@ -81,7 +81,7 @@ namespace Assets.Behaviours
                 var selectedServerIdx = serverSelectGameObject!.value;
                 var serverUrl = serverSelectGameObject.options[selectedServerIdx].text;
                 Debug.Log($"LoginPopupBehaviour.OnSendButtonClick: server: {serverUrl}");
-                Networking.Instance.Init(serverUrl);
+                Networking.Instance.Init(serverUrl, canvasService!);
 
                 using var sha512 = SHA512.Create();
                 var passwordHash = GetStringFromHash(sha512.ComputeHash(Encoding.UTF8.GetBytes(passwordGameObject!.text)));

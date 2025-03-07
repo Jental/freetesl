@@ -1,5 +1,6 @@
 #nullable enable
 
+using Assets.Behaviours;
 using Assets.DTO;
 using System;
 using System.Collections.Generic;
@@ -25,6 +26,7 @@ namespace Assets.Services
         private Uri? websocketUrl;
         private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
         private bool disposedValue;
+        private CanvasService? canvasService;
 
         /// <summary>
         /// Subscriptions to received messages.
@@ -51,11 +53,10 @@ namespace Assets.Services
 
         private Networking()
         {
-            
             webSocket = new ClientWebSocket();
         }
 
-        public void Init(string serverUrl)
+        public void Init(string serverUrl, CanvasService canvasService)
         {
             int firstSlashIdx = serverUrl.IndexOf("/");
             string baseUrl = firstSlashIdx < 0 ? serverUrl : serverUrl.Substring(0, firstSlashIdx);
@@ -71,6 +72,8 @@ namespace Assets.Services
 
             httpClient = new HttpClient() { BaseAddress = new Uri($"http://{baseUrl}") };
             websocketUrl = new Uri($"ws://{serverUrl}/ws");
+
+            this.canvasService = canvasService;
         }
 
         protected virtual void Dispose(bool disposing)
@@ -151,7 +154,9 @@ namespace Assets.Services
                 }
                 catch (Exception e)
                 {
-                    Debug.LogError(e);
+                    canvasService!.ShowError("Failed to connect to a match");
+                    canvasService.ActiveCanvas = Enums.AppCanvas.JoinMatch;
+                    Debug.LogException(e);
                     return;
                 }
 

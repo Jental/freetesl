@@ -26,15 +26,16 @@ namespace Assets.Behaviours
         // Start is called once before the first execution of Update after the MonoBehaviour is created
         protected void Start()
         {
-            if (text == null) throw new InvalidOperationException($"{nameof(text)} parameter is expected to be set");
             if (headerTextGameObject == null) throw new InvalidOperationException($"{nameof(headerTextGameObject)} game object is expected to be set");
             if (textGameObject == null) throw new InvalidOperationException($"{nameof(textGameObject)} game object is expected to be set");
             if (imageGameObject == null) throw new InvalidOperationException($"{nameof(imageGameObject)} game object is expected to be set");
             if (okButtonTextGameObject == null) throw new InvalidOperationException($"{nameof(okButtonTextGameObject)} game object is expected to be set");
             if (okButtonGameObject == null) throw new InvalidOperationException($"{nameof(okButtonGameObject)} game object is expected to be set");
-            if (cancelButtonGameObject == null) throw new InvalidOperationException($"{nameof(cancelButtonGameObject)} game object is expected to be set");
 
-            cancelButtonGameObject.onClick.AddListener(OnCancel);
+            if (cancelButtonGameObject != null)
+            {
+                cancelButtonGameObject.onClick.AddListener(OnCancel);
+            }
             okButtonGameObject.onClick.AddListener(OnOkAgg);
         }
 
@@ -44,7 +45,7 @@ namespace Assets.Behaviours
             isRendered = true;
 
             headerTextGameObject!.text = headerText;
-            textGameObject!.text = text;
+            textGameObject!.text = text ?? string.Empty;
             okButtonTextGameObject!.text = okButtonText;
             if (image != null) {
                 imageGameObject!.texture = image;
@@ -59,6 +60,11 @@ namespace Assets.Behaviours
         public Action OnOK
         {
             set { this.onOk = value; }
+        }
+
+        public string Text
+        {
+            set { this.text = value; }
         }
 
         private void OnOkAgg()

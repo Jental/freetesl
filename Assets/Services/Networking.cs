@@ -287,7 +287,9 @@ namespace Assets.Services
             var respDTO = JsonUtility.FromJson<R>(str);
             if (respDTO == null)
             {
-                Debug.LogError($"Networking.GetAsync: [{relativeUrl}]: received message in unknown format");
+                var errorMessage = $"Networking.GetAsync: [{relativeUrl}]: received message in unknown format";
+                Debug.LogError(errorMessage);
+                throw new Exception(errorMessage);
             }
             return respDTO;
         }
@@ -310,7 +312,9 @@ namespace Assets.Services
             var respDTO = JsonUtility.FromJson<R>(str);
             if (respDTO == null)
             {
-                Debug.LogError($"Networking.PostAsync: [{relativeUrl}]: received message in unknown format");
+                var errorMessage = $"Networking.PostAsync: [{relativeUrl}]: received message in unknown format";
+                Debug.LogError(errorMessage);
+                throw new Exception(errorMessage);
             }
             return respDTO;
         }

@@ -19,11 +19,13 @@ namespace Assets.Behaviours
     {
         [SerializeField] private TMP_InputField? loginGameObject;
         [SerializeField] private TMP_InputField? passwordGameObject;
+        [SerializeField] private TextMeshProUGUI? errorGameObject;
         [SerializeField] private TMP_Dropdown? serverSelectGameObject;
         [SerializeField] private Button? sendButtonGameObject;
         [SerializeField] private CanvasService? canvasService;
 
-        public int inputFocused = 0;
+        private int inputFocused = 0;
+        private string? errorMessage = null;
 
         protected void Start()
         {
@@ -32,6 +34,7 @@ namespace Assets.Behaviours
             if (passwordGameObject == null) throw new InvalidOperationException($"{nameof(passwordGameObject)} game object is expected to be set");
             if (serverSelectGameObject == null) throw new InvalidOperationException($"{nameof(serverSelectGameObject)} game object is expected to be set");
             if (canvasService == null) throw new InvalidOperationException($"{nameof(canvasService)} game object is expected to be set");
+            if (errorGameObject == null) throw new InvalidOperationException($"{nameof(errorGameObject)} game object is expected to be set");
 
             _ = destroyCancellationToken;
             sendButtonGameObject.onClick.AddListener(OnSendButtonClick);
@@ -52,6 +55,18 @@ namespace Assets.Behaviours
                 if (inputFocused > 2) inputFocused = 0;
                 UpdateInputFocus();
             }
+
+            if (errorMessage != null)
+            {
+                this.errorGameObject!.text = (string)errorMessage.Clone();
+                this.errorGameObject.gameObject.SetActive(true);
+                errorMessage = null;
+            }
+        }
+
+        protected void OnDisable()
+        {
+            this.errorGameObject!.gameObject.SetActive(false);
         }
 
         private void UpdateInputFocus()
@@ -86,21 +101,31 @@ namespace Assets.Behaviours
                 using var sha512 = SHA512.Create();
                 var passwordHash = GetStringFromHash(sha512.ComputeHash(Encoding.UTF8.GetBytes(passwordGameObject!.text)));
                 var dto = new LoginDTO { login = loginGameObject.text, passwordSha512 = passwordHash };
-                var response = await Networking.Instance.PostAsync<LoginDTO, LoginResponseDTO>(Constants.MethodNames.LOGIN, dto, destroyCancellationToken);
-
-                if (response != null && response.valid && response.token != null)
+                LoginResponseDTO? response = null;
+                try
                 {
-                    GlobalStorage.Instance.Token = response.token;
-                    GlobalStorage.Instance.PlayerLogin = loginGameObject.text;
-                    GlobalStorage.Instance.CurrentServer = serverUrl;
-                    canvasService!.ActiveCanvas = AppCanvas.JoinMatch;
-
-                    Debug.Log("LoginPopupBehaviour.OnSendButtonClick: logged in successfully");
+                    response = await Networking.Instance.PostAsync<LoginDTO, LoginResponseDTO>(Constants.MethodNames.LOGIN, dto, destroyCancellationToken);
                 }
-                else
+                catch (Exception e)
+                {
+                    errorMessage = "Failed to log in. Could not connect the server";
+                    Debug.LogException(e);
+                    return;
+                }
+
+                if (response == null || !response.valid || response.token == null)
                 {
                     Debug.Log("LoginPopupBehaviour.OnSendButtonClick: failed to log in");
+                    errorMessage = "Failed to log in. Invalid login or password";
+                    return;
                 }
+
+                GlobalStorage.Instance.Token = response.token;
+                GlobalStorage.Instance.PlayerLogin = loginGameObject.text;
+                GlobalStorage.Instance.CurrentServer = serverUrl;
+                canvasService!.ActiveCanvas = AppCanvas.JoinMatch;
+
+                Debug.Log("LoginPopupBehaviour.OnSendButtonClick: logged in successfully");
             });
         }
 

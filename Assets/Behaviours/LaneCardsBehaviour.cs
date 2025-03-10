@@ -28,6 +28,12 @@ namespace Assets.Behaviours
             }
         }
 
+        protected void OnDisable()
+        {
+            cardsToShow.Clear();
+            changesArePresent = true;
+        }
+
         protected override Task OnMatchStateUpdateAsync(PlayerMatchStateDTO dto, bool isPlayersTurn, CancellationToken cancellationToken)
         {
             try

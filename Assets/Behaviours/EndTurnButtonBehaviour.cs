@@ -22,6 +22,13 @@ namespace Assets.Behaviours
         private bool isPlayersTurn = false;
         private bool hasTurnChangedSinceLastUpdate = false;
 
+        protected void OnDisable()
+        {
+            isPlayersTurn = false;
+            hasTurnChangedSinceLastUpdate = false;
+            changesArePresent = true;
+        }
+
         public async void OnPointerClick(PointerEventData eventData)
         {
             if (!isPlayersTurn) { return; }

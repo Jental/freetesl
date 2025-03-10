@@ -233,6 +233,7 @@ namespace Assets.Services
             });
         }
 
+        // TODO: sync sends (and manybe some other methods) with a mutex
         public async Task SendMessageAsync<T>(string methodName, T body, CancellationToken cancellationToken)
         {
             if (webSocket == null) throw new InvalidOperationException("Networking: not connected");
@@ -247,11 +248,18 @@ namespace Assets.Services
             try
             {
                 // There should be a better way to do it with ManualResetEvent or TaskCompletionSource
-                while (webSocket.State != WebSocketState.Open)
+                while (webSocket != null && webSocket.State != WebSocketState.Open)
                 {
                     cancellationToken.ThrowIfCancellationRequested();
                     await Task.Delay(500);
                 }
+
+                if (webSocket == null)
+                {
+                    Debug.Log($"Connection is closed during '{methodName}' send.");
+                    return;
+                }
+
                 await webSocket.SendAsync(sendBuffer, WebSocketMessageType.Text, true, cancellationToken);
                 Debug.Log($"Sent message with a method: '{methodName}': {json}");
             }
@@ -274,11 +282,18 @@ namespace Assets.Services
             try
             {
                 // There should be a better way to do it with ManualResetEvent or TaskCompletionSource
-                while (webSocket.State != WebSocketState.Open)
+                while (webSocket != null && webSocket.State != WebSocketState.Open)
                 {
                     cancellationToken.ThrowIfCancellationRequested();
                     await Task.Delay(500);
                 }
+
+                if (webSocket == null)
+                {
+                    Debug.Log($"Connection is closed during '{methodName}' send.");
+                    return;
+                }
+
                 await webSocket.SendAsync(sendBuffer, WebSocketMessageType.Text, true, cancellationToken);
                 Debug.Log($"Sent message with a method: '{methodName}': {json}");
             }

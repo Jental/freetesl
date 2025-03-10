@@ -15,6 +15,13 @@ namespace Assets.Behaviours
         private int mana = 0;
         private int maxMana = 0;
 
+        protected void OnDisable()
+        {
+            mana = 0;
+            maxMana = 0;
+            changesArePresent = true;
+        }
+
         protected override Task OnMatchStateUpdateAsync(PlayerMatchStateDTO dto, bool isPlayersTurn, CancellationToken cancellationToken)
         {
             this.maxMana = dto.maxMana;

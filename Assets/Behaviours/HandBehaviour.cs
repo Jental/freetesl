@@ -20,6 +20,12 @@ namespace Assets.Behaviours
 
         private List<CardInstance> cardsToShow = new List<CardInstance>();
 
+        protected void OnDisable()
+        {
+            cardsToShow.Clear();
+            changesArePresent = true;
+        }
+
         protected override Task OnMatchStateUpdateAsync(PlayerMatchStateDTO dto, bool isPlayersTurn, CancellationToken cancellationToken)
         {
             cardsToShow = dto.hand.Select(ciState =>

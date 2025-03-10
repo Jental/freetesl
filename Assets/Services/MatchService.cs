@@ -47,10 +47,7 @@ namespace Assets.Services
                 return Task.CompletedTask;
             }
 
-            
             canvasService.ActiveCanvas = Enums.AppCanvas.MatchEnd;
-
-            unsubscriber?.Invoke();
 
             return Task.CompletedTask;
         }

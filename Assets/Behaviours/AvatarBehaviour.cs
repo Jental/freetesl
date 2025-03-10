@@ -32,6 +32,14 @@ namespace Assets.Behaviours
         private byte runes = 0;
         private string? imageName = null;
 
+        protected void OnDisable()
+        {
+            health = 0;
+            runes = 0;
+            imageName = null;
+            changesArePresent = true;
+        }
+
         protected override void UpdateImpl()
         {
             this.healthText!.text = health.ToString();

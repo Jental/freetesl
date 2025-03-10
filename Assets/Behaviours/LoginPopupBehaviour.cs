@@ -5,6 +5,7 @@ using Assets.DTO;
 using Assets.Enums;
 using Assets.Services;
 using System;
+using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -123,7 +124,34 @@ namespace Assets.Behaviours
                 GlobalStorage.Instance.Token = response.token;
                 GlobalStorage.Instance.PlayerLogin = loginGameObject.text;
                 GlobalStorage.Instance.CurrentServer = serverUrl;
-                canvasService!.ActiveCanvas = AppCanvas.JoinMatch;
+
+                PlayerInformationDTO? currentPlayerInfo;
+                try
+                {
+                    currentPlayerInfo = await Networking.Instance.GetAsync<PlayerInformationDTO>(Constants.MethodNames.GET_CURRENT_PLAYER_INFO, new Dictionary<string, string>(), destroyCancellationToken);
+                }
+                catch (Exception e)
+                {
+                    errorMessage = "Failed to log in. Failed to retrieve current user";
+                    Debug.LogException(e);
+                    return;
+                }
+
+                if (currentPlayerInfo == null)
+                {
+                    Debug.Log("LoginPopupBehaviour.OnSendButtonClick: failed to get current user info");
+                    errorMessage = "Failed to log in. Failed to retrieve current user";
+                    return;
+                }
+
+                if (currentPlayerInfo.state == (int)PlayerState.InMatch)
+                {
+                    canvasService!.ActiveCanvas = AppCanvas.Match;
+                }
+                else
+                {
+                    canvasService!.ActiveCanvas = AppCanvas.JoinMatch;
+                }
 
                 Debug.Log("LoginPopupBehaviour.OnSendButtonClick: logged in successfully");
             });

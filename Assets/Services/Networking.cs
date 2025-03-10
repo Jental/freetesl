@@ -183,6 +183,12 @@ namespace Assets.Services
                     try
                     {
                         ServerMessageDTO<object> message = JsonUtility.FromJson<ServerMessageDTO<object>>(messageStr);
+                        if (message == null)
+                        {
+                            Debug.LogError($"Received message in unknown format: '{messageStr}'");
+                            continue;
+                        }
+
                         Debug.Log($"Received message with a method: '{message.method}'; message: {messageStr}");
 
                         if (subscriptions.ContainsKey(message.method))

@@ -23,7 +23,7 @@ namespace Assets.Services
         private static Networking? instance = null;
         private HttpClient? httpClient;
         private string? relativeUrlPrefix = null;
-        private readonly ClientWebSocket webSocket;
+        private ClientWebSocket? webSocket;
         private Uri? websocketUrl;
         private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
         private bool disposedValue;
@@ -53,9 +53,7 @@ namespace Assets.Services
         }
 
         private Networking()
-        {
-            webSocket = new ClientWebSocket();
-        }
+        {}
 
         public void Init(string serverUrl, CanvasService canvasService)
         {
@@ -83,8 +81,7 @@ namespace Assets.Services
             {
                 if (disposing)
                 {
-                    cancellationTokenSource.Cancel();
-                    webSocket.Dispose();
+                    Disconnect();
                 }
 
                 disposedValue = true;
@@ -135,9 +132,22 @@ namespace Assets.Services
             return Subscribe(new string[1] { method }, handler);
         }
 
+        public void Disconnect()
+        {
+            Debug.Log("Networking.Disconnect");
+            cancellationTokenSource.Cancel();
+            if (webSocket != null)
+            {
+                webSocket.Dispose();
+                webSocket = null;
+            }
+        }
+
         public void ConnectAndListen(CancellationToken cancellationToken)
         {
             Debug.Log("Networking.ConnectAndListen");
+
+            if (webSocket != null) throw new InvalidOperationException($"Networking: already connected. Call a {nameof(Disconnect)} method first.");
 
             _ = Task.Run(async () =>
             {
@@ -150,6 +160,7 @@ namespace Assets.Services
 
                 try
                 {
+                    webSocket = new ClientWebSocket();
                     webSocket.Options.SetRequestHeader("Authorization", $"Bearer {token}");
                     await webSocket.ConnectAsync(websocketUrl, cancellationToken);
                 }
@@ -224,6 +235,8 @@ namespace Assets.Services
 
         public async Task SendMessageAsync<T>(string methodName, T body, CancellationToken cancellationToken)
         {
+            if (webSocket == null) throw new InvalidOperationException("Networking: not connected");
+
             var message = new ServerMessageDTO<T>
             {
                 method = methodName,
@@ -250,6 +263,8 @@ namespace Assets.Services
 
         public async Task SendMessageAsync(string methodName, CancellationToken cancellationToken)
         {
+            if (webSocket == null) throw new InvalidOperationException("Networking: not connected");
+
             var message = new ServerMessageDTO
             {
                 method = methodName,

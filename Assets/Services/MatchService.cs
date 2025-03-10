@@ -18,10 +18,19 @@ namespace Assets.Services
         protected void Start()
         {
             _ = destroyCancellationToken;
-            GlobalStorage.Instance.Init();
-            Networking.Instance.ConnectAndListen(destroyCancellationToken);
-
             unsubscriber = Networking.Instance.Subscribe(Constants.MethodNames.MATCH_END, OnMatchEnd);
+        }
+
+        protected void OnEnable()
+        {
+            Debug.Log("MatchService.OnEnable");
+            Networking.Instance.ConnectAndListen(destroyCancellationToken);
+        }
+
+        protected void OnDisable()
+        {
+            Debug.Log("MatchService.OnDisable");
+            Networking.Instance.Disconnect();
         }
 
         private Task OnMatchEnd(string methodName, string message, CancellationToken cancellationToken)

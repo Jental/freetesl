@@ -37,6 +37,8 @@ namespace Assets.Behaviours
             if (canvasService == null) throw new InvalidOperationException($"{nameof(canvasService)} game object is expected to be set");
             if (errorGameObject == null) throw new InvalidOperationException($"{nameof(errorGameObject)} game object is expected to be set");
 
+            GlobalStorage.Instance.Init();
+
             _ = destroyCancellationToken;
             sendButtonGameObject.onClick.AddListener(OnSendButtonClick);
             loginGameObject.ActivateInputField();

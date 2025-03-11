@@ -311,7 +311,7 @@ namespace Assets.Services
             if (parameters.Count > 0)
             {
                 string parametersStr = string.Join("&", parameters.Select(p => $"{p.Key}={HttpUtility.UrlEncode(p.Value)}"));
-                fullUrl = $"{relativeUrl}?{parametersStr}";
+                fullUrl = $"{fullUrl}?{parametersStr}";
             }
 
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", GlobalStorage.Instance.Token);
@@ -327,7 +327,7 @@ namespace Assets.Services
                 if (response.Content != null)
                 {
                     string? errorStr = await response.Content.ReadAsStringAsync();
-                    if (errorStr != null)
+                    if (errorStr != null && !errorStr.Contains("<html>"))
                     {
                         var errorRespDTO = JsonUtility.FromJson<ErrorDTO>(errorStr);
                         if (errorRespDTO != null)

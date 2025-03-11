@@ -7,5 +7,6 @@ namespace Assets.DTO
     {
         public bool valid;
         public string token;
+        public int playerID;
     }
 }

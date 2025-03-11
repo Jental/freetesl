@@ -64,7 +64,12 @@ namespace Assets.Behaviours
             {
                 progressDialogGameObject!.SetActive(false);
                 buttonsGameObject!.SetActive(true);
-                startMatchButtonGameObject!.gameObject.SetActive(playerListGameObject!.SelectedPlayer != null);
+
+                bool matchCanBeStarted =
+                    playerListGameObject!.SelectedPlayer != null
+                    && playerListGameObject!.SelectedPlayer.ID != GlobalStorage.Instance.PlayerID
+                    && playerListGameObject.SelectedPlayer.State == PlayerState.LookingForOpponent;
+                startMatchButtonGameObject!.gameObject.SetActive(matchCanBeStarted);
             }
         }
 

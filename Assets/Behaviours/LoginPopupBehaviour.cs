@@ -124,6 +124,7 @@ namespace Assets.Behaviours
                 }
 
                 GlobalStorage.Instance.Token = response.token;
+                GlobalStorage.Instance.PlayerID = response.playerID;
                 GlobalStorage.Instance.PlayerLogin = loginGameObject.text;
                 GlobalStorage.Instance.CurrentServer = serverUrl;
 

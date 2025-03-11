@@ -127,7 +127,7 @@ namespace Assets.Behaviours
             {
                 dtos = await Networking.Instance.GetAsync<ListDTO<PlayerInformationDTO>>(
                     Constants.MethodNames.GET_PLAYERS,
-                    new Dictionary<string, string>(),
+                    new Dictionary<string, string>() { { "inGame", "true" } },
                     cancellationToken
                 );
             }

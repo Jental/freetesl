@@ -6,6 +6,7 @@ using Assets.Enums;
 using Assets.Models;
 using Assets.Services;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
@@ -29,7 +30,10 @@ namespace Assets.Behaviours
 
         public Image? frontEl = null;
         public RawImage? backEl = null;
-        public Image? shadowEl = null;
+        public GameObject? borderGameObject;
+        public GameObject? shadowGameObject;
+        public GameObject? guardBorderGameObject;
+        public GameObject? guardShadowGameObject;
 
         private Canvas? canvasGameObject = null;
         private LineRenderer? actionLineGameObject = null;
@@ -54,7 +58,10 @@ namespace Assets.Behaviours
         {
             if (frontEl == null) throw new InvalidOperationException($"{nameof(frontEl)} gameObject is expected to be set");
             if (backEl == null) throw new InvalidOperationException($"{nameof(backEl)} gameObject is expected to be set");
-            if (shadowEl == null) throw new InvalidOperationException($"{nameof(shadowEl)} gameObject is expected to be set");
+            if (borderGameObject == null) throw new InvalidOperationException($"{nameof(borderGameObject)} gameObject is expected to be set");
+            if (shadowGameObject == null) throw new InvalidOperationException($"{nameof(shadowGameObject)} gameObject is expected to be set");
+            if (guardBorderGameObject == null) throw new InvalidOperationException($"{nameof(guardBorderGameObject)} gameObject is expected to be set");
+            if (guardShadowGameObject == null) throw new InvalidOperationException($"{nameof(guardShadowGameObject)} gameObject is expected to be set");
             if (nameText == null) throw new InvalidOperationException($"{nameof(nameText)} gameObject is expected to be set");
             if (descriptionText == null) throw new InvalidOperationException($"{nameof(descriptionText)} gameObject is expected to be set");
             if (image == null) throw new InvalidOperationException($"{nameof(image)} gameObject is expected to be set");
@@ -64,7 +71,15 @@ namespace Assets.Behaviours
 
             frontEl.gameObject.SetActive(showFront);
             backEl.gameObject.SetActive(!showFront);
-            shadowEl.gameObject.SetActive(isFloating);
+
+            bool isGuard = cardInstance?.Keywords.Contains(Keyword.Guard) ?? false;
+            var parentLaneCardsComponent = gameObject.GetComponentInParent<LaneCardsBehaviour>();
+            bool isInLane = parentLaneCardsComponent != null;
+            bool showGuardBorder = isGuard && isInLane;
+            borderGameObject.SetActive(!showGuardBorder);
+            shadowGameObject.SetActive(isFloating && !showGuardBorder);
+            guardBorderGameObject.SetActive(showGuardBorder);
+            guardShadowGameObject.SetActive(isFloating && showGuardBorder);
 
             if (showFront)
             {

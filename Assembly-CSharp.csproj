@@ -75,6 +75,7 @@
     <Compile Include="Assets\Enums\AppCanvas.cs" />
     <Compile Include="Assets\Services\Networking.cs" />
     <Compile Include="Assets\DTO\MatchInformationDTO.cs" />
+    <Compile Include="Assets\DTO\ApplyActionToCardDTO.cs" />
     <Compile Include="Assets\DTO\MatchStateDTO.cs" />
     <Compile Include="Assets\Mappers\MatchMappers.cs" />
     <Compile Include="Assets\DTO\CardInstanceDTO.cs" />

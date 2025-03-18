@@ -180,7 +180,9 @@ namespace Assets.Behaviours
                 }
             }
 
-            isDraggedAsCard = cardDragSource == CardDragSource.Hand; // TODO: check cart type for actions later
+            // TODO: I think we should have 3 drag modes: draggedAsCard, ray, just apply (any drag target) - for supports and some actions
+            //       for now, let's assume applying = dragging to lane
+            isDraggedAsCard = cardDragSource == CardDragSource.Hand && cardInstance.Card.Type == CardType.Creature;
 
             if (isDraggedAsCard)
             {
@@ -237,35 +239,48 @@ namespace Assets.Behaviours
             // TODO: this method should be updated with actions introduction
 
             var dropped = eventData.pointerDrag;
-            var cardDragSource = GetCardDragSource(dropped);
-
-            if (cardDragSource != CardDragSource.LeftLane && cardDragSource != CardDragSource.RightLane)
-            {
-                Debug.Log("CardBehaviour.OnDrop: drop not accepted - only lane sources are allowed");
-                return;
-            }
 
             var sourceDisplayCard = dropped.GetComponent<CardBehaviour>();
             var sourceCardInstance =
                 sourceDisplayCard.cardInstance
                 ?? throw new InvalidOperationException($"{sourceDisplayCard.cardInstance} property of a dropped item is expected to be set");
-            
-            var sourceParentLaneCardsComponent = dropped.GetComponentInParent<LaneCardsBehaviour>();
+
+            switch (sourceCardInstance.Card.Type)
+            {
+                case CardType.Creature:
+                    OnCreatureCardDrop(dropped, sourceCardInstance);
+                    break;
+                case CardType.Action:
+                    OnActionCardDrop(dropped, sourceCardInstance);
+                    break;
+            }
+        }
+
+        private void OnCreatureCardDrop(GameObject sourceCardGameObject, CardInstance sourceCardInstance)
+        {
+            var cardDragSource = GetCardDragSource(sourceCardGameObject);
+            if (cardDragSource != CardDragSource.LeftLane && cardDragSource != CardDragSource.RightLane)
+            {
+                Debug.Log("CardBehaviour.OnCreatureCardDrop: drop not accepted - for creatures only lane sources are allowed");
+                return;
+            }
+
+            var sourceParentLaneCardsComponent = sourceCardGameObject.GetComponentInParent<LaneCardsBehaviour>();
             var targetParentLaneCardsComponent = gameObject.GetComponentInParent<LaneCardsBehaviour>();
 
             if (targetParentLaneCardsComponent.playerType != PlayerType.Opponent)
             {
-                Debug.Log("CardBehaviour.OnDrop: drop not accepted - only opponent cards are allowed");
+                Debug.Log("CardBehaviour.OnCreatureCardDrop: drop not accepted - only opponent cards are allowed");
                 return;
             }
 
             if (targetParentLaneCardsComponent.laneID != sourceParentLaneCardsComponent.laneID)
             {
-                Debug.Log("CardBehaviour.OnDrop: drop not accepted - other lane");
+                Debug.Log("CardBehaviour.OnCreatureCardDrop: drop not accepted - other lane");
                 return;
             }
 
-            cardInstance.Health = cardInstance.Health - sourceCardInstance.Power;
+            cardInstance!.Health = cardInstance.Health - sourceCardInstance.Power;
             cardInstance.IsActive = false;
 
             _ = Task.Run(async () =>
@@ -276,6 +291,26 @@ namespace Assets.Behaviours
                     opponentCardInstanceID = cardInstance.ID.ToString(),
                 };
                 await Networking.Instance.SendMessageAsync(Constants.MethodNames.HIT_CARD, dto, destroyCancellationToken);
+            });
+        }
+
+        private void OnActionCardDrop(GameObject sourceCardGameObject, CardInstance sourceCardInstance)
+        {
+            var cardDragSource = GetCardDragSource(sourceCardGameObject);
+            if (cardDragSource != CardDragSource.Hand)
+            {
+                Debug.Log("CardBehaviour.OnActionCardDrop: drop not accepted - for actions only lane sources are allowed");
+                return;
+            }
+
+            _ = Task.Run(async () =>
+            {
+                var dto = new ApplyActionToCardDTO
+                {
+                    cardInstanceID = sourceCardInstance.ID.ToString(),
+                    opponentCardInstanceID = cardInstance!.ID.ToString(),
+                };
+                await Networking.Instance.SendMessageAsync(Constants.MethodNames.APPLY_ACTION_TO_CARD, dto, destroyCancellationToken);
             });
         }
     }

@@ -20,6 +20,7 @@
             public const string MOVE_CARD_TO_LANE = "moveCardToLane";
             public const string HIT_FACE = "hitFace";
             public const string HIT_CARD = "hitCard";
+            public const string APPLY_ACTION_TO_CARD = "applyActionToCard";
             public const string MATCH_END = "matchEnd";
             public const string CONCEDE = "concede";
             public const string LOGIN = "login";

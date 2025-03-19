@@ -120,6 +120,7 @@ namespace Assets.Services
                 if (dto.body != null)
                 {
                     // TODO: it would be better to update existing instances if they are present
+                    //       it becomes event more actual if BE is going to send only updated card instances
                     this.allCardInstances =
                         dto.body
                         .Select(ciDto =>

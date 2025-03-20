@@ -34,6 +34,7 @@ namespace Assets.Behaviours
         public GameObject? shadowGameObject;
         public GameObject? guardBorderGameObject;
         public GameObject? guardShadowGameObject;
+        public GameObject? shackleGameObject;
 
         private Canvas? canvasGameObject = null;
         private LineRenderer? actionLineGameObject = null;
@@ -68,6 +69,7 @@ namespace Assets.Behaviours
             if (powerTextGameObject == null) throw new InvalidOperationException($"{nameof(powerTextGameObject)} gameObject is expected to be set");
             if (healthTextGameObject == null) throw new InvalidOperationException($"{nameof(healthTextGameObject)} gameObject is expected to be set");
             if (costTextGameObject == null) throw new InvalidOperationException($"{nameof(costTextGameObject)} gameObject is expected to be set");
+            if (shackleGameObject == null) throw new InvalidOperationException($"{nameof(shackleGameObject)} gameObject is expected to be set");
 
             frontEl.gameObject.SetActive(showFront);
             backEl.gameObject.SetActive(!showFront);
@@ -75,7 +77,7 @@ namespace Assets.Behaviours
             bool isGuard = cardInstance?.Keywords.Contains(Keyword.Guard) ?? false;
             var parentLaneCardsComponent = gameObject.GetComponentInParent<LaneCardsBehaviour>();
             bool isInLane = parentLaneCardsComponent != null;
-            bool showGuardBorder = isGuard && isInLane;
+            bool showGuardBorder = showFront && isGuard && isInLane;
             borderGameObject.SetActive(!showGuardBorder);
             shadowGameObject.SetActive(isFloating && !showGuardBorder);
             guardBorderGameObject.SetActive(showGuardBorder);
@@ -91,6 +93,9 @@ namespace Assets.Behaviours
                     powerTextGameObject.text = cardInstance.Power.ToString();
                     healthTextGameObject.text = cardInstance.Health.ToString();
                     costTextGameObject.text = cardInstance.Cost.ToString();
+
+                    bool isShackled = cardInstance.Effects.Contains(Effect.Shackled);
+                    shackleGameObject.SetActive(isShackled);
                 }
             }
         }

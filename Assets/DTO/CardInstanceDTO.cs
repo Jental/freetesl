@@ -11,6 +11,7 @@ namespace Assets.DTO
         public int health;
         public int cost;
         public byte[] keywords;
+        public byte[] effects;
 
         private Guid? cardInstanceGuid = null;
 

@@ -65,6 +65,7 @@
     <Compile Include="Assets\Behaviours\LaneCardsBehaviour.cs" />
     <Compile Include="Assets\DTO\ServerMessageDTO.cs" />
     <Compile Include="Assets\Mappers\GeneralMappers.cs" />
+    <Compile Include="Assets\Enums\Effect.cs" />
     <Compile Include="Assets\DTO\PlayerMatchStateDTO.cs" />
     <Compile Include="Assets\Behaviours\PlayerListItemBehaviour.cs" />
     <Compile Include="Assets\Behaviours\ConfirmationDialogBehaviour.cs" />

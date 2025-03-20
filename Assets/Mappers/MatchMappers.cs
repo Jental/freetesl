@@ -13,6 +13,9 @@ namespace Assets.Mappers
         private static Keyword[] MapToKeywords(byte[] byteValues) =>
             byteValues.Select(b => (Keyword)b).ToArray();
 
+        private static Effect[] MapToEffects(byte[] byteValues) =>
+            byteValues.Select(b => (Effect)b).ToArray();
+
         public static Card MapFromCardDTO(CardDTO dto, Dictionary<int, CardScriptableObject> allCardScriptableObjects) =>
             new Card(
                 dto.id,
@@ -32,6 +35,7 @@ namespace Assets.Mappers
                 dto.health,
                 dto.cost,
                 MapToKeywords(dto.keywords),
+                MapToEffects(dto.effects),
                 previous?.IsActive ?? false
             );
     }

@@ -352,8 +352,8 @@ namespace Assets.Behaviours
                 return;
             }
 
-            cardInstance!.Health = cardInstance.Health - sourceCardInstance.Power;
-            cardInstance.IsActive = false;
+            // cardInstance!.Health = cardInstance.Health - sourceCardInstance.Power;
+            cardInstance!.IsActive = false;
 
             _ = Task.Run(async () =>
             {

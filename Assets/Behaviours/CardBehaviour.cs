@@ -6,6 +6,7 @@ using Assets.Enums;
 using Assets.Models;
 using Assets.Services;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TMPro;
@@ -17,86 +18,152 @@ namespace Assets.Behaviours
 {
     public class CardBehaviour: MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler, IDropHandler
     {
-        public CardInstance? cardInstance = null;
-        public bool showFront = false;
-        public bool isFloating = false;
+        private CardInstance? cardInstance = null;
+        private CardDisplayMode displayMode = CardDisplayMode.Cover;
+        private bool isFloating = false;
 
-        public TextMeshProUGUI? nameText = null;
-        public TextMeshProUGUI? descriptionText = null;
-        public RawImage? image = null;
-        public TextMeshProUGUI? powerTextGameObject = null;
-        public TextMeshProUGUI? healthTextGameObject = null;
-        public TextMeshProUGUI? costTextGameObject = null;
+        [SerializeField] private TextMeshProUGUI? nameText;
+        [SerializeField] private TextMeshProUGUI? descriptionText;
+        [SerializeField] private RawImage? image;
+        [SerializeField] private TextMeshProUGUI? powerTextGameObject;
+        [SerializeField] private TextMeshProUGUI? healthTextGameObject;
+        [SerializeField] private TextMeshProUGUI? costTextGameObject;
 
-        public Image? frontEl = null;
-        public RawImage? backEl = null;
-        public GameObject? borderGameObject;
-        public GameObject? shadowGameObject;
-        public GameObject? guardBorderGameObject;
-        public GameObject? guardShadowGameObject;
-        public GameObject? shackleGameObject;
+        [SerializeField] private GameObject? backGameObject;
+        [SerializeField] private GameObject? borderGameObject;
+        [SerializeField] private GameObject? shadowGameObject;
+        [SerializeField] private GameObject? guardBorderGameObject;
+        [SerializeField] private GameObject? guardShadowGameObject;
+        [SerializeField] private GameObject? cardImageGameObject;
+        [SerializeField] private GameObject? backgroundGameObject;
+        [SerializeField] private GameObject? powerGameObject;
+        [SerializeField] private GameObject? defenceGameObject;
+        [SerializeField] private GameObject? raceGameObject;
+        [SerializeField] private GameObject? costGameObject;
+        [SerializeField] private GameObject? nameGameObject;
+        [SerializeField] private GameObject? shackleGameObject;
+        [SerializeField] private GameObject? coverGameObject;
 
-        private Canvas? canvasGameObject = null;
-        private LineRenderer? actionLineGameObject = null;
+        private Canvas? canvasGameObject;
+        private LineRenderer? actionLineGameObject;
+
+        /// <summary>
+        /// Children game objects that COULD be visible in defined mode (grandchildren are not expected to be here)
+        /// </summary>
+        private Dictionary<CardDisplayMode, GameObject[]> modesToGameObjects = new Dictionary<CardDisplayMode, GameObject[]>();
+        private HashSet<GameObject> gameObjectsForCurrentMode = new HashSet<GameObject>();
+        private HashSet<GameObject> allChildrenGameObjects = new HashSet<GameObject>();
 
         private RectTransform? rectTransform;
         private Image? imageComponent;
         private Vector2? anchoredPoitionBeforeDrag;
         private bool isDraggedAsCard = false; // if dragging drags card itself (true) or just shows an arrow (false)
 
+        public CardInstance CardInstance =>
+            cardInstance
+            ?? throw new InvalidOperationException($"CardBehaviour: Not initialized. Call {nameof(UpdateDisplaySettings)} method.");
+
         protected void Awake()
         {
-            rectTransform = GetComponent<RectTransform>();
-            imageComponent = GetComponent<Image>();
-
-            canvasGameObject = GameObject.Find("Canvas")?.GetComponent<Canvas>();
-            actionLineGameObject = GameObject.Find("ActionLine")?.GetComponent<LineRenderer>();
-
-            _ = destroyCancellationToken;
-        }
-
-        protected void Update()
-        {
-            if (frontEl == null) throw new InvalidOperationException($"{nameof(frontEl)} gameObject is expected to be set");
-            if (backEl == null) throw new InvalidOperationException($"{nameof(backEl)} gameObject is expected to be set");
+            if (backGameObject == null) throw new InvalidOperationException($"{nameof(backGameObject)} gameObject is expected to be set");
             if (borderGameObject == null) throw new InvalidOperationException($"{nameof(borderGameObject)} gameObject is expected to be set");
             if (shadowGameObject == null) throw new InvalidOperationException($"{nameof(shadowGameObject)} gameObject is expected to be set");
             if (guardBorderGameObject == null) throw new InvalidOperationException($"{nameof(guardBorderGameObject)} gameObject is expected to be set");
             if (guardShadowGameObject == null) throw new InvalidOperationException($"{nameof(guardShadowGameObject)} gameObject is expected to be set");
+            if (cardImageGameObject == null) throw new InvalidOperationException($"{nameof(cardImageGameObject)} gameObject is expected to be set");
+            if (backgroundGameObject == null) throw new InvalidOperationException($"{nameof(backgroundGameObject)} gameObject is expected to be set");
+            if (powerGameObject == null) throw new InvalidOperationException($"{nameof(powerGameObject)} gameObject is expected to be set");
+            if (defenceGameObject == null) throw new InvalidOperationException($"{nameof(defenceGameObject)} gameObject is expected to be set");
+            if (raceGameObject == null) throw new InvalidOperationException($"{nameof(raceGameObject)} gameObject is expected to be set");
+            if (costGameObject == null) throw new InvalidOperationException($"{nameof(costGameObject)} gameObject is expected to be set");
+            if (nameGameObject == null) throw new InvalidOperationException($"{nameof(nameGameObject)} gameObject is expected to be set");
+            if (shackleGameObject == null) throw new InvalidOperationException($"{nameof(shackleGameObject)} gameObject is expected to be set");
+            if (coverGameObject == null) throw new InvalidOperationException($"{nameof(coverGameObject)} gameObject is expected to be set");
+
             if (nameText == null) throw new InvalidOperationException($"{nameof(nameText)} gameObject is expected to be set");
             if (descriptionText == null) throw new InvalidOperationException($"{nameof(descriptionText)} gameObject is expected to be set");
             if (image == null) throw new InvalidOperationException($"{nameof(image)} gameObject is expected to be set");
             if (powerTextGameObject == null) throw new InvalidOperationException($"{nameof(powerTextGameObject)} gameObject is expected to be set");
             if (healthTextGameObject == null) throw new InvalidOperationException($"{nameof(healthTextGameObject)} gameObject is expected to be set");
             if (costTextGameObject == null) throw new InvalidOperationException($"{nameof(costTextGameObject)} gameObject is expected to be set");
-            if (shackleGameObject == null) throw new InvalidOperationException($"{nameof(shackleGameObject)} gameObject is expected to be set");
 
-            frontEl.gameObject.SetActive(showFront);
-            backEl.gameObject.SetActive(!showFront);
+            canvasGameObject = GameObject.Find("Canvas")?.GetComponent<Canvas>() ?? throw new InvalidOperationException($"Canvas gameObject is not found");
+            actionLineGameObject = GameObject.Find("ActionLine")?.GetComponent<LineRenderer>() ?? throw new InvalidOperationException($"ActionLine gameObject is not found");
 
-            bool isGuard = cardInstance?.Keywords.Contains(Keyword.Guard) ?? false;
-            var parentLaneCardsComponent = gameObject.GetComponentInParent<LaneCardsBehaviour>();
-            bool isInLane = parentLaneCardsComponent != null;
-            bool showGuardBorder = showFront && isGuard && isInLane;
-            borderGameObject.SetActive(!showGuardBorder);
-            shadowGameObject.SetActive(isFloating && !showGuardBorder);
-            guardBorderGameObject.SetActive(showGuardBorder);
-            guardShadowGameObject.SetActive(isFloating && showGuardBorder);
-
-            if (showFront)
+            modesToGameObjects = new Dictionary<CardDisplayMode, GameObject[]>
             {
-                if (cardInstance != null)
-                {
-                    nameText.text = (string)cardInstance.Card.ScriptableObject.cardName.Clone();
-                    descriptionText.text = (string)cardInstance.Card.ScriptableObject.description.Clone();
-                    image.texture = cardInstance.Card.ScriptableObject.image.texture;
-                    powerTextGameObject.text = cardInstance.Power.ToString();
-                    healthTextGameObject.text = cardInstance.Health.ToString();
-                    costTextGameObject.text = cardInstance.Cost.ToString();
+                { CardDisplayMode.Cover, new GameObject[] { backGameObject } },
+                { CardDisplayMode.Light, new GameObject[] {
+                    borderGameObject,
+                    guardBorderGameObject,
+                    cardImageGameObject,
+                    powerGameObject,
+                    defenceGameObject,
+                    shackleGameObject,
+                    coverGameObject
+                } },
+                { CardDisplayMode.Full, new GameObject[] {
+                    borderGameObject,
+                    cardImageGameObject,
+                    backgroundGameObject,
+                    powerGameObject,
+                    defenceGameObject,
+                    raceGameObject,
+                    costGameObject,
+                    nameGameObject,
+                    shackleGameObject,
+                    coverGameObject
+                } },
+            };
+            allChildrenGameObjects = modesToGameObjects.SelectMany(gos => gos.Value).ToHashSet();
 
-                    bool isShackled = cardInstance.Effects.Contains(Effect.Shackled);
-                    shackleGameObject.SetActive(isShackled);
-                }
+            rectTransform = GetComponent<RectTransform>() ?? throw new InvalidOperationException($"RectTransform component is not found");
+            imageComponent = GetComponent<Image>() ?? throw new InvalidOperationException($"Image component is not found");
+
+            _ = destroyCancellationToken;
+        }
+
+        public void UpdateDisplaySettings(CardInstance cardInstance, CardDisplayMode displayMode, bool isFloating)
+        {
+            this.cardInstance = cardInstance;
+            this.displayMode = displayMode;
+            this.isFloating = isFloating;
+
+            gameObjectsForCurrentMode =
+                modesToGameObjects.GetValueOrDefault(displayMode)?.ToHashSet() 
+                ?? throw new InvalidOperationException($"GameObjects for mode '{displayMode}' are not specified");
+        }
+
+        protected void Update()
+        {
+            if (cardInstance == null) throw new InvalidOperationException($"CardBehaviour: Not initialized. Call {nameof(UpdateDisplaySettings)} method.");
+
+            foreach (var go in allChildrenGameObjects)
+            {
+                go.SetActive(gameObjectsForCurrentMode.Contains(go));
+            }
+
+            bool isGuard = cardInstance.Keywords.Contains(Keyword.Guard);
+            bool showGuardBorder = isGuard && displayMode == CardDisplayMode.Light;
+            borderGameObject!.SetActive(!showGuardBorder && gameObjectsForCurrentMode.Contains(borderGameObject));
+            shadowGameObject!.SetActive(isFloating && !showGuardBorder); // No gameObjectsForCurrentMode because shadowGameObject is in borderGameObject
+            guardBorderGameObject!.SetActive(showGuardBorder && gameObjectsForCurrentMode.Contains(guardBorderGameObject));
+            guardShadowGameObject!.SetActive(isFloating && showGuardBorder); // No gameObjectsForCurrentMode because guardShadowGameObject is in guardBorderGameObject
+
+            if (displayMode != CardDisplayMode.Cover)
+            {
+                nameText!.text = (string)cardInstance.Card.ScriptableObject.cardName.Clone();
+                descriptionText!.text = (string)cardInstance.Card.ScriptableObject.description.Clone();
+                image!.texture = cardInstance.Card.ScriptableObject.image.texture;
+                powerTextGameObject!.text = cardInstance.Power.ToString();
+                healthTextGameObject!.text = cardInstance.Health.ToString();
+                costTextGameObject!.text = cardInstance.Cost.ToString();
+
+                bool isShackled = cardInstance.Effects.Contains(Effect.Shackled);
+                shackleGameObject!.SetActive(isShackled && gameObjectsForCurrentMode.Contains(shackleGameObject));
+
+                bool withCover = cardInstance.Effects.Contains(Effect.Cover);
+                coverGameObject!.SetActive(withCover && gameObjectsForCurrentMode.Contains(coverGameObject));
             }
         }
 

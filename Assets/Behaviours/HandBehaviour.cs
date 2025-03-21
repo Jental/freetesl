@@ -64,9 +64,11 @@ namespace Assets.Behaviours
                         Instantiate(CardPrefab, new Vector3(0, 0, 0), Quaternion.identity)
                         ?? throw new InvalidOperationException("Failed to instantiate a card prefab");
                     dc.transform.parent = gameObject.transform;
-                    dc.cardInstance = card;
-                    dc.showFront = playerType == PlayerType.Self;
-                    dc.isFloating = false;
+                    dc.UpdateDisplaySettings(
+                        card,
+                        playerType == PlayerType.Self ? CardDisplayMode.Full : CardDisplayMode.Cover,
+                        isFloating: false
+                    );
 
                     var cardRect = dc.gameObject.GetComponent<RectTransform>();
                     cardRect.anchorMin = new Vector2(marginWidthShare + cardWidthShare * i * (1 - Constants.HAND_CARD_OVERFLOW), 0);

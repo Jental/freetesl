@@ -36,8 +36,8 @@ namespace Assets.Behaviours
             var dropped = eventData.pointerDrag;
             var displayCard = dropped.GetComponent<CardBehaviour>();
             var cardInstance =
-                displayCard.cardInstance
-                ?? throw new InvalidOperationException($"{displayCard.cardInstance} property of a dropped item is expected to be set");
+                displayCard.CardInstance
+                ?? throw new InvalidOperationException($"{displayCard.CardInstance} property of a dropped item is expected to be set");
             
             var currentParentHandComponent = displayCard.gameObject.GetComponentInParent<HandBehaviour>();
             if (currentParentHandComponent == null)

@@ -89,6 +89,7 @@
     <Compile Include="Assets\Behaviours\ManaDisplayBehaviour.cs" />
     <Compile Include="Assets\Models\CardScriptableObject.cs" />
     <Compile Include="Assets\DTO\MoveCardToLaneDTO.cs" />
+    <Compile Include="Assets\Enums\CardDisplayMode.cs" />
     <Compile Include="Assets\Behaviours\HandBehaviour.cs" />
     <Compile Include="Assets\Enums\CardType.cs" />
     <Compile Include="Assets\Services\InitService.cs" />

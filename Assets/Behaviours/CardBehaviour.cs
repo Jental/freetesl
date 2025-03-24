@@ -187,7 +187,7 @@ namespace Assets.Behaviours
                 }
                 else
                 {
-                    return parentLaneCardsComponent.laneID switch
+                    return parentLaneCardsComponent.LaneID switch
                     {
                         Constants.LEFT_LANE_ID => CardDragSource.LeftLane,
                         Constants.RIGHT_LANE_ID => CardDragSource.RightLane,
@@ -312,15 +312,15 @@ namespace Assets.Behaviours
 
             var dropped = eventData.pointerDrag;
 
-            var sourceDisplayCard = dropped.GetComponent<CardBehaviour>();
+            var sourceCardBehaviour = dropped.GetComponent<CardBehaviour>();
             var sourceCardInstance =
-                sourceDisplayCard.cardInstance
-                ?? throw new InvalidOperationException($"{sourceDisplayCard.cardInstance} property of a dropped item is expected to be set");
+                sourceCardBehaviour.cardInstance
+                ?? throw new InvalidOperationException($"{sourceCardBehaviour.cardInstance} property of a dropped item is expected to be set");
 
             switch (sourceCardInstance.Card.Type)
             {
                 case CardType.Creature:
-                    OnCreatureCardDrop(dropped, sourceCardInstance);
+                    OnCreatureCardDrop(dropped, sourceCardBehaviour, sourceCardInstance);
                     break;
                 case CardType.Action:
                     OnActionCardDrop(dropped, sourceCardInstance);
@@ -328,12 +328,13 @@ namespace Assets.Behaviours
             }
         }
 
-        private void OnCreatureCardDrop(GameObject sourceCardGameObject, CardInstance sourceCardInstance)
+        private void OnCreatureCardDrop(GameObject sourceCardGameObject, CardBehaviour sourceCardBehaviour, CardInstance sourceCardInstance)
         {
             var cardDragSource = GetCardDragSource(sourceCardGameObject);
             if (cardDragSource != CardDragSource.LeftLane && cardDragSource != CardDragSource.RightLane)
             {
                 Debug.Log("CardBehaviour.OnCreatureCardDrop: drop not accepted - for creatures only lane sources are allowed");
+                sourceCardBehaviour.ReturnBack();
                 return;
             }
 
@@ -343,12 +344,14 @@ namespace Assets.Behaviours
             if (targetParentLaneCardsComponent.playerType != PlayerType.Opponent)
             {
                 Debug.Log("CardBehaviour.OnCreatureCardDrop: drop not accepted - only opponent cards are allowed");
+                sourceCardBehaviour.ReturnBack();
                 return;
             }
 
-            if (targetParentLaneCardsComponent.laneID != sourceParentLaneCardsComponent.laneID)
+            if (targetParentLaneCardsComponent.LaneID != sourceParentLaneCardsComponent.LaneID)
             {
                 Debug.Log("CardBehaviour.OnCreatureCardDrop: drop not accepted - other lane");
+                sourceCardBehaviour.ReturnBack();
                 return;
             }
 

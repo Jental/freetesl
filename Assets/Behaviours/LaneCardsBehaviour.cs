@@ -10,6 +10,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Assets.Behaviours
 {
@@ -18,13 +19,18 @@ namespace Assets.Behaviours
         public CardBehaviour? CardPrefab = null;
 
         private List<CardInstance> cardsToShow = new List<CardInstance>();
-        public byte? laneID;
+        private byte? laneID;
+        private RectTransform? laneRectTransform;
+
+        public byte LaneID => laneID ?? throw new InvalidOperationException("LaneCardsBehaviour: not initialized");
 
         public void Init(LaneBehaviour laneGameObject)
         {
             if (laneGameObject != null)
             {
                 laneID = laneGameObject.LaneID;
+
+                laneRectTransform = laneGameObject.gameObject.GetComponent<RectTransform>();
             }
         }
 
@@ -71,14 +77,16 @@ namespace Assets.Behaviours
 
             if (cardsToShow.Count > 0)
             {
-                var gameObjectRect = gameObject.GetComponent<RectTransform>();
-                float generalCardHeight = gameObjectRect.rect.height;
-                float generalCardWidth = generalCardHeight * Constants.CARD_ASPECT_RATIO;
-                float gameObjectWidth = cardsToShow.Count * generalCardWidth + (cardsToShow.Count - 1) * Constants.LANE_CARDS_GAP;
-                gameObjectRect.anchorMin = new Vector2(0.5f, 0.0f);
-                gameObjectRect.anchorMax = new Vector2(0.5f, 1.0f);
-                gameObjectRect.sizeDelta = new Vector2(gameObjectWidth, 0.0f);
-                gameObjectRect.anchoredPosition = new Vector2(0.0f, 0.0f);
+                var gameObjectWidthInShares = 4 * (1 + Constants.LANE_CARDS_GAP) + Constants.LANE_CARDS_GAP; // total width of lane cards in shares of card width
+                var maxWidth = laneRectTransform!.rect.width;
+                var cardWidth = maxWidth / gameObjectWidthInShares;
+                var cardHeight = cardWidth / Constants.CARD_ASPECT_RATIO;
+
+                var layoutGroup = gameObject.GetComponent<HorizontalLayoutGroup>();
+                if (layoutGroup != null)
+                {
+                    layoutGroup.spacing = cardWidth * Constants.LANE_CARDS_GAP;
+                }
 
                 for (int i = 0; i < cardsToShow.Count; i++)
                 {
@@ -95,12 +103,6 @@ namespace Assets.Behaviours
                     );
 
                     var cardRect = dc.gameObject.GetComponent<RectTransform>();
-                    cardRect.anchorMin = new Vector2(0, 0.5f);
-                    cardRect.anchorMax = new Vector2(0, 0.5f);
-                    var cardHOffset = i * (generalCardWidth + Constants.LANE_CARDS_GAP) + generalCardWidth / 2;
-                    cardRect.anchoredPosition = new Vector2(cardHOffset, 0.0f);
-                    float cardHeight = card.IsActive ? generalCardHeight : (generalCardHeight - 5.0f);
-                    float cardWidth = cardHeight * Constants.CARD_ASPECT_RATIO;
                     cardRect.sizeDelta = new Vector2(cardWidth, cardHeight);
                     cardRect.localScale = new Vector3(1, 1, 1);
                 }

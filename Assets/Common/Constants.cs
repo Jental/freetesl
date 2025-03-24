@@ -5,6 +5,8 @@
         public const float CARD_ASPECT_RATIO = 0.6f;
         public const float HAND_CARD_OVERFLOW = 0.3f;
         public const float LANE_CARDS_GAP = 0.3f; // share of card width
+        public const int MAX_HAND_CARDS = 10;
+        public const int MAX_LANE_CARDS = 4;
         public const byte LEFT_LANE_ID = 0;
         public const byte RIGHT_LANE_ID = 1;
         public const int BACKEND_POLLING_INTERVAL = 5; // in sec

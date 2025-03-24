@@ -11,6 +11,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Assets.Behaviours
 {
@@ -19,6 +20,23 @@ namespace Assets.Behaviours
         public CardBehaviour? CardPrefab = null;
 
         private List<CardInstance> cardsToShow = new List<CardInstance>();
+        private RectTransform? rectTransform;
+        private HorizontalLayoutGroup? hLayoutGroup;
+        private RectTransform? canvasRectTransform;
+
+        protected new void Start()
+        {
+            base.Start();
+
+            rectTransform = gameObject.GetComponent<RectTransform>();
+            if (rectTransform == null) throw new InvalidOperationException($"{nameof(RectTransform)} component is expected to be set");
+
+            hLayoutGroup = gameObject.GetComponent<HorizontalLayoutGroup>();
+            if (hLayoutGroup == null) throw new InvalidOperationException($"{nameof(HorizontalLayoutGroup)} component is expected to be set");
+
+            var canvasGameObject = GameObject.Find("Canvas")?.GetComponent<Canvas>() ?? throw new InvalidOperationException($"Canvas gameObject is not found");
+            canvasRectTransform = canvasGameObject.GetComponent<RectTransform>() ?? throw new InvalidOperationException($"Canvas RectTransform is not found");
+        }
 
         protected void OnDisable()
         {
@@ -49,12 +67,26 @@ namespace Assets.Behaviours
 
             if (cardsToShow.Count > 0)
             {
-                var handRect = gameObject.GetComponent<RectTransform>();
-                float cardHeight = handRect.rect.height;
-                float cardWidth = cardHeight * Constants.CARD_ASPECT_RATIO;
-                float cardWidthShare = cardWidth / handRect.rect.width;
-                float totalCardWidthShare = cardWidthShare * (1 - Constants.HAND_CARD_OVERFLOW) * cardsToShow.Count + cardWidthShare * Constants.HAND_CARD_OVERFLOW;
-                float marginWidthShare = Math.Max(0.0f, (1 - totalCardWidthShare) / 2.0f);
+                var gameObjectWidthInShares = (Constants.MAX_HAND_CARDS - 1) * (1 - Constants.HAND_CARD_OVERFLOW) + 1.5f; // total width of hand cards in shares of card width
+                var widthFromCanvas = canvasRectTransform!.rect.width;
+                var maxWidth = widthFromCanvas * 0.68f;
+                var cardWidth = maxWidth / gameObjectWidthInShares;
+                var cardHeight = cardWidth / Constants.CARD_ASPECT_RATIO;
+
+                if (cardsToShow.Count > 5)
+                {
+                    rectTransform!.anchorMin = new Vector2(0.05f, rectTransform.anchorMin.y);
+                    rectTransform.anchorMax = new Vector2(0.68f, rectTransform.anchorMax.y);
+                    hLayoutGroup!.childAlignment = TextAnchor.UpperRight;
+                }
+                else
+                {
+                    rectTransform!.anchorMin = new Vector2(0.33f, rectTransform.anchorMin.y);
+                    rectTransform.anchorMax = new Vector2(0.69f, rectTransform.anchorMax.y);
+                    hLayoutGroup!.childAlignment = TextAnchor.UpperCenter;
+                }
+
+                hLayoutGroup.spacing = -cardWidth * Constants.HAND_CARD_OVERFLOW;
 
                 for (int i = 0; i < cardsToShow.Count; i++)
                 {
@@ -71,10 +103,7 @@ namespace Assets.Behaviours
                     );
 
                     var cardRect = dc.gameObject.GetComponent<RectTransform>();
-                    cardRect.anchorMin = new Vector2(marginWidthShare + cardWidthShare * i * (1 - Constants.HAND_CARD_OVERFLOW), 0);
-                    cardRect.anchorMax = new Vector2(marginWidthShare + cardWidthShare * (i * (1 - Constants.HAND_CARD_OVERFLOW) + 1), 1);
-                    cardRect.offsetMin = new Vector2(0, 0);
-                    cardRect.offsetMax = new Vector2(0, 0);
+                    cardRect.sizeDelta = new Vector2(cardWidth, cardHeight);
                     cardRect.localScale = new Vector3(1, 1, 1);
                 }
             }

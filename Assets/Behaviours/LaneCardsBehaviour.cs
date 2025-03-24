@@ -77,7 +77,7 @@ namespace Assets.Behaviours
 
             if (cardsToShow.Count > 0)
             {
-                var gameObjectWidthInShares = 4 * (1 + Constants.LANE_CARDS_GAP) + Constants.LANE_CARDS_GAP; // total width of lane cards in shares of card width
+                var gameObjectWidthInShares = Constants.MAX_LANE_CARDS * (1 + Constants.LANE_CARDS_GAP) + Constants.LANE_CARDS_GAP; // total width of lane cards in shares of card width
                 var maxWidth = laneRectTransform!.rect.width;
                 var cardWidth = maxWidth / gameObjectWidthInShares;
                 var cardHeight = cardWidth / Constants.CARD_ASPECT_RATIO;

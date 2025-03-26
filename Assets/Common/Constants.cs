@@ -18,6 +18,8 @@
             public const string MATCH_CREATE = "matchCreate";
             public const string MATCH_STATE_UPDATE = "matchStateUpdate";
             public const string MATCH_INFORMATION_UPDATE = "matchInformationUpdate";
+            public const string DECK_STATE_UPDATE = "deckStateUpdate";
+            public const string DISCARD_PILE_STATE_UPDATE = "discardPileStateUpdate";
             public const string END_TURN = "endTurn";
             public const string MOVE_CARD_TO_LANE = "moveCardToLane";
             public const string HIT_FACE = "hitFace";

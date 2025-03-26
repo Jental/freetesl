@@ -64,6 +64,7 @@
     <Compile Include="Assets\Enums\PlayerState.cs" />
     <Compile Include="Assets\Behaviours\LaneCardsBehaviour.cs" />
     <Compile Include="Assets\DTO\ServerMessageDTO.cs" />
+    <Compile Include="Assets\DTO\DeckStateUpdateDTO.cs" />
     <Compile Include="Assets\Mappers\GeneralMappers.cs" />
     <Compile Include="Assets\Enums\Effect.cs" />
     <Compile Include="Assets\DTO\PlayerMatchStateDTO.cs" />
@@ -77,10 +78,12 @@
     <Compile Include="Assets\Services\Networking.cs" />
     <Compile Include="Assets\DTO\MatchInformationDTO.cs" />
     <Compile Include="Assets\DTO\ApplyActionToCardDTO.cs" />
+    <Compile Include="Assets\Behaviours\DiscardPileButtonBehaviour.cs" />
     <Compile Include="Assets\DTO\MatchStateDTO.cs" />
     <Compile Include="Assets\Mappers\MatchMappers.cs" />
     <Compile Include="Assets\DTO\CardInstanceDTO.cs" />
     <Compile Include="Assets\DTO\GuidIdDTO.cs" />
+    <Compile Include="Assets\Behaviours\TooltipBehaviour.cs" />
     <Compile Include="Assets\DTO\LoginResponseDTO.cs" />
     <Compile Include="Assets\Behaviours\LoginPopupBehaviour.cs" />
     <Compile Include="Assets\Behaviours\MenuBehaviour.cs" />
@@ -91,6 +94,7 @@
     <Compile Include="Assets\DTO\MoveCardToLaneDTO.cs" />
     <Compile Include="Assets\Enums\CardDisplayMode.cs" />
     <Compile Include="Assets\Behaviours\HandBehaviour.cs" />
+    <Compile Include="Assets\Behaviours\DeckButtonBehaviour.cs" />
     <Compile Include="Assets\Enums\CardType.cs" />
     <Compile Include="Assets\Services\InitService.cs" />
     <Compile Include="Assets\Behaviours\LookingForOpponentBehaviour.cs" />
@@ -117,6 +121,7 @@
     <Compile Include="Assets\DTO\PlayerInformationDTO.cs" />
     <Compile Include="Assets\Services\GlobalStorage.cs" />
     <Compile Include="Assets\Behaviours\JoinMatchTopPanelBehaviour.cs" />
+    <Compile Include="Assets\DTO\DiscardPileStateUpdateDTO.cs" />
     <Compile Include="Assets\DTO\CardDTO.cs" />
     <Compile Include="Assets\Behaviours\OpenPopupButtonBehaviour.cs" />
     <Compile Include="Assets\DTO\CardInstanceStateDTO.cs" />

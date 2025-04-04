@@ -1,10 +1,9 @@
 #nullable enable
 
-using Assets.Common;
-using Assets.DTO;
+using Assets.Enums;
+using Assets.Models;
 using Assets.Services;
 using System;
-using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -12,55 +11,48 @@ namespace Assets.Behaviours
 {
     public class LaneBehaviour : MonoBehaviour, IDropHandler
     {
-        public LaneCardsBehaviour? LaneOwnCardsGameObject = null;
-        public LaneCardsBehaviour? LaneOpponentCardsGameObject = null;
-        public byte LaneID = Constants.LEFT_LANE_ID;
+        [SerializeField] private LaneCardsBehaviour? laneCardsGameObject;
+        [SerializeField] private LaneType laneID = LaneType.Left;
+        [SerializeField] private PlayerType playerType = PlayerType.Self;
+
+        private CardDragAndDropService? cardDragAndDropService;
+
+        public LaneType LaneID => laneID;
 
         protected void Start()
         {
+            if (laneCardsGameObject == null) throw new InvalidOperationException($"{laneCardsGameObject} gameObject is expected to be set");
+
+            cardDragAndDropService = GameObject.Find("CardDragAndDropService")?.GetComponent<CardDragAndDropService>() ?? throw new InvalidOperationException($"CardDragAndDropService gameObject is not found");
+
             _ = destroyCancellationToken;
 
-            if (LaneOwnCardsGameObject == null) throw new InvalidOperationException($"{LaneOwnCardsGameObject} gameObject is expected to be set");
-            if (LaneOpponentCardsGameObject == null) throw new InvalidOperationException($"{LaneOpponentCardsGameObject} gameObject is expected to be set");
-
-            LaneOwnCardsGameObject.Init(this);
-            LaneOpponentCardsGameObject.Init(this);
+            laneCardsGameObject.Init(this);
         }
 
         public void OnDrop(PointerEventData eventData)
         {
-            if (LaneOwnCardsGameObject == null) throw new InvalidOperationException($"{LaneOwnCardsGameObject} gameObject is expected to be set");
-
             Debug.Log("LaneBehaviour.OnDrop");
 
-            var dropped = eventData.pointerDrag;
-            var displayCard = dropped.GetComponent<CardBehaviour>();
-            var cardInstance =
-                displayCard.CardInstance
-                ?? throw new InvalidOperationException($"{displayCard.CardInstance} property of a dropped item is expected to be set");
-            
-            var currentParentHandComponent = displayCard.gameObject.GetComponentInParent<HandBehaviour>();
-            if (currentParentHandComponent == null)
-            {
-                displayCard.ReturnBack();
-                return;
-            }
+            var droppedCardGameObject = eventData.pointerDrag;
+            var droppedCardBehaviour = droppedCardGameObject.GetComponent<CardBehaviour>();
+            var droppedCardInstance =
+                droppedCardBehaviour.CardInstance
+                ?? throw new InvalidOperationException($"{droppedCardBehaviour.CardInstance} property of a dropped item is expected to be set");
+            (var droppedCardSource, _) = CardDragAndDropService.GetCardDragSource(droppedCardGameObject);
 
-            cardInstance.IsActive = false;
+            var targetCardSource = this.laneID == LaneType.Left ? CardDragSource.LeftLane : CardDragSource.RightLane;
+            bool targetIsOwn = this.playerType == PlayerType.Self;
 
-            LaneOwnCardsGameObject.AddCard(cardInstance);
-
-            Destroy(dropped.gameObject);
-            Destroy(dropped);
-
-            _ = Task.Run(async () =>
-            {
-                var dto = new MoveCardToLaneDTO {
-                    cardInstanceID = cardInstance.ID.ToString(),
-                    laneID = LaneID,
-                };
-                await Networking.Instance.SendMessageAsync(Constants.MethodNames.MOVE_CARD_TO_LANE, dto, destroyCancellationToken);
-            });
+            cardDragAndDropService!.CardDrop(
+                droppedCardInstance,
+                droppedCardSource,
+                droppedCardBehaviour,
+                targetCardSource,
+                targetIsOwn,
+                targetCardInstance: null,
+                destroyCancellationToken
+            );
         }
     }
 }

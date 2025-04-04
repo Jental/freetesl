@@ -2,6 +2,7 @@
 
 using Assets.Common;
 using Assets.DTO;
+using Assets.Enums;
 using Assets.Models;
 using Assets.Services;
 using System;
@@ -19,10 +20,10 @@ namespace Assets.Behaviours
         public CardBehaviour? CardPrefab = null;
 
         private List<CardInstance> cardsToShow = new List<CardInstance>();
-        private byte? laneID;
+        private LaneType? laneID;
         private RectTransform? laneRectTransform;
 
-        public byte LaneID => laneID ?? throw new InvalidOperationException("LaneCardsBehaviour: not initialized");
+        public LaneType LaneID => laneID ?? throw new InvalidOperationException("LaneCardsBehaviour: not initialized");
 
         public void Init(LaneBehaviour laneGameObject)
         {
@@ -34,8 +35,9 @@ namespace Assets.Behaviours
             }
         }
 
-        protected void OnDisable()
+        protected new void OnDisable()
         {
+            base.OnDisable();
             cardsToShow.Clear();
             changesArePresent = true;
         }
@@ -46,8 +48,8 @@ namespace Assets.Behaviours
             {
                 var cardsDTO = laneID switch
                 {
-                    Constants.LEFT_LANE_ID => dto.leftLaneCards,
-                    Constants.RIGHT_LANE_ID => dto.rightLaneCards,
+                    LaneType.Left => dto.leftLaneCards,
+                    LaneType.Right => dto.rightLaneCards,
                     _ => throw new InvalidOperationException($"Invalid lane id: '{laneID}'")
                 };
 

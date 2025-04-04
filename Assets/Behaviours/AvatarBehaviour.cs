@@ -1,6 +1,5 @@
 #nullable enable
 
-using Assets.Common;
 using Assets.DTO;
 using Assets.Enums;
 using Assets.Models;
@@ -25,6 +24,8 @@ namespace Assets.Behaviours
         public GameObject? runesGameObject = null;
         public RawImage? imageGameObject = null;
 
+        private CardDragAndDropService? cardDragAndDropService;
+
         private const float HEALTH_START_ANGLE = 152.25f;
         private const float HEALTH_STEP_ANGLE = 10.5f;
 
@@ -32,8 +33,18 @@ namespace Assets.Behaviours
         private byte runes = 0;
         private string? imageName = null;
 
-        protected void OnDisable()
+        protected new void Start()
         {
+            base.Start();
+
+            cardDragAndDropService = GameObject.Find("CardDragAndDropService")?.GetComponent<CardDragAndDropService>() ?? throw new InvalidOperationException($"CardDragAndDropService gameObject is not found");
+
+            _ = destroyCancellationToken;
+        }
+
+        protected new void OnDisable()
+        {
+            base.OnDisable();
             health = 0;
             runes = 0;
             imageName = null;
@@ -55,7 +66,7 @@ namespace Assets.Behaviours
             {
                 var angle = HEALTH_START_ANGLE - i * HEALTH_STEP_ANGLE;
                 var sector = Instantiate(healthSectorPrefab, new Vector3(0, 0, 0), Quaternion.Euler(new Vector3(0, 0, angle)));
-                sector!.transform.parent = healthBarGameObject.transform;
+                sector!.transform.parent = healthBarGameObject.transform;       
 
                 var sectorRect = sector.GetComponent<RectTransform>();
                 sectorRect.anchorMin = new Vector2(0, 0);
@@ -128,26 +139,22 @@ namespace Assets.Behaviours
         {
             Debug.Log("AvatarBehaviour.OnDrop");
 
-            var dropped = eventData.pointerDrag;
-            var displayCard = dropped.GetComponent<CardBehaviour>();
-            var cardInstance =
-                displayCard.CardInstance
-                ?? throw new InvalidOperationException($"{displayCard.CardInstance} property of a dropped item is expected to be set");
+            var droppedCardGameObject = eventData.pointerDrag;
+            var droppedCardBehaviour = droppedCardGameObject.GetComponent<CardBehaviour>();
+            var droppedCardInstance =
+                droppedCardBehaviour.CardInstance
+                ?? throw new InvalidOperationException($"{droppedCardBehaviour.CardInstance} property of a dropped item is expected to be set");
+            (var droppedCardSource, _) = CardDragAndDropService.GetCardDragSource(droppedCardGameObject);
 
-            var currentParentLaneCardsComponent = displayCard.gameObject.GetComponentInParent<LaneCardsBehaviour>();
-            if (currentParentLaneCardsComponent == null)
-            {
-                return;
-            }
-
-            _ = Task.Run(async () =>
-            {
-                var dto = new HitFaceDTO
-                {
-                    cardInstanceID = cardInstance.ID.ToString(),
-                };
-                await Networking.Instance.SendMessageAsync(Constants.MethodNames.HIT_FACE, dto, destroyCancellationToken);
-            });
+            cardDragAndDropService!.CardDrop(
+                droppedCardInstance,
+                droppedCardSource,
+                droppedCardBehaviour,
+                CardDragSource.Face,
+                targetIsOwn: playerType == PlayerType.Self,
+                targetCardInstance: null,
+                destroyCancellationToken
+            );
         }
     }
 }

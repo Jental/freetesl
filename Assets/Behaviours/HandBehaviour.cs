@@ -11,11 +11,12 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace Assets.Behaviours
 {
-    public class HandBehaviour : AWithMatchStateSubscribtionBehaviour
+    public class HandBehaviour : AWithMatchStateSubscribtionBehaviour, IDropHandler
     {
         public CardBehaviour? CardPrefab = null;
 
@@ -23,6 +24,7 @@ namespace Assets.Behaviours
         private RectTransform? rectTransform;
         private HorizontalLayoutGroup? hLayoutGroup;
         private RectTransform? canvasRectTransform;
+        private CardDragAndDropService? cardDragAndDropService;
 
         protected new void Start()
         {
@@ -36,10 +38,14 @@ namespace Assets.Behaviours
 
             var canvasGameObject = GameObject.Find("Canvas")?.GetComponent<Canvas>() ?? throw new InvalidOperationException($"Canvas gameObject is not found");
             canvasRectTransform = canvasGameObject.GetComponent<RectTransform>() ?? throw new InvalidOperationException($"Canvas RectTransform is not found");
+            cardDragAndDropService = GameObject.Find("CardDragAndDropService")?.GetComponent<CardDragAndDropService>() ?? throw new InvalidOperationException($"CardDragAndDropService gameObject is not found");
+
+            _ = destroyCancellationToken;
         }
 
-        protected void OnDisable()
+        protected new void OnDisable()
         {
+            base.OnDisable();
             cardsToShow.Clear();
             changesArePresent = true;
         }
@@ -112,6 +118,36 @@ namespace Assets.Behaviours
         protected override void VerifyFields()
         {
             if (this.CardPrefab == null) throw new InvalidOperationException($"{nameof(CardPrefab)} prefab is expected to be set");
+        }
+
+        public void OnDrop(PointerEventData eventData)
+        {
+            if (this.playerType != PlayerType.Self) return;
+
+            Debug.Log("LaneBehaviour.OnDrop");
+
+            var droppedCardGameObject = eventData.pointerDrag;
+            var droppedCardBehaviour = droppedCardGameObject.GetComponent<CardBehaviour>();
+            var droppedCardInstance =
+                droppedCardBehaviour.CardInstance
+                ?? throw new InvalidOperationException($"{droppedCardBehaviour.CardInstance} property of a dropped item is expected to be set");
+            (var droppedCardSource, _) = CardDragAndDropService.GetCardDragSource(droppedCardGameObject);
+
+            cardDragAndDropService!.CardDrop(
+                droppedCardInstance,
+                droppedCardSource,
+                droppedCardBehaviour,
+                CardDragSource.Hand,
+                targetIsOwn: playerType == PlayerType.Self,
+                targetCardInstance: null,
+                destroyCancellationToken
+            );
+        }
+
+        public void AddCard(CardInstance cardInstance)
+        {
+            cardsToShow.Add(cardInstance);
+            changesArePresent = true;
         }
     }
 }

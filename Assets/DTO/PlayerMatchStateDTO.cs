@@ -12,5 +12,6 @@ namespace Assets.DTO
         public CardInstanceStateDTO[] hand;
         public CardInstanceStateDTO[] leftLaneCards;
         public CardInstanceStateDTO[] rightLaneCards;
+        public string cardInstanceWaitingForAction; // guid
     }
 }

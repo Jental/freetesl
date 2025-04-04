@@ -15,9 +15,10 @@ namespace Assets.Behaviours
 {
     public abstract class AWithMatchStateSubscribtionBehaviour : MonoBehaviour
     {
-        protected List<Action> unsubscribers = new List<Action>(); // TODO: call them 
+        protected List<Action> unsubscribers = new List<Action>();
         protected bool changesArePresent = false;
         public PlayerType playerType = PlayerType.Self;
+        protected bool isEnabled = false;
 
         protected void Start()
         {
@@ -27,14 +28,31 @@ namespace Assets.Behaviours
             _ = destroyCancellationToken;
         }
 
+        protected void OnDestroy()
+        {
+            foreach (var uss in unsubscribers)
+            {
+                uss();
+            }
+        }
+
         protected void Update()
         {
-            if (!changesArePresent) return;
+            if (!changesArePresent || !isEnabled) return;
+            changesArePresent = false;
 
             VerifyFields();
             UpdateImpl();
+        }
 
-            changesArePresent = false;
+        protected void OnEnable()
+        {
+            isEnabled = true;
+        }
+
+        protected void OnDisable()
+        {
+            isEnabled = false;
         }
 
         protected abstract void VerifyFields();
@@ -43,6 +61,8 @@ namespace Assets.Behaviours
 
         protected async Task OnMatchStateUpdateAsync(string methodName, string message, CancellationToken cancellationToken)
         {
+            if (!isEnabled) return;
+
             try
             {
                 ServerMessageDTO<MatchStateDTO> dto = JsonUtility.FromJson<ServerMessageDTO<MatchStateDTO>>(message);
@@ -62,7 +82,7 @@ namespace Assets.Behaviours
                 return;
             }
 
-                changesArePresent = true;
+            changesArePresent = true;
         }
     }
 }

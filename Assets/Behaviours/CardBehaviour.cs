@@ -1,14 +1,11 @@
 ﻿#nullable enable
 
-using Assets.Common;
-using Assets.DTO;
 using Assets.Enums;
 using Assets.Models;
 using Assets.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -21,6 +18,7 @@ namespace Assets.Behaviours
         private CardInstance? cardInstance = null;
         private CardDisplayMode displayMode = CardDisplayMode.Cover;
         private bool isFloating = false;
+        private bool isReturnBackRequested = false;
 
         [SerializeField] private TextMeshProUGUI? nameText;
         [SerializeField] private TextMeshProUGUI? descriptionText;
@@ -45,6 +43,7 @@ namespace Assets.Behaviours
         [SerializeField] private GameObject? coverGameObject;
 
         private Canvas? canvasGameObject;
+        private CardDragAndDropService? cardDragAndDropService;
         private LineRenderer? actionLineGameObject;
 
         /// <summary>
@@ -89,6 +88,7 @@ namespace Assets.Behaviours
 
             canvasGameObject = GameObject.Find("Canvas")?.GetComponent<Canvas>() ?? throw new InvalidOperationException($"Canvas gameObject is not found");
             actionLineGameObject = GameObject.Find("ActionLine")?.GetComponent<LineRenderer>() ?? throw new InvalidOperationException($"ActionLine gameObject is not found");
+            cardDragAndDropService = GameObject.Find("CardDragAndDropService")?.GetComponent<CardDragAndDropService>() ?? throw new InvalidOperationException($"CardDragAndDropService gameObject is not found");
 
             modesToGameObjects = new Dictionary<CardDisplayMode, GameObject[]>
             {
@@ -137,6 +137,8 @@ namespace Assets.Behaviours
         protected void Update()
         {
             if (cardInstance == null) throw new InvalidOperationException($"CardBehaviour: Not initialized. Call {nameof(UpdateDisplaySettings)} method.");
+            if (rectTransform == null) throw new InvalidOperationException("RectTransform component is expected to be added");
+            if (actionLineGameObject == null) throw new InvalidOperationException($"{nameof(actionLineGameObject)} gameObject is expected to be set");
 
             foreach (var go in allChildrenGameObjects)
             {
@@ -165,39 +167,22 @@ namespace Assets.Behaviours
                 bool withCover = cardInstance.Effects.Contains(Effect.Cover);
                 coverGameObject!.SetActive(withCover && gameObjectsForCurrentMode.Contains(coverGameObject));
             }
-        }
 
-        private static CardDragSource GetCardDragSource(GameObject draggedCard)
-        {
-            var parentHandComponent = draggedCard.GetComponentInParent<HandBehaviour>();
-            var parentLaneCardsComponent = draggedCard.GetComponentInParent<LaneCardsBehaviour>();
+            if (isReturnBackRequested)
+            {
+                isReturnBackRequested = false;
 
-            if (parentHandComponent != null)
-            {
-                return
-                    parentHandComponent.playerType == PlayerType.Self
-                    ? CardDragSource.Hand
-                    : CardDragSource.Other; // opponent's hand
-            }
-            else if (parentLaneCardsComponent != null)
-            {
-                if (parentLaneCardsComponent.playerType != PlayerType.Self)
+                if (isDraggedAsCard)
                 {
-                    return CardDragSource.Other; // opponent's lane
+                    if (this.anchoredPoitionBeforeDrag != null)
+                    {
+                        rectTransform.anchoredPosition = anchoredPoitionBeforeDrag.Value;
+                    }
                 }
                 else
                 {
-                    return parentLaneCardsComponent.LaneID switch
-                    {
-                        Constants.LEFT_LANE_ID => CardDragSource.LeftLane,
-                        Constants.RIGHT_LANE_ID => CardDragSource.RightLane,
-                        _ => CardDragSource.Other,
-                    };
+                    actionLineGameObject.enabled = false;
                 }
-            }
-            else
-            {
-                return CardDragSource.Other;
             }
         }
 
@@ -233,11 +218,11 @@ namespace Assets.Behaviours
                 return;
             }
 
-            var cardDragSource = GetCardDragSource(gameObject);
+            (var cardDragSource, bool isOwn) = CardDragAndDropService.GetCardDragSource(gameObject);
 
-            if (cardDragSource == CardDragSource.Other)
+            if (!isOwn)
             {
-                Debug.Log("CardBehaviour.OnBeginDrag: aborted (invalid drag source)");
+                Debug.Log("CardBehaviour.OnBeginDrag: only own cards can be dragged");
                 eventData.pointerDrag = null;
                 return;
             }
@@ -254,7 +239,7 @@ namespace Assets.Behaviours
 
             // TODO: I think we should have 3 drag modes: draggedAsCard, ray, just apply (any drag target) - for supports and some actions
             //       for now, let's assume applying = dragging to lane
-            isDraggedAsCard = cardDragSource == CardDragSource.Hand && cardInstance.Card.Type == CardType.Creature;
+            isDraggedAsCard = cardInstance.Card.Type == CardType.Creature && (cardDragSource == CardDragSource.Hand || cardDragSource == CardDragSource.Prophecy);
 
             if (isDraggedAsCard)
             {
@@ -287,20 +272,8 @@ namespace Assets.Behaviours
 
         public void ReturnBack()
         {
-            if (rectTransform == null) throw new InvalidOperationException("RectTransform component is expected to be added");
-            if (actionLineGameObject == null) throw new InvalidOperationException($"{nameof(actionLineGameObject)} gameObject is expected to be set");
-
-            if (isDraggedAsCard)
-            {
-                if (this.anchoredPoitionBeforeDrag != null)
-                {
-                    rectTransform.anchoredPosition = anchoredPoitionBeforeDrag.Value;
-                }
-            }
-            else
-            {
-                actionLineGameObject.enabled = false;
-            }
+            Debug.Log("CardBehaviour.ReturnBack");
+            isReturnBackRequested = true;
         }
 
         public void OnDrop(PointerEventData eventData)
@@ -308,85 +281,24 @@ namespace Assets.Behaviours
             Debug.Log("CardBehaviour.OnDrop");
             if (cardInstance == null) throw new InvalidOperationException($"{nameof(cardInstance)} field is expected to be filled");
 
-            // TODO: this method should be updated with actions introduction
+            var droppedCardGameObject = eventData.pointerDrag;
+            var droppedCardBehaviour = droppedCardGameObject.GetComponent<CardBehaviour>();
+            var droppedCardInstance =
+                droppedCardBehaviour.cardInstance
+                ?? throw new InvalidOperationException($"{droppedCardBehaviour.cardInstance} property of a dropped item is expected to be set");
+            (var droppedCardSource, _) = CardDragAndDropService.GetCardDragSource(droppedCardGameObject);
 
-            var dropped = eventData.pointerDrag;
+            (var targetCardSource, bool targetIsOwn) = CardDragAndDropService.GetCardDragSource(this.gameObject);
 
-            var sourceCardBehaviour = dropped.GetComponent<CardBehaviour>();
-            var sourceCardInstance =
-                sourceCardBehaviour.cardInstance
-                ?? throw new InvalidOperationException($"{sourceCardBehaviour.cardInstance} property of a dropped item is expected to be set");
-
-            switch (sourceCardInstance.Card.Type)
-            {
-                case CardType.Creature:
-                    OnCreatureCardDrop(dropped, sourceCardBehaviour, sourceCardInstance);
-                    break;
-                case CardType.Action:
-                    OnActionCardDrop(dropped, sourceCardInstance);
-                    break;
-            }
-        }
-
-        private void OnCreatureCardDrop(GameObject sourceCardGameObject, CardBehaviour sourceCardBehaviour, CardInstance sourceCardInstance)
-        {
-            var cardDragSource = GetCardDragSource(sourceCardGameObject);
-            if (cardDragSource != CardDragSource.LeftLane && cardDragSource != CardDragSource.RightLane)
-            {
-                Debug.Log("CardBehaviour.OnCreatureCardDrop: drop not accepted - for creatures only lane sources are allowed");
-                sourceCardBehaviour.ReturnBack();
-                return;
-            }
-
-            var sourceParentLaneCardsComponent = sourceCardGameObject.GetComponentInParent<LaneCardsBehaviour>();
-            var targetParentLaneCardsComponent = gameObject.GetComponentInParent<LaneCardsBehaviour>();
-
-            if (targetParentLaneCardsComponent.playerType != PlayerType.Opponent)
-            {
-                Debug.Log("CardBehaviour.OnCreatureCardDrop: drop not accepted - only opponent cards are allowed");
-                sourceCardBehaviour.ReturnBack();
-                return;
-            }
-
-            if (targetParentLaneCardsComponent.LaneID != sourceParentLaneCardsComponent.LaneID)
-            {
-                Debug.Log("CardBehaviour.OnCreatureCardDrop: drop not accepted - other lane");
-                sourceCardBehaviour.ReturnBack();
-                return;
-            }
-
-            // cardInstance!.Health = cardInstance.Health - sourceCardInstance.Power;
-            cardInstance!.IsActive = false;
-
-            _ = Task.Run(async () =>
-            {
-                var dto = new HitCardDTO
-                {
-                    cardInstanceID = sourceCardInstance.ID.ToString(),
-                    opponentCardInstanceID = cardInstance.ID.ToString(),
-                };
-                await Networking.Instance.SendMessageAsync(Constants.MethodNames.HIT_CARD, dto, destroyCancellationToken);
-            });
-        }
-
-        private void OnActionCardDrop(GameObject sourceCardGameObject, CardInstance sourceCardInstance)
-        {
-            var cardDragSource = GetCardDragSource(sourceCardGameObject);
-            if (cardDragSource != CardDragSource.Hand)
-            {
-                Debug.Log("CardBehaviour.OnActionCardDrop: drop not accepted - for actions only lane sources are allowed");
-                return;
-            }
-
-            _ = Task.Run(async () =>
-            {
-                var dto = new ApplyActionToCardDTO
-                {
-                    cardInstanceID = sourceCardInstance.ID.ToString(),
-                    opponentCardInstanceID = cardInstance!.ID.ToString(),
-                };
-                await Networking.Instance.SendMessageAsync(Constants.MethodNames.APPLY_ACTION_TO_CARD, dto, destroyCancellationToken);
-            });
+            cardDragAndDropService!.CardDrop(
+                droppedCardInstance,
+                droppedCardSource,
+                droppedCardBehaviour,
+                targetCardSource,
+                targetIsOwn,
+                this.cardInstance,
+                destroyCancellationToken
+            );
         }
     }
 }

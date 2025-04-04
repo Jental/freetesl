@@ -5,6 +5,7 @@
         Hand,
         LeftLane,
         RightLane,
-        Other
+        Prophecy,
+        Face,
     }
 }

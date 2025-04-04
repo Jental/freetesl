@@ -15,8 +15,9 @@ namespace Assets.Behaviours
         private int mana = 0;
         private int maxMana = 0;
 
-        protected void OnDisable()
+        protected new void OnDisable()
         {
+            base.OnDisable();
             mana = 0;
             maxMana = 0;
             changesArePresent = true;

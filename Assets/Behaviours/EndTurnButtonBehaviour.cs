@@ -22,8 +22,9 @@ namespace Assets.Behaviours
         private bool isPlayersTurn = false;
         private bool hasTurnChangedSinceLastUpdate = false;
 
-        protected void OnDisable()
+        protected new void OnDisable()
         {
+            base.OnDisable();
             isPlayersTurn = false;
             hasTurnChangedSinceLastUpdate = false;
             changesArePresent = true;

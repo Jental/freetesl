@@ -7,8 +7,6 @@
         public const float LANE_CARDS_GAP = 0.3f; // share of card width
         public const int MAX_HAND_CARDS = 10;
         public const int MAX_LANE_CARDS = 4;
-        public const byte LEFT_LANE_ID = 0;
-        public const byte RIGHT_LANE_ID = 1;
         public const int BACKEND_POLLING_INTERVAL = 5; // in sec
 
         public static class MethodNames
@@ -22,9 +20,12 @@
             public const string DISCARD_PILE_STATE_UPDATE = "discardPileStateUpdate";
             public const string END_TURN = "endTurn";
             public const string MOVE_CARD_TO_LANE = "moveCardToLane";
+            public const string DRAW_CARD_TO_LANE = "drawCardToLane";
             public const string HIT_FACE = "hitFace";
             public const string HIT_CARD = "hitCard";
             public const string APPLY_ACTION_TO_CARD = "applyActionToCard";
+            public const string DRAW_CARD = "drawCard";
+            public const string WAITED_USER_ACTIONS_COMPLETED = "waitedUserActionsCompleted";
             public const string MATCH_END = "matchEnd";
             public const string CONCEDE = "concede";
             public const string LOGIN = "login";

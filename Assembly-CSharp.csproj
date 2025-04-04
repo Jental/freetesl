@@ -67,6 +67,7 @@
     <Compile Include="Assets\DTO\DeckStateUpdateDTO.cs" />
     <Compile Include="Assets\Mappers\GeneralMappers.cs" />
     <Compile Include="Assets\Enums\Effect.cs" />
+    <Compile Include="Assets\Services\CardDragAndDropService.cs" />
     <Compile Include="Assets\DTO\PlayerMatchStateDTO.cs" />
     <Compile Include="Assets\Behaviours\PlayerListItemBehaviour.cs" />
     <Compile Include="Assets\Behaviours\ConfirmationDialogBehaviour.cs" />
@@ -76,9 +77,11 @@
     <Compile Include="Assets\DTO\MatchCreateDTO.cs" />
     <Compile Include="Assets\Enums\AppCanvas.cs" />
     <Compile Include="Assets\Services\Networking.cs" />
+    <Compile Include="Assets\DTO\DrawCardToLaneDTO.cs" />
     <Compile Include="Assets\DTO\MatchInformationDTO.cs" />
     <Compile Include="Assets\DTO\ApplyActionToCardDTO.cs" />
     <Compile Include="Assets\Behaviours\DiscardPileButtonBehaviour.cs" />
+    <Compile Include="Assets\DTO\ShowCardActionSelectDTO.cs" />
     <Compile Include="Assets\DTO\MatchStateDTO.cs" />
     <Compile Include="Assets\Mappers\MatchMappers.cs" />
     <Compile Include="Assets\DTO\CardInstanceDTO.cs" />
@@ -122,8 +125,10 @@
     <Compile Include="Assets\Services\GlobalStorage.cs" />
     <Compile Include="Assets\Behaviours\JoinMatchTopPanelBehaviour.cs" />
     <Compile Include="Assets\DTO\DiscardPileStateUpdateDTO.cs" />
+    <Compile Include="Assets\Behaviours\ProphecyCardBehaviour.cs" />
     <Compile Include="Assets\DTO\CardDTO.cs" />
     <Compile Include="Assets\Behaviours\OpenPopupButtonBehaviour.cs" />
+    <Compile Include="Assets\Enums\LaneType.cs" />
     <Compile Include="Assets\DTO\CardInstanceStateDTO.cs" />
     <Compile Include="Assets\Behaviours\PlayerListBehaviour.cs" />
     <Compile Include="Assets\Models\CardDragSource.cs" />

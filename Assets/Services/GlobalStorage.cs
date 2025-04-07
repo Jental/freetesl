@@ -21,7 +21,7 @@ namespace Assets.Services
         private List<Action> unsubscribers = new List<Action>();
         private bool disposedValue;
 
-        private PlayerMatchStateDTO? playerMatchStateDTO = null;
+        private MatchStateDTO? matchStateDTO = null;
         private Dictionary<int, CardScriptableObject>? allCardScriptableObjects = null;
         private Dictionary<int, Card> allCards = new Dictionary<int, Card>();
         private Dictionary<Guid, CardInstance> allCardInstances = new Dictionary<Guid, CardInstance>();
@@ -64,8 +64,8 @@ namespace Assets.Services
             allCardScriptableObjects = Resources.LoadAll<CardScriptableObject>("CardObjects").ToDictionary(c => c.id, c => c);
         }
 
-        public PlayerMatchStateDTO PlayerMatchStateDTO =>
-            playerMatchStateDTO ?? throw new InvalidOperationException($"Expected not null {nameof(playerMatchStateDTO)}");
+        public MatchStateDTO MatchStateDTO =>
+            matchStateDTO ?? throw new InvalidOperationException($"Expected not null {nameof(matchStateDTO)}");
 
         public Dictionary<Guid, CardInstance> AllCardInstances => allCardInstances;
 
@@ -97,9 +97,9 @@ namespace Assets.Services
             {
                 ServerMessageDTO<MatchStateDTO> dto = JsonUtility.FromJson<ServerMessageDTO<MatchStateDTO>>(message);
 
-                if (dto.body?.player != null)
+                if (dto.body != null)
                 {
-                    this.playerMatchStateDTO = dto.body.player;
+                    this.matchStateDTO = dto.body;
                 }
             }
             catch (Exception e)

@@ -20,6 +20,7 @@ namespace Assets.Behaviours
         public CanvasService? CanvasService = null;
 
         private bool isPlayersTurn = false;
+        private bool waitingForOtherPlayerAction = false;
         private bool hasTurnChangedSinceLastUpdate = false;
 
         protected new void OnDisable()
@@ -39,10 +40,11 @@ namespace Assets.Behaviours
             await Networking.Instance.SendMessageAsync(Constants.MethodNames.END_TURN, destroyCancellationToken);
         }
 
-        protected override Task OnMatchStateUpdateAsync(PlayerMatchStateDTO dto, bool isPlayersTurn, CancellationToken cancellationToken)
+        protected override Task OnMatchStateUpdateAsync(PlayerMatchStateDTO dto, MatchStateDTO matchStateDTO, bool isPlayersTurn, CancellationToken cancellationToken)
         {
             this.hasTurnChangedSinceLastUpdate = this.hasTurnChangedSinceLastUpdate || this.isPlayersTurn != isPlayersTurn;
             this.isPlayersTurn = isPlayersTurn;
+            this.waitingForOtherPlayerAction = matchStateDTO.waitingForOtherPlayerAction;
             return Task.CompletedTask;
         }
 
@@ -55,7 +57,10 @@ namespace Assets.Behaviours
                 Destroy(dc);
             }
 
-            var playButtonPrefab = isPlayersTurn && playerType == PlayerType.Self ? ActivePlayButtonPrefab : InactivePlayButtonPrefab;
+            var playButtonPrefab =
+                isPlayersTurn && playerType == PlayerType.Self && !waitingForOtherPlayerAction
+                ? ActivePlayButtonPrefab
+                : InactivePlayButtonPrefab;
             var playButton = Instantiate(playButtonPrefab, new Vector3(0, 0, 0), Quaternion.identity);
             playButton!.transform.parent = gameObject.transform;
 

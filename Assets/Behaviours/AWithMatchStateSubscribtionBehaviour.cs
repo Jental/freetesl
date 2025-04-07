@@ -57,7 +57,7 @@ namespace Assets.Behaviours
 
         protected abstract void VerifyFields();
         protected abstract void UpdateImpl();
-        protected abstract Task OnMatchStateUpdateAsync(PlayerMatchStateDTO dto, bool isPlayersTurn, CancellationToken cancellationToken);
+        protected abstract Task OnMatchStateUpdateAsync(PlayerMatchStateDTO dto, MatchStateDTO matchStateDTO, bool isPlayersTurn, CancellationToken cancellationToken);
 
         protected async Task OnMatchStateUpdateAsync(string methodName, string message, CancellationToken cancellationToken)
         {
@@ -74,7 +74,7 @@ namespace Assets.Behaviours
                     _ => throw new InvalidOperationException($"Unsupported {nameof(playerType)}: '{playerType}'")
                 }; 
 
-                await OnMatchStateUpdateAsync(playerState, isPlayersTurn, cancellationToken);
+                await OnMatchStateUpdateAsync(playerState, dto.body, isPlayersTurn, cancellationToken);
             }
             catch (Exception e)
             {

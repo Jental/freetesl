@@ -6,6 +6,7 @@ using Assets.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -211,6 +212,15 @@ namespace Assets.Behaviours
             if (canvasGameObject == null) throw new InvalidOperationException($"{nameof(canvasGameObject)} gameObject is expected to be set");
             if (actionLineGameObject == null) throw new InvalidOperationException($"{nameof(actionLineGameObject)} gameObject is expected to be set");
 
+            var matchStateDTO = GlobalStorage.Instance.MatchStateDTO;
+
+            if (matchStateDTO.waitingForOtherPlayerAction)
+            {
+                Debug.Log("CardBehaviour.OnBeginDrag: aborted (waiting for opponent action)");
+                eventData.pointerDrag = null;
+                return;
+            }
+
             if (cardInstance == null || !cardInstance.IsActive)
             {
                 Debug.Log("CardBehaviour.OnBeginDrag: aborted (card not active)");
@@ -229,7 +239,7 @@ namespace Assets.Behaviours
 
             if (cardDragSource == CardDragSource.Hand)
             {
-                if (cardInstance.Cost > GlobalStorage.Instance.PlayerMatchStateDTO.mana)
+                if (cardInstance.Cost > matchStateDTO.player.mana)
                 {
                     Debug.Log("CardBehaviour.OnBeginDrag: aborted (not enough mana)");
                     eventData.pointerDrag = null;

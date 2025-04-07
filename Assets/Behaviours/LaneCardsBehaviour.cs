@@ -42,7 +42,7 @@ namespace Assets.Behaviours
             changesArePresent = true;
         }
 
-        protected override Task OnMatchStateUpdateAsync(PlayerMatchStateDTO dto, bool isPlayersTurn, CancellationToken cancellationToken)
+        protected override Task OnMatchStateUpdateAsync(PlayerMatchStateDTO dto, MatchStateDTO _, bool isPlayersTurn, CancellationToken cancellationToken)
         {
             try
             {

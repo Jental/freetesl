@@ -52,7 +52,7 @@ namespace Assets.Behaviours
             if (cardPrefab == null) throw new InvalidOperationException($"ProphecyCardBehaviour: {nameof(cardPrefab)} prefab is not set");
         }
 
-        protected override Task OnMatchStateUpdateAsync(PlayerMatchStateDTO dto, bool isPlayersTurn, CancellationToken cancellationToken)
+        protected override Task OnMatchStateUpdateAsync(PlayerMatchStateDTO dto, MatchStateDTO _, bool isPlayersTurn, CancellationToken cancellationToken)
         {
             Debug.Log("ProphecyCardBehaviour.OnMatchStateUpdateAsync");
 

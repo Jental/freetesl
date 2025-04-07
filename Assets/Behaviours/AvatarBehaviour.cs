@@ -113,7 +113,7 @@ namespace Assets.Behaviours
             if (this.imageGameObject == null) throw new InvalidOperationException($"{nameof(imageGameObject)} gameObject is expected to be set");
         }
 
-        protected override Task OnMatchStateUpdateAsync(PlayerMatchStateDTO dto, bool isPlayersTurn, CancellationToken cancellationToken)
+        protected override Task OnMatchStateUpdateAsync(PlayerMatchStateDTO dto, MatchStateDTO _, bool isPlayersTurn, CancellationToken cancellationToken)
         {
             this.health = dto.health;
             this.runes = dto.runes;

@@ -8,5 +8,6 @@ namespace Assets.DTO
         public PlayerMatchStateDTO player;
         public PlayerMatchStateDTO opponent;
         public bool ownTurn;
+        public bool waitingForOtherPlayerAction;
     }
 }

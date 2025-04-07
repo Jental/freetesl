@@ -34,7 +34,7 @@ namespace Assets.Behaviours
                 dc.transform.parent = gameObject.transform;
                 dc.UpdateDisplaySettings(
                     cardToShow,
-                    CardDisplayMode.Full,
+                    playerType == PlayerType.Self ? CardDisplayMode.Full : CardDisplayMode.Cover,
                     isFloating: false
                 );
 

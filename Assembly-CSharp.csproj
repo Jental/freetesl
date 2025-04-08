@@ -89,6 +89,7 @@
     <Compile Include="Assets\Behaviours\TooltipBehaviour.cs" />
     <Compile Include="Assets\DTO\LoginResponseDTO.cs" />
     <Compile Include="Assets\Behaviours\LoginPopupBehaviour.cs" />
+    <Compile Include="Assets\Behaviours\RingBehaviour.cs" />
     <Compile Include="Assets\Behaviours\MenuBehaviour.cs" />
     <Compile Include="Assets\Behaviours\AvatarBehaviour.cs" />
     <Compile Include="Assets\Enums\ServerErrorCode.cs" />

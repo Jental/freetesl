@@ -26,6 +26,7 @@
             public const string APPLY_ACTION_TO_CARD = "applyActionToCard";
             public const string DRAW_CARD = "drawCard";
             public const string WAITED_USER_ACTIONS_COMPLETED = "waitedUserActionsCompleted";
+            public const string USE_RING = "useRing";
             public const string MATCH_END = "matchEnd";
             public const string CONCEDE = "concede";
             public const string LOGIN = "login";

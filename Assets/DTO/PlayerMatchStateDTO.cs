@@ -13,5 +13,7 @@ namespace Assets.DTO
         public CardInstanceStateDTO[] leftLaneCards;
         public CardInstanceStateDTO[] rightLaneCards;
         public string cardInstanceWaitingForAction; // guid
+        public byte ringGemCount;
+        public bool isRingActive;
     }
 }

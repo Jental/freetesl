@@ -7,5 +7,7 @@ namespace Assets.DTO
     {
         public PlayerInformationDTO player;
         public PlayerInformationDTO opponent;
+        public bool hasRing;
+        public bool opponentHasRing;
     }
 }

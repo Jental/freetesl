@@ -71,6 +71,7 @@
     <Compile Include="Assets\DTO\PlayerMatchStateDTO.cs" />
     <Compile Include="Assets\Behaviours\PlayerListItemBehaviour.cs" />
     <Compile Include="Assets\Behaviours\ConfirmationDialogBehaviour.cs" />
+    <Compile Include="Assets\Behaviours\AListItemBehaviour.cs" />
     <Compile Include="Assets\Behaviours\ExitConfirmationDialogBehaviour.cs" />
     <Compile Include="Assets\Behaviours\ConcedeConfirmationDialogBehaviour.cs" />
     <Compile Include="Assets\Models\Player.cs" />
@@ -96,6 +97,7 @@
     <Compile Include="Assets\Behaviours\ManaDisplayBehaviour.cs" />
     <Compile Include="Assets\Models\CardScriptableObject.cs" />
     <Compile Include="Assets\DTO\MoveCardToLaneDTO.cs" />
+    <Compile Include="Assets\Behaviours\AListBehaviour.cs" />
     <Compile Include="Assets\Enums\CardDisplayMode.cs" />
     <Compile Include="Assets\Behaviours\HandBehaviour.cs" />
     <Compile Include="Assets\Behaviours\DeckButtonBehaviour.cs" />

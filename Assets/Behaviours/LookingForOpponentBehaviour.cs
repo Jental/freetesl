@@ -66,9 +66,9 @@ namespace Assets.Behaviours
                 buttonsGameObject!.SetActive(true);
 
                 bool matchCanBeStarted =
-                    playerListGameObject!.SelectedPlayer != null
-                    && playerListGameObject!.SelectedPlayer.ID != GlobalStorage.Instance.PlayerID
-                    && playerListGameObject.SelectedPlayer.State == PlayerState.LookingForOpponent;
+                    playerListGameObject!.SelectedModel != null
+                    && playerListGameObject!.SelectedModel.ID != GlobalStorage.Instance.PlayerID
+                    && playerListGameObject.SelectedModel.State == PlayerState.LookingForOpponent;
                 startMatchButtonGameObject!.gameObject.SetActive(matchCanBeStarted);
             }
         }
@@ -119,7 +119,7 @@ namespace Assets.Behaviours
             if (playerListGameObject == null) throw new InvalidOperationException($"{nameof(playerListGameObject)} game object is expected to be set");
             Debug.Log("LookingForOpponentBehaviour.OnStartMatchButtonClick");
 
-            var opponentID = playerListGameObject.SelectedPlayer?.ID ?? throw new InvalidOperationException("At least one player is expected to be selected");
+            var opponentID = playerListGameObject.SelectedModel?.ID ?? throw new InvalidOperationException("At least one player is expected to be selected");
 
             _ = Task.Run(async () =>
             {

@@ -87,7 +87,7 @@ GameObject:
   - component: {fileID: 2032820054898036652}
   - component: {fileID: 2300760463108878869}
   - component: {fileID: 2917385948252276764}
-  - component: {fileID: 4142717432727144435}
+  - component: {fileID: 6340608783485838016}
   m_Layer: 5
   m_Name: PlayerListPlayer
   m_TagString: Untagged
@@ -158,7 +158,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &4142717432727144435
+--- !u!114 &6340608783485838016
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -167,10 +167,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1588410207039385843}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6184d18255b7df24c8adbc7196c030cd, type: 3}
+  m_Script: {fileID: 11500000, guid: 006954955111b8749b07a5220dd250cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsSelected: 0
   AvatarImage: {fileID: 5260348190840319721}
   StateImage: {fileID: 6872505962553213522}
   NameText: {fileID: 325613407557188850}

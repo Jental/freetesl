@@ -14,23 +14,13 @@ using UnityEngine;
 
 namespace Assets.Behaviours
 {
-    public class PlayerListBehaviour : MonoBehaviour
+    public class PlayerListBehaviour : AListBehaviour<Player, PlayerListItemBehaviour>
     {
-        [SerializeField] private GameObject? ContentGameObject = null;
-        [SerializeField] private PlayerListItemBehaviour? ListItemPrefab = null;
-
-        private Player[] playersToShow = Array.Empty<Player>();
-        private int? selectedPlayerIdx;
-
-        private List<PlayerListItemBehaviour> itemGameObjects = new List<PlayerListItemBehaviour>();
-        private bool beChangesArePresent = false;
-        private bool changesArePresent = false;
         private Timer? playersPollingTimer = null;
 
-        protected void Start()
+        protected new void Start()
         {
-            if (this.ContentGameObject == null) throw new InvalidOperationException($"{nameof(ContentGameObject)} game object is expected to be set");
-            if (this.ListItemPrefab == null) throw new InvalidOperationException($"{nameof(ListItemPrefab)} prefab is expected to be set");
+            base.Start();
 
             _ = destroyCancellationToken;
         }
@@ -44,60 +34,10 @@ namespace Assets.Behaviours
             }
         }
 
-        protected void OnDisable()
+        protected new void OnDisable()
         {
-            Debug.Log("PlayerListBehaviour.OnDisable");
-            selectedPlayerIdx = null;
+            base.OnDisable();
             StopPlayerListPolling().Wait();
-        }
-
-        protected void Update()
-        {
-            if (beChangesArePresent)
-            {
-                beChangesArePresent = false;
-
-                var children = ContentGameObject!.transform.GetComponentsInChildren<PlayerListItemBehaviour>();
-                foreach (var dc in children)
-                {
-                    Destroy(dc.gameObject);
-                    Destroy(dc);
-                }
-                itemGameObjects.Clear();
-
-                for (int i = 0; i < playersToShow.Length; i++)
-                {
-                    var player = playersToShow[i];
-                    var dc =
-                        Instantiate(ListItemPrefab, new Vector3(0, 0, 0), Quaternion.identity)
-                        ?? throw new InvalidOperationException("Failed to instantiate a player list item prefab");
-                    dc.transform.parent = ContentGameObject.transform;
-                    dc.Player = player;
-                    var savedIdx = i;
-                    dc.OnClick = () => OnItemClick(savedIdx);
-                    dc.GetComponent<RectTransform>().localScale = new Vector3(1, 1, 1);
-                    itemGameObjects.Add(dc);
-                }
-            }
-
-            if (changesArePresent)
-            {
-                for (int i = 0; i < itemGameObjects.Count; i++)
-                {
-                    var igo = itemGameObjects[i];
-                    igo.IsSelected = i == selectedPlayerIdx;
-                }
-            }
-        }
-
-        public Player? SelectedPlayer =>
-            selectedPlayerIdx == null || selectedPlayerIdx >= playersToShow.Length 
-            ? null
-            : playersToShow[selectedPlayerIdx.Value];
-
-        public void DeselectPlayer()
-        {
-            selectedPlayerIdx = null;
         }
 
         private void StartPlayerListPolling(CancellationToken cancellationToken)
@@ -143,19 +83,7 @@ namespace Assets.Behaviours
                 return;
             }
 
-            var newPlayersToShow = dtos.items.Select(GeneralMappers.MapFromPlayerInformationDTO).ToArray();
-            beChangesArePresent = !playersToShow.SequenceEqual(newPlayersToShow) || playersToShow.Length != itemGameObjects.Count; // for case of unsync happened
-            playersToShow = newPlayersToShow;
-        }
-
-        private void OnItemClick(int idx)
-        {
-            Debug.Log($"PlayerListBehaviour: OnItemClick: {idx}");
-            selectedPlayerIdx =
-                idx == selectedPlayerIdx
-                ? null
-                : idx;
-            changesArePresent = true;
+            ModelsToShow = dtos.items.Select(GeneralMappers.MapFromPlayerInformationDTO).ToArray();
         }
     }
 }

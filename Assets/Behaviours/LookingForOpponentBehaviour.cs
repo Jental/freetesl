@@ -22,6 +22,7 @@ namespace Assets.Behaviours
         [SerializeField] private Button? cancelButtonGameObject;
         [SerializeField] private GameObject? progressDialogGameObject;
         [SerializeField] private PlayerListBehaviour? playerListGameObject;
+        [SerializeField] private DeckListBehaviour? deckListGameObject;
         [SerializeField] private CanvasService? canvasService;
 
         private bool progressDialogVisible = false;
@@ -37,6 +38,7 @@ namespace Assets.Behaviours
             if (cancelButtonGameObject == null) throw new InvalidOperationException($"{nameof(cancelButtonGameObject)} game object is expected to be set");
             if (progressDialogGameObject == null) throw new InvalidOperationException($"{nameof(progressDialogGameObject)} game object is expected to be set");
             if (playerListGameObject == null) throw new InvalidOperationException($"{nameof(playerListGameObject)} game object is expected to be set");
+            if (deckListGameObject == null) throw new InvalidOperationException($"{nameof(deckListGameObject)} game object is expected to be set");
             if (canvasService == null) throw new InvalidOperationException($"{nameof(canvasService)} game object is expected to be set");
 
             _ = destroyCancellationToken;
@@ -68,19 +70,27 @@ namespace Assets.Behaviours
                 bool matchCanBeStarted =
                     playerListGameObject!.SelectedModel != null
                     && playerListGameObject!.SelectedModel.ID != GlobalStorage.Instance.PlayerID
-                    && playerListGameObject.SelectedModel.State == PlayerState.LookingForOpponent;
+                    && playerListGameObject.SelectedModel.State == PlayerState.LookingForOpponent
+                    && deckListGameObject!.SelectedModel != null;
                 startMatchButtonGameObject!.gameObject.SetActive(matchCanBeStarted);
+
+                bool lookingForCanBeStarted = deckListGameObject!.SelectedModel != null;
+                startLookingButtonGameObject!.gameObject.SetActive(lookingForCanBeStarted);
             }
         }
 
         private void OnStartButtonClick()
         {
             Debug.Log("LookingForOpponentBehaviour.OnStartButtonClick");
+
+            var deckID = deckListGameObject!.SelectedModel?.id ?? throw new InvalidOperationException("Deck is expected to be selected");
+
             _ = Task.Run(async () =>
             {
                 try
                 {
-                    await Networking.Instance.PostAsync(Constants.MethodNames.LOOKING_FOR_OPPONENT_START, destroyCancellationToken);
+                    var dto = new StartLookingForOpponentDTO { deckID = deckID };
+                    await Networking.Instance.PostAsync(Constants.MethodNames.LOOKING_FOR_OPPONENT_START, dto, destroyCancellationToken);
                 }
                 catch (Exception e)
                 {
@@ -117,13 +127,15 @@ namespace Assets.Behaviours
         private void OnStartMatchButtonClick()
         {
             if (playerListGameObject == null) throw new InvalidOperationException($"{nameof(playerListGameObject)} game object is expected to be set");
+            if (deckListGameObject == null) throw new InvalidOperationException($"{nameof(deckListGameObject)} game object is expected to be set");
             Debug.Log("LookingForOpponentBehaviour.OnStartMatchButtonClick");
 
-            var opponentID = playerListGameObject.SelectedModel?.ID ?? throw new InvalidOperationException("At least one player is expected to be selected");
+            var opponentID = playerListGameObject.SelectedModel?.ID ?? throw new InvalidOperationException("Player is expected to be selected");
+            var deckID = deckListGameObject.SelectedModel?.id ?? throw new InvalidOperationException("Deck is expected to be selected");
 
             _ = Task.Run(async () =>
             {
-                var dto = new MatchCreateDTO { opponentID = opponentID };
+                var dto = new MatchCreateDTO { opponentID = opponentID, deckID = deckID };
                 try
                 {
                     var resp = await Networking.Instance.PostAsync<MatchCreateDTO, GuidIdDTO>(Constants.MethodNames.MATCH_CREATE, dto, destroyCancellationToken);

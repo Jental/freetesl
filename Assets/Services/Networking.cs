@@ -355,12 +355,42 @@ namespace Assets.Services
 
         public async Task<R?> PostAsync<T, R>(string relativeUrl, T body, CancellationToken cancellationToken)
         {
+            var response = await postAsync<T>(relativeUrl, body, cancellationToken);
+
+            string str = await response.Content.ReadAsStringAsync();
+            Debug.Log($"Networking.PostAsync: [{relativeUrl}]: resp: {str}");
+            var respDTO = JsonUtility.FromJson<R>(str);
+            if (respDTO == null)
+            {
+                var errorMessage = $"Networking.PostAsync: [{relativeUrl}]: received message in unknown format";
+                Debug.LogError(errorMessage);
+                throw new Exception(errorMessage);
+            }
+            return respDTO;
+        }
+
+        public async Task PostAsync<T>(string relativeUrl, T body, CancellationToken cancellationToken)
+        {
+            await postAsync<T>(relativeUrl, body, cancellationToken);
+        }
+
+        public async Task PostAsync(string relativeUrl, CancellationToken cancellationToken)
+        {
+            await postAsync<object>(relativeUrl, null, cancellationToken);
+        }
+
+        private async Task<HttpResponseMessage> postAsync<T>(string relativeUrl, T? body, CancellationToken cancellationToken)
+        {
             if (httpClient == null) throw new InvalidOperationException("Networking is not initialized");
 
-            var json = JsonUtility.ToJson(body);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
-
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", GlobalStorage.Instance.Token);
+
+            HttpContent? content = null;
+            if (body != null)
+            {
+                var json = JsonUtility.ToJson(body);
+                content = new StringContent(json, Encoding.UTF8, "application/json");
+            }
 
             var fullUrl = relativeUrlPrefix == null ? relativeUrl : $"{relativeUrlPrefix}{relativeUrl}";
             var response = await httpClient.PostAsync(fullUrl, content, cancellationToken);
@@ -388,49 +418,7 @@ namespace Assets.Services
                 throw e;
             }
 
-            string str = await response.Content.ReadAsStringAsync();
-            Debug.Log($"Networking.PostAsync: [{relativeUrl}]: resp: {str}");
-            var respDTO = JsonUtility.FromJson<R>(str);
-            if (respDTO == null)
-            {
-                var errorMessage = $"Networking.PostAsync: [{relativeUrl}]: received message in unknown format";
-                Debug.LogError(errorMessage);
-                throw new Exception(errorMessage);
-            }
-            return respDTO;
-        }
-
-        public async Task PostAsync(string relativeUrl, CancellationToken cancellationToken)
-        {
-            if (httpClient == null) throw new InvalidOperationException("Networking is not initialized");
-
-            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", GlobalStorage.Instance.Token);
-
-            var fullUrl = relativeUrlPrefix == null ? relativeUrl : $"{relativeUrlPrefix}{relativeUrl}";
-            var response = await httpClient.PostAsync(fullUrl, null, cancellationToken);
-
-            try
-            {
-                response.EnsureSuccessStatusCode();
-            }
-            catch (Exception e)
-            {
-                if (response.Content != null)
-                {
-                    string? errorStr = await response.Content.ReadAsStringAsync();
-                    if (errorStr != null)
-                    {
-                        var errorRespDTO = JsonUtility.FromJson<ErrorDTO>(errorStr);
-                        if (errorRespDTO != null)
-                        {
-                            Debug.LogError($"Server returned error: '{errorRespDTO.message}'; error code: '{errorRespDTO.errorCode}'");
-                            throw new ServerErrorResponseException(errorRespDTO.errorCode, errorRespDTO.message);
-                        }
-                    }
-                }
-
-                throw e;
-            }
+            return response;
         }
     }
 }

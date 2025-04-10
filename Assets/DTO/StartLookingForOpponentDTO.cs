@@ -3,9 +3,8 @@
 namespace Assets.DTO
 {
     [Serializable]
-    public record MatchCreateDTO
+    public record StartLookingForOpponentDTO
     {
-        public int opponentID;
         public int deckID;
     }
 }

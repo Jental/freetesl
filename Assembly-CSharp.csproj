@@ -132,6 +132,7 @@
     <Compile Include="Assets\Services\GlobalStorage.cs" />
     <Compile Include="Assets\Behaviours\JoinMatchTopPanelBehaviour.cs" />
     <Compile Include="Assets\DTO\DiscardPileStateUpdateDTO.cs" />
+    <Compile Include="Assets\DTO\StartLookingForOpponentDTO.cs" />
     <Compile Include="Assets\DTO\CardWithCountDTO.cs" />
     <Compile Include="Assets\Behaviours\ProphecyCardBehaviour.cs" />
     <Compile Include="Assets\DTO\CardDTO.cs" />

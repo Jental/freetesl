@@ -19,6 +19,7 @@ namespace Assets.Behaviours
 
         protected void Start()
         {
+            if (this.Model == null) throw new InvalidOperationException($"{nameof(Model)} parameter is expected to be set");
             if (this.OnClick == null) throw new InvalidOperationException($"{nameof(OnClick)} parameter is expected to be set");
         }
 

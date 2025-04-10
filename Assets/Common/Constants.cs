@@ -33,6 +33,7 @@
             public const string LOGOUT = "logout";
             public const string GET_PLAYERS = "players";
             public const string GET_CURRENT_PLAYER_INFO = "currentPlayerInfo";
+            public const string GET_DECKS = "decks";
             public const string LOOKING_FOR_OPPONENT_START = "lookingForOpponentStart";
             public const string LOOKING_FOR_OPPONENT_STOP = "lookingForOpponentStop";
             public const string LOOKING_FOR_OPPONENT_STATUS = "lookingForOpponentStatus";

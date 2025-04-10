@@ -26,12 +26,11 @@ namespace Assets.Behaviours
             if (this.NameText == null) throw new InvalidOperationException($"{nameof(NameText)} game object is expected to be set");
             if (this.HoverBackground == null) throw new InvalidOperationException($"{nameof(HoverBackground)} game object is expected to be set");
             if (this.SelectedBackground == null) throw new InvalidOperationException($"{nameof(SelectedBackground)} game object is expected to be set");
-            if (this.Model == null) throw new InvalidOperationException($"{nameof(Model)} parameter is expected to be set");
         }
 
         protected override void FirstRenderImpl()
         {
-            AvatarImage!.texture = Resources.Load<Texture>($"Player/{Model!.AvatarName}");
+            AvatarImage!.texture = Resources.Load<Texture>($"Avatars/{Model!.AvatarName}");
 
             string stateTexturePath = Model.State switch
             {

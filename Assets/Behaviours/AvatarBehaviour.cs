@@ -101,7 +101,7 @@ namespace Assets.Behaviours
             }
 
             string imageNameNotNull = imageName ?? "DBH_NPC_CRDL_02_022_avatar_png";
-            this.imageGameObject!.texture = Resources.Load<Texture>($"Player/{imageNameNotNull}");
+            this.imageGameObject!.texture = Resources.Load<Texture>($"Avatars/{imageNameNotNull}");
         }
 
         protected override void VerifyFields()

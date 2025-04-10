@@ -99,6 +99,7 @@
     <Compile Include="Assets\DTO\MoveCardToLaneDTO.cs" />
     <Compile Include="Assets\Behaviours\AListBehaviour.cs" />
     <Compile Include="Assets\Enums\CardDisplayMode.cs" />
+    <Compile Include="Assets\DTO\DeckDTO.cs" />
     <Compile Include="Assets\Behaviours\HandBehaviour.cs" />
     <Compile Include="Assets\Behaviours\DeckButtonBehaviour.cs" />
     <Compile Include="Assets\Enums\CardType.cs" />
@@ -109,10 +110,12 @@
     <Compile Include="Assets\Common\Constants.cs" />
     <Compile Include="Assets\Models\Card.cs" />
     <Compile Include="Assets\Services\MatchService.cs" />
+    <Compile Include="Assets\Behaviours\DeckListAttributeBehaviour.cs" />
     <Compile Include="Assets\Behaviours\AWithMatchStateSubscribtionBehaviour.cs" />
     <Compile Include="Assets\DTO\LoginDTO.cs" />
     <Compile Include="Assets\Models\CardInstance.cs" />
     <Compile Include="Assets\Behaviours\CardBehaviour.cs" />
+    <Compile Include="Assets\Behaviours\DeckListItemBehaviour.cs" />
     <Compile Include="Assets\Models\ServerErrorResponseException.cs" />
     <Compile Include="Assets\DTO\HitCardDTO.cs" />
     <Compile Include="Assets\DTO\ListDTO.cs" />
@@ -120,6 +123,7 @@
     <Compile Include="Assets\DTO\MatchEndDTO.cs" />
     <Compile Include="Assets\Behaviours\MatchEndCanvasBehaviour.cs" />
     <Compile Include="Assets\Behaviours\EndTurnButtonBehaviour.cs" />
+    <Compile Include="Assets\Behaviours\DeckListBehaviour.cs" />
     <Compile Include="Assets\Enums\PlayerType.cs" />
     <Compile Include="Assets\DTO\ErrorDTO.cs" />
     <Compile Include="Assets\Services\CanvasService.cs" />
@@ -128,6 +132,7 @@
     <Compile Include="Assets\Services\GlobalStorage.cs" />
     <Compile Include="Assets\Behaviours\JoinMatchTopPanelBehaviour.cs" />
     <Compile Include="Assets\DTO\DiscardPileStateUpdateDTO.cs" />
+    <Compile Include="Assets\DTO\CardWithCountDTO.cs" />
     <Compile Include="Assets\Behaviours\ProphecyCardBehaviour.cs" />
     <Compile Include="Assets\DTO\CardDTO.cs" />
     <Compile Include="Assets\Behaviours\OpenPopupButtonBehaviour.cs" />

@@ -62,12 +62,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Enums\PlayerState.cs" />
+    <Compile Include="Assets\StandaloneFileBrowser\StandaloneFileBrowserWindows.cs" />
     <Compile Include="Assets\Behaviours\LaneCardsBehaviour.cs" />
     <Compile Include="Assets\DTO\ServerMessageDTO.cs" />
     <Compile Include="Assets\DTO\DeckStateUpdateDTO.cs" />
+    <Compile Include="Assets\StandaloneFileBrowser\StandaloneFileBrowser.cs" />
     <Compile Include="Assets\Mappers\GeneralMappers.cs" />
     <Compile Include="Assets\Enums\Effect.cs" />
     <Compile Include="Assets\Services\CardDragAndDropService.cs" />
+    <Compile Include="Assets\StandaloneFileBrowser\Sample\CanvasSampleSaveFileText.cs" />
     <Compile Include="Assets\DTO\PlayerMatchStateDTO.cs" />
     <Compile Include="Assets\Behaviours\PlayerListItemBehaviour.cs" />
     <Compile Include="Assets\Behaviours\ConfirmationDialogBehaviour.cs" />
@@ -75,6 +78,7 @@
     <Compile Include="Assets\Behaviours\ExitConfirmationDialogBehaviour.cs" />
     <Compile Include="Assets\Behaviours\ConcedeConfirmationDialogBehaviour.cs" />
     <Compile Include="Assets\Models\Player.cs" />
+    <Compile Include="Assets\StandaloneFileBrowser\StandaloneFileBrowserEditor.cs" />
     <Compile Include="Assets\DTO\MatchCreateDTO.cs" />
     <Compile Include="Assets\Enums\AppCanvas.cs" />
     <Compile Include="Assets\Services\Networking.cs" />
@@ -89,14 +93,18 @@
     <Compile Include="Assets\DTO\GuidIdDTO.cs" />
     <Compile Include="Assets\Behaviours\TooltipBehaviour.cs" />
     <Compile Include="Assets\DTO\LoginResponseDTO.cs" />
-    <Compile Include="Assets\Behaviours\LoginPopupBehaviour.cs" />
     <Compile Include="Assets\Behaviours\RingBehaviour.cs" />
+    <Compile Include="Assets\Behaviours\LoginPopupBehaviour.cs" />
     <Compile Include="Assets\Behaviours\MenuBehaviour.cs" />
+    <Compile Include="Assets\StandaloneFileBrowser\IStandaloneFileBrowser.cs" />
     <Compile Include="Assets\Behaviours\AvatarBehaviour.cs" />
+    <Compile Include="Assets\StandaloneFileBrowser\StandaloneFileBrowserLinux.cs" />
     <Compile Include="Assets\Enums\ServerErrorCode.cs" />
+    <Compile Include="Assets\StandaloneFileBrowser\Sample\CanvasSampleOpenFileText.cs" />
     <Compile Include="Assets\Behaviours\ManaDisplayBehaviour.cs" />
     <Compile Include="Assets\Models\CardScriptableObject.cs" />
     <Compile Include="Assets\DTO\MoveCardToLaneDTO.cs" />
+    <Compile Include="Assets\StandaloneFileBrowser\StandaloneFileBrowserMac.cs" />
     <Compile Include="Assets\Behaviours\AListBehaviour.cs" />
     <Compile Include="Assets\Enums\CardDisplayMode.cs" />
     <Compile Include="Assets\DTO\DeckDTO.cs" />
@@ -106,6 +114,7 @@
     <Compile Include="Assets\Services\InitService.cs" />
     <Compile Include="Assets\Behaviours\LookingForOpponentBehaviour.cs" />
     <Compile Include="Assets\Enums\Keyword.cs" />
+    <Compile Include="Assets\Behaviours\ExportDeckButtonBehaviour.cs" />
     <Compile Include="Assets\DTO\HitFaceDTO.cs" />
     <Compile Include="Assets\Common\Constants.cs" />
     <Compile Include="Assets\Models\Card.cs" />
@@ -126,6 +135,7 @@
     <Compile Include="Assets\Behaviours\DeckListBehaviour.cs" />
     <Compile Include="Assets\Enums\PlayerType.cs" />
     <Compile Include="Assets\DTO\ErrorDTO.cs" />
+    <Compile Include="Assets\StandaloneFileBrowser\Sample\CanvasSampleOpenFileTextMultiple.cs" />
     <Compile Include="Assets\Services\CanvasService.cs" />
     <Compile Include="Assets\Behaviours\LaneBehaviour.cs" />
     <Compile Include="Assets\DTO\PlayerInformationDTO.cs" />
@@ -139,9 +149,12 @@
     <Compile Include="Assets\Behaviours\OpenPopupButtonBehaviour.cs" />
     <Compile Include="Assets\Enums\LaneType.cs" />
     <Compile Include="Assets\DTO\CardInstanceStateDTO.cs" />
+    <Compile Include="Assets\StandaloneFileBrowser\Sample\CanvasSampleSaveFileImage.cs" />
     <Compile Include="Assets\Behaviours\PlayerListBehaviour.cs" />
     <Compile Include="Assets\Models\CardDragSource.cs" />
+    <Compile Include="Assets\StandaloneFileBrowser\Sample\BasicSample.cs" />
     <Compile Include="Assets\Behaviours\AWithMatchStateAndInformationSubscribtionBehaviour.cs" />
+    <Compile Include="Assets\StandaloneFileBrowser\Sample\CanvasSampleOpenFileImage.cs" />
     <Compile Include="Assets\Behaviours\NotificationBehaviour.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -153,6 +166,7 @@
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF SSD.shader" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Surface-Mobile.shader" />
     <None Include="Assets\TextMesh Pro\Shaders\SDFFunctions.hlsl" />
+    <None Include="Assets\StandaloneFileBrowser\Plugins\Ookii.Dialogs.dll" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Surface.shader" />
     <None Include="Assets\TextMesh Pro\Sprites\EmojiOne Attribution.txt" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_Bitmap-Custom-Atlas.shader" />
@@ -163,6 +177,7 @@
     <None Include="Assets\TextMesh Pro\Shaders\TMPro_Surface.cginc" />
     <None Include="Assets\TextMesh Pro\Resources\LineBreaking Following Characters.txt" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile Masking.shader" />
+    <None Include="Assets\StandaloneFileBrowser\Plugins\System.Windows.Forms.dll" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF Overlay.shader" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_Bitmap-Mobile.shader" />
     <None Include="Assets\TextMesh Pro\Fonts\LiberationSans - OFL.txt" />
@@ -648,6 +663,14 @@
     </Reference>
     <Reference Include="Mono.Cecil">
       <HintPath>Library\PackageCache\com.unity.nuget.mono-cecil\Mono.Cecil.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Ookii.Dialogs">
+      <HintPath>Assets\StandaloneFileBrowser\Plugins\Ookii.Dialogs.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Windows.Forms">
+      <HintPath>Assets\StandaloneFileBrowser\Plugins\System.Windows.Forms.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="netstandard">

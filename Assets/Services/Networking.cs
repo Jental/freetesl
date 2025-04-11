@@ -303,7 +303,58 @@ namespace Assets.Services
             }
         }
 
+        private async Task checkResponseErrors(HttpResponseMessage response)
+        {
+            try
+            {
+                response.EnsureSuccessStatusCode();
+            }
+            catch (Exception e)
+            {
+                if (response.Content != null && response.Content.Headers.ContentLength > 0)
+                {
+                    string? errorStr = await response.Content.ReadAsStringAsync();
+                    if (!string.IsNullOrEmpty(errorStr) && !errorStr.Contains("<html>"))
+                    {
+                        var errorRespDTO = JsonUtility.FromJson<ErrorDTO>(errorStr);
+                        if (errorRespDTO != null)
+                        {
+                            Debug.LogError($"Server returned error: '{errorRespDTO.message}'; error code: '{errorRespDTO.errorCode}'");
+                            throw new ServerErrorResponseException(errorRespDTO.errorCode, errorRespDTO.message);
+                        }
+                    }
+                }
+
+                Debug.LogError(e);
+                throw e;
+            }
+        }
+
         public async Task<R?> GetAsync<R>(string relativeUrl, Dictionary<string, string> parameters, CancellationToken cancellationToken)
+        {
+            var response = await getAsync(relativeUrl, parameters, cancellationToken);
+
+            string str = await response.Content.ReadAsStringAsync();
+            Debug.Log($"Networking.GetAsync: [{relativeUrl}]: resp: {str}");
+            var respDTO = JsonUtility.FromJson<R>(str);
+            if (respDTO == null)
+            {
+                var errorMessage = $"Networking.GetAsync: [{relativeUrl}]: received message in unknown format";
+                Debug.LogError(errorMessage);
+                throw new Exception(errorMessage);
+            }
+            return respDTO;
+        }
+
+        public async Task<byte[]> GetBytesAsync(string relativeUrl, Dictionary<string, string> parameters, CancellationToken cancellationToken)
+        {
+            var response = await getAsync(relativeUrl, parameters, cancellationToken);
+
+            byte[] bytes = await response.Content.ReadAsByteArrayAsync();
+            return bytes;
+        }
+
+        private async Task<HttpResponseMessage> getAsync(string relativeUrl, Dictionary<string, string> parameters, CancellationToken cancellationToken)
         {
             if (httpClient == null) throw new InvalidOperationException("Networking is not initialized");
 
@@ -318,39 +369,9 @@ namespace Assets.Services
 
             var response = await httpClient.GetAsync(fullUrl, cancellationToken);
 
-            try
-            {
-                response.EnsureSuccessStatusCode();
-            }
-            catch (Exception e)
-            {
-                if (response.Content != null)
-                {
-                    string? errorStr = await response.Content.ReadAsStringAsync();
-                    if (errorStr != null && !errorStr.Contains("<html>"))
-                    {
-                        var errorRespDTO = JsonUtility.FromJson<ErrorDTO>(errorStr);
-                        if (errorRespDTO != null)
-                        {
-                            Debug.LogError($"Server returned error: '{errorRespDTO.message}'; error code: '{errorRespDTO.errorCode}'");
-                            throw new ServerErrorResponseException(errorRespDTO.errorCode, errorRespDTO.message);
-                        }
-                    }
-                }
+            await checkResponseErrors(response);
 
-                throw e;
-            }
-
-            string str = await response.Content.ReadAsStringAsync();
-            Debug.Log($"Networking.GetAsync: [{relativeUrl}]: resp: {str}");
-            var respDTO = JsonUtility.FromJson<R>(str);
-            if (respDTO == null)
-            {
-                var errorMessage = $"Networking.GetAsync: [{relativeUrl}]: received message in unknown format";
-                Debug.LogError(errorMessage);
-                throw new Exception(errorMessage);
-            }
-            return respDTO;
+            return response;
         }
 
         public async Task<R?> PostAsync<T, R>(string relativeUrl, T body, CancellationToken cancellationToken)
@@ -395,28 +416,7 @@ namespace Assets.Services
             var fullUrl = relativeUrlPrefix == null ? relativeUrl : $"{relativeUrlPrefix}{relativeUrl}";
             var response = await httpClient.PostAsync(fullUrl, content, cancellationToken);
 
-            try
-            {
-                response.EnsureSuccessStatusCode();
-            }
-            catch (Exception e)
-            {
-                if (response.Content != null)
-                {
-                    string? errorStr = await response.Content.ReadAsStringAsync();
-                    if (errorStr != null)
-                    {
-                        var errorRespDTO = JsonUtility.FromJson<ErrorDTO>(errorStr);
-                        if (errorRespDTO != null)
-                        {
-                            Debug.LogError($"Server returned error: '{errorRespDTO.message}'; error code: '{errorRespDTO.errorCode}'");
-                            throw new ServerErrorResponseException(errorRespDTO.errorCode, errorRespDTO.message);
-                        }
-                    }
-                }
-
-                throw e;
-            }
+            await checkResponseErrors(response);
 
             return response;
         }

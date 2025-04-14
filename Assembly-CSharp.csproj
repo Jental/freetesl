@@ -137,6 +137,7 @@
     <Compile Include="Assets\Behaviours\DeckListBehaviour.cs" />
     <Compile Include="Assets\Enums\PlayerType.cs" />
     <Compile Include="Assets\DTO\ErrorDTO.cs" />
+    <Compile Include="Assets\Behaviours\DeleteDeckButtonBehaviour.cs" />
     <Compile Include="Assets\StandaloneFileBrowser\Sample\CanvasSampleOpenFileTextMultiple.cs" />
     <Compile Include="Assets\Services\CanvasService.cs" />
     <Compile Include="Assets\Behaviours\LaneBehaviour.cs" />

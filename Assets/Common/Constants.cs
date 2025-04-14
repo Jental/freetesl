@@ -36,6 +36,7 @@
             public const string GET_DECKS = "decks";
             public const string IMPORT_DECK = "decks/import";
             public const string EXPORT_DECK = "decks/export";
+            public const string DELETE_DECK = "decks";
             public const string LOOKING_FOR_OPPONENT_START = "lookingForOpponentStart";
             public const string LOOKING_FOR_OPPONENT_STOP = "lookingForOpponentStop";
             public const string LOOKING_FOR_OPPONENT_STATUS = "lookingForOpponentStatus";

@@ -99,7 +99,7 @@ namespace Assets.Behaviours
             ? default
             : modelsToShow[selectedItemIdx.Value];
 
-        public void DeselectPlayer()
+        public void Deselect()
         {
             selectedItemIdx = null;
         }

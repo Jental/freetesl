@@ -420,5 +420,23 @@ namespace Assets.Services
 
             return response;
         }
+
+        public async Task DeleteAsync(string relativeUrl, Dictionary<string, string> parameters, CancellationToken cancellationToken)
+        {
+            if (httpClient == null) throw new InvalidOperationException("Networking is not initialized");
+
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", GlobalStorage.Instance.Token);
+
+            var fullUrl = relativeUrlPrefix == null ? relativeUrl : $"{relativeUrlPrefix}{relativeUrl}";
+            if (parameters.Count > 0)
+            {
+                string parametersStr = string.Join("&", parameters.Select(p => $"{p.Key}={HttpUtility.UrlEncode(p.Value)}"));
+                fullUrl = $"{fullUrl}?{parametersStr}";
+            }
+
+            var response = await httpClient.DeleteAsync(fullUrl, cancellationToken);
+
+            await checkResponseErrors(response);
+        }
     }
 }

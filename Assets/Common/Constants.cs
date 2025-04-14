@@ -34,6 +34,7 @@
             public const string GET_PLAYERS = "players";
             public const string GET_CURRENT_PLAYER_INFO = "currentPlayerInfo";
             public const string GET_DECKS = "decks";
+            public const string IMPORT_DECK = "decks/import";
             public const string EXPORT_DECK = "decks/export";
             public const string LOOKING_FOR_OPPONENT_START = "lookingForOpponentStart";
             public const string LOOKING_FOR_OPPONENT_STOP = "lookingForOpponentStop";

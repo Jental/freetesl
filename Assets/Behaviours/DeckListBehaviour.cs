@@ -16,10 +16,12 @@ namespace Assets.Behaviours
         protected new void Start()
         {
             base.Start();
+            Refresh();
+        }
 
-            _ = destroyCancellationToken;
-
-            _ = Task.Run(async () => await LoadDecksAsync(destroyCancellationToken));
+        protected override async Task RefreshImplAsync(CancellationToken cancellationToken)
+        {
+            await LoadDecksAsync(cancellationToken);
         }
 
         private async Task LoadDecksAsync(CancellationToken cancellationToken)

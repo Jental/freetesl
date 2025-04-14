@@ -17,6 +17,8 @@ namespace Assets.Behaviours
         [SerializeField] private DeckListBehaviour? deckListBehaviour;
         [SerializeField] private CanvasService? canvasService;
 
+        private Button? buttonComponent;
+
         protected void Start()
         {
             if (deckListBehaviour == null) throw new InvalidOperationException($"{nameof(deckListBehaviour)} game object is expected to be set");
@@ -24,13 +26,13 @@ namespace Assets.Behaviours
 
             _ = destroyCancellationToken;
 
-            var button = this.GetComponent<Button>() ?? throw new InvalidOperationException($"{nameof(Button)} comnponent is expected to be present");
-            button.onClick.AddListener(OnClick);
+            buttonComponent = this.GetComponent<Button>() ?? throw new InvalidOperationException($"{nameof(Button)} comnponent is expected to be present");
+            buttonComponent.onClick.AddListener(OnClick);
         }
 
         protected void Update()
         {
-            GetComponent<Button>().interactable = deckListBehaviour!.SelectedModel != null;
+            buttonComponent!.interactable = deckListBehaviour!.SelectedModel != null;
         }
 
         private void OnClick()

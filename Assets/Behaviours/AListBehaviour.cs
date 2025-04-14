@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace Assets.Behaviours
 {
@@ -33,6 +35,8 @@ namespace Assets.Behaviours
         {
             if (this.ContentGameObject == null) throw new InvalidOperationException($"{nameof(ContentGameObject)} game object is expected to be set");
             if (this.ListItemPrefab == null) throw new InvalidOperationException($"{nameof(ListItemPrefab)} prefab is expected to be set");
+
+            _ = destroyCancellationToken;
         }
 
         protected void OnDisable()
@@ -78,6 +82,16 @@ namespace Assets.Behaviours
                     igo.IsSelected = i == selectedItemIdx;
                 }
             }
+        }
+
+        protected abstract Task RefreshImplAsync(CancellationToken cancellationToken);
+
+        public void Refresh()
+        {
+            _ = Task.Run(async () => {
+                await RefreshImplAsync(destroyCancellationToken);
+                modelsChangesArePresent = true;
+            });
         }
 
         public T? SelectedModel =>

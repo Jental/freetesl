@@ -107,7 +107,9 @@
     <Compile Include="Assets\StandaloneFileBrowser\StandaloneFileBrowserMac.cs" />
     <Compile Include="Assets\Behaviours\AListBehaviour.cs" />
     <Compile Include="Assets\Enums\CardDisplayMode.cs" />
+    <Compile Include="Assets\DTO\ImportDeckDTO.cs" />
     <Compile Include="Assets\DTO\DeckDTO.cs" />
+    <Compile Include="Assets\Behaviours\ImportDeckButtonBehaviour.cs" />
     <Compile Include="Assets\Behaviours\HandBehaviour.cs" />
     <Compile Include="Assets\Behaviours\DeckButtonBehaviour.cs" />
     <Compile Include="Assets\Enums\CardType.cs" />

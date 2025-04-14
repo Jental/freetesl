@@ -21,8 +21,6 @@ namespace Assets.Behaviours
         protected new void Start()
         {
             base.Start();
-
-            _ = destroyCancellationToken;
         }
 
         protected void OnEnable()
@@ -84,6 +82,11 @@ namespace Assets.Behaviours
             }
 
             ModelsToShow = dtos.items.Select(GeneralMappers.MapFromPlayerInformationDTO).ToArray();
+        }
+
+        protected override async Task RefreshImplAsync(CancellationToken cancellationToken)
+        {
+            await LoadPlayersAsync(cancellationToken);
         }
     }
 }

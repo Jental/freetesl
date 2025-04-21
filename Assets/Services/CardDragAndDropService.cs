@@ -146,6 +146,14 @@ namespace Assets.Services
                         cancellationToken
                     );
                     break;
+                case (CardType.Item, CardDragSource.Hand, CardDragSource.LeftLane, _):
+                case (CardType.Item, CardDragSource.Hand, CardDragSource.RightLane, _):
+                    ItemCardDropFromOwnHandToLaneCard(
+                        droppedCardInstance,
+                        targetCardInstance ?? throw new InvalidOperationException($"{nameof(CardDrop)}: {nameof(targetCardInstance)} should be supplied"),
+                        cancellationToken
+                    );
+                    break;
                 case (CardType.Item, CardDragSource.Prophecy, CardDragSource.Hand, true):
                     CardDropFromOwnProphecyToOwnHand(
                         droppedCardInstance,
@@ -316,12 +324,12 @@ namespace Assets.Services
 
             _ = Task.Run(async () =>
             {
-                var dto = new ApplyActionToCardDTO
+                var dto = new ApplyCardToCardDTO
                 {
                     cardInstanceID = droppedCardInstance.ID.ToString(),
                     opponentCardInstanceID = targetCardInstance.ID.ToString(),
                 };
-                await Networking.Instance.SendMessageAsync(Constants.MethodNames.APPLY_ACTION_TO_CARD, dto, cancellationToken);
+                await Networking.Instance.SendMessageAsync(Constants.MethodNames.APPLY_CARD_TO_CARD, dto, cancellationToken);
             });
         }
 
@@ -378,6 +386,27 @@ namespace Assets.Services
                 droppedCardBehaviour.ReturnBack();
                 throw new NotImplementedException();
                 // await Networking.Instance.SendMessageAsync(Constants.MethodNames.DRAW_AND_APPLY_ACTION_TO_FACE, dto, cancellationToken);
+            });
+        }
+
+        private void ItemCardDropFromOwnHandToLaneCard( // it does not matter own or opponent
+            CardInstance droppedCardInstance,
+            CardInstance targetCardInstance,
+            CancellationToken cancellationToken
+        )
+        {
+            Debug.Log($"{nameof(CardDragAndDropService)}.{nameof(ItemCardDropFromOwnHandToLaneCard)}: {droppedCardInstance.ID} [{droppedCardInstance.Card.ScriptableObject.cardName}] -> {targetCardInstance.ID} [{targetCardInstance.Card.ScriptableObject.cardName}]");
+
+            droppedCardInstance.IsActive = false;
+
+            _ = Task.Run(async () =>
+            {
+                var dto = new ApplyCardToCardDTO
+                {
+                    cardInstanceID = droppedCardInstance.ID.ToString(),
+                    opponentCardInstanceID = targetCardInstance.ID.ToString(),
+                };
+                await Networking.Instance.SendMessageAsync(Constants.MethodNames.APPLY_CARD_TO_CARD, dto, cancellationToken);
             });
         }
     }

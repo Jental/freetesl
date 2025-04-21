@@ -84,7 +84,7 @@
     <Compile Include="Assets\Services\Networking.cs" />
     <Compile Include="Assets\DTO\DrawCardToLaneDTO.cs" />
     <Compile Include="Assets\DTO\MatchInformationDTO.cs" />
-    <Compile Include="Assets\DTO\ApplyActionToCardDTO.cs" />
+    <Compile Include="Assets\DTO\ApplyCardToCardDTO.cs" />
     <Compile Include="Assets\Behaviours\DiscardPileButtonBehaviour.cs" />
     <Compile Include="Assets\DTO\ShowCardActionSelectDTO.cs" />
     <Compile Include="Assets\DTO\MatchStateDTO.cs" />
@@ -660,16 +660,16 @@
       <HintPath>Library\PackageCache\com.unity.ext.nunit\net40\unity-custom\nunit.framework.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Ookii.Dialogs">
+      <HintPath>Assets\StandaloneFileBrowser\Plugins\Ookii.Dialogs.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Unity.VisualScripting.Antlr3.Runtime">
       <HintPath>Library\PackageCache\com.unity.visualscripting\Runtime\VisualScripting.Flow\Dependencies\NCalc\Unity.VisualScripting.Antlr3.Runtime.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Mono.Cecil">
       <HintPath>Library\PackageCache\com.unity.nuget.mono-cecil\Mono.Cecil.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Ookii.Dialogs">
-      <HintPath>Assets\StandaloneFileBrowser\Plugins\Ookii.Dialogs.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System.Windows.Forms">

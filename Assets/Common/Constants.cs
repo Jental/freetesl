@@ -23,7 +23,7 @@
             public const string DRAW_CARD_TO_LANE = "drawCardToLane";
             public const string HIT_FACE = "hitFace";
             public const string HIT_CARD = "hitCard";
-            public const string APPLY_ACTION_TO_CARD = "applyActionToCard";
+            public const string APPLY_CARD_TO_CARD = "applyCardToCard";
             public const string DRAW_CARD = "drawCard";
             public const string WAITED_USER_ACTIONS_COMPLETED = "waitedUserActionsCompleted";
             public const string USE_RING = "useRing";

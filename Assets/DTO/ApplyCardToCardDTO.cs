@@ -3,7 +3,7 @@
 namespace Assets.DTO
 {
     [Serializable]
-    public record ApplyActionToCardDTO
+    public record ApplyCardToCardDTO
     {
         public string cardInstanceID;
         public string opponentCardInstanceID;

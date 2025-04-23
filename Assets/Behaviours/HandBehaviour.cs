@@ -18,13 +18,15 @@ namespace Assets.Behaviours
 {
     public class HandBehaviour : AWithMatchStateSubscribtionBehaviour, IDropHandler
     {
-        public CardBehaviour? CardPrefab = null;
+        [SerializeField] private CardBehaviour? cardPrefab;
+        [SerializeField] private TooltipBehaviour tooltipGameObject;
 
         private List<CardInstance> cardsToShow = new List<CardInstance>();
         private RectTransform? rectTransform;
         private HorizontalLayoutGroup? hLayoutGroup;
         private RectTransform? canvasRectTransform;
         private CardDragAndDropService? cardDragAndDropService;
+
 
         protected new void Start()
         {
@@ -99,13 +101,14 @@ namespace Assets.Behaviours
                     var card = cardsToShow[i];
 
                     var dc =
-                        Instantiate(CardPrefab, new Vector3(0, 0, 0), Quaternion.identity)
+                        Instantiate(cardPrefab, new Vector3(0, 0, 0), Quaternion.identity)
                         ?? throw new InvalidOperationException("Failed to instantiate a card prefab");
                     dc.transform.parent = gameObject.transform;
                     dc.UpdateDisplaySettings(
                         card,
                         playerType == PlayerType.Self ? CardDisplayMode.Full : CardDisplayMode.Cover,
-                        isFloating: false
+                        isFloating: false,
+                        tooltipGameObject
                     );
 
                     var cardRect = dc.gameObject.GetComponent<RectTransform>();
@@ -117,7 +120,8 @@ namespace Assets.Behaviours
 
         protected override void VerifyFields()
         {
-            if (this.CardPrefab == null) throw new InvalidOperationException($"{nameof(CardPrefab)} prefab is expected to be set");
+            if (this.tooltipGameObject == null) throw new InvalidOperationException($"{nameof(tooltipGameObject)} game object is expected to be set");
+            if (this.cardPrefab == null) throw new InvalidOperationException($"{nameof(cardPrefab)} prefab is expected to be set");
         }
 
         public void OnDrop(PointerEventData eventData)

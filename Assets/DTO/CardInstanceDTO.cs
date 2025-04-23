@@ -8,10 +8,12 @@ namespace Assets.DTO
         public int cardID;
         public string cardInstanceID;
         public int power;
+        public int powerMod;
         public int health;
+        public int healthMod;
         public int cost;
-        public byte[] keywords;
-        public byte[] effects;
+        public KeywordInstanceDTO[] keywords;
+        public EffectInstanceDTO[] effects;
 
         private Guid? cardInstanceGuid = null;
 

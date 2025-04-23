@@ -62,20 +62,20 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Enums\PlayerState.cs" />
+    <Compile Include="Assets\Models\KeywordInstance.cs" />
     <Compile Include="Assets\StandaloneFileBrowser\StandaloneFileBrowserWindows.cs" />
     <Compile Include="Assets\Behaviours\LaneCardsBehaviour.cs" />
     <Compile Include="Assets\DTO\ServerMessageDTO.cs" />
     <Compile Include="Assets\DTO\DeckStateUpdateDTO.cs" />
     <Compile Include="Assets\StandaloneFileBrowser\StandaloneFileBrowser.cs" />
     <Compile Include="Assets\Mappers\GeneralMappers.cs" />
-    <Compile Include="Assets\Enums\Effect.cs" />
     <Compile Include="Assets\Services\CardDragAndDropService.cs" />
-    <Compile Include="Assets\StandaloneFileBrowser\Sample\CanvasSampleSaveFileText.cs" />
     <Compile Include="Assets\DTO\PlayerMatchStateDTO.cs" />
     <Compile Include="Assets\Behaviours\PlayerListItemBehaviour.cs" />
     <Compile Include="Assets\Behaviours\ConfirmationDialogBehaviour.cs" />
     <Compile Include="Assets\Behaviours\AListItemBehaviour.cs" />
     <Compile Include="Assets\Behaviours\ExitConfirmationDialogBehaviour.cs" />
+    <Compile Include="Assets\DTO\EffectInstanceDTO.cs" />
     <Compile Include="Assets\Behaviours\ConcedeConfirmationDialogBehaviour.cs" />
     <Compile Include="Assets\Models\Player.cs" />
     <Compile Include="Assets\StandaloneFileBrowser\StandaloneFileBrowserEditor.cs" />
@@ -92,6 +92,7 @@
     <Compile Include="Assets\DTO\CardInstanceDTO.cs" />
     <Compile Include="Assets\DTO\GuidIdDTO.cs" />
     <Compile Include="Assets\Behaviours\TooltipBehaviour.cs" />
+    <Compile Include="Assets\Models\EffectInstance.cs" />
     <Compile Include="Assets\DTO\LoginResponseDTO.cs" />
     <Compile Include="Assets\Behaviours\RingBehaviour.cs" />
     <Compile Include="Assets\Behaviours\LoginPopupBehaviour.cs" />
@@ -100,7 +101,6 @@
     <Compile Include="Assets\Behaviours\AvatarBehaviour.cs" />
     <Compile Include="Assets\StandaloneFileBrowser\StandaloneFileBrowserLinux.cs" />
     <Compile Include="Assets\Enums\ServerErrorCode.cs" />
-    <Compile Include="Assets\StandaloneFileBrowser\Sample\CanvasSampleOpenFileText.cs" />
     <Compile Include="Assets\Behaviours\ManaDisplayBehaviour.cs" />
     <Compile Include="Assets\Models\CardScriptableObject.cs" />
     <Compile Include="Assets\DTO\MoveCardToLaneDTO.cs" />
@@ -110,6 +110,7 @@
     <Compile Include="Assets\DTO\ImportDeckDTO.cs" />
     <Compile Include="Assets\DTO\DeckDTO.cs" />
     <Compile Include="Assets\Behaviours\ImportDeckButtonBehaviour.cs" />
+    <Compile Include="Assets\Enums\EffectType.cs" />
     <Compile Include="Assets\Behaviours\HandBehaviour.cs" />
     <Compile Include="Assets\Behaviours\DeckButtonBehaviour.cs" />
     <Compile Include="Assets\Enums\CardType.cs" />
@@ -138,7 +139,6 @@
     <Compile Include="Assets\Enums\PlayerType.cs" />
     <Compile Include="Assets\DTO\ErrorDTO.cs" />
     <Compile Include="Assets\Behaviours\DeleteDeckButtonBehaviour.cs" />
-    <Compile Include="Assets\StandaloneFileBrowser\Sample\CanvasSampleOpenFileTextMultiple.cs" />
     <Compile Include="Assets\Services\CanvasService.cs" />
     <Compile Include="Assets\Behaviours\LaneBehaviour.cs" />
     <Compile Include="Assets\DTO\PlayerInformationDTO.cs" />
@@ -152,12 +152,10 @@
     <Compile Include="Assets\Behaviours\OpenPopupButtonBehaviour.cs" />
     <Compile Include="Assets\Enums\LaneType.cs" />
     <Compile Include="Assets\DTO\CardInstanceStateDTO.cs" />
-    <Compile Include="Assets\StandaloneFileBrowser\Sample\CanvasSampleSaveFileImage.cs" />
     <Compile Include="Assets\Behaviours\PlayerListBehaviour.cs" />
     <Compile Include="Assets\Models\CardDragSource.cs" />
-    <Compile Include="Assets\StandaloneFileBrowser\Sample\BasicSample.cs" />
     <Compile Include="Assets\Behaviours\AWithMatchStateAndInformationSubscribtionBehaviour.cs" />
-    <Compile Include="Assets\StandaloneFileBrowser\Sample\CanvasSampleOpenFileImage.cs" />
+    <Compile Include="Assets\DTO\KeywordInstanceDTO.cs" />
     <Compile Include="Assets\Behaviours\NotificationBehaviour.cs" />
   </ItemGroup>
   <ItemGroup>

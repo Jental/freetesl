@@ -9,22 +9,19 @@ namespace Assets.Models
         public int Power { get; private set; }
         public int Health { get; set; }
         public int Cost { get; private set; }
-        public Keyword[] Keywords { get; private set; }
-        public Effect[] Effects { get; private set; }
+        public KeywordInstance[] Keywords { get; set; }
+        public EffectInstance[] Effects { get; set; }
         public bool IsActive { get; set; }
 
         public Card Card { get; private set; }
 
-        public CardInstance(Guid id, Card card, int power, int health, int cost, Keyword[] keywords, Effect[] effects, bool isActive)
+        public CardInstance(Guid id, Card card, int power, int health, int cost, bool isActive)
         {
             ID = id;
             Power = power;
             Health = health;
             Cost = cost;
-            Keywords = keywords;
-            Effects = effects;
             IsActive = isActive;
-
             Card = card;
         }
     }

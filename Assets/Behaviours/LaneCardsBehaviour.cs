@@ -17,7 +17,8 @@ namespace Assets.Behaviours
 {
     public class LaneCardsBehaviour : AWithMatchStateSubscribtionBehaviour
     {
-        public CardBehaviour? CardPrefab = null;
+        [SerializeField] private CardBehaviour? CardPrefab;
+        [SerializeField] private TooltipBehaviour tooltipGameObject;
 
         private List<CardInstance> cardsToShow = new List<CardInstance>();
         private LaneType? laneID;
@@ -101,7 +102,8 @@ namespace Assets.Behaviours
                     dc.UpdateDisplaySettings(
                         card,
                         Enums.CardDisplayMode.Light,
-                        isFloating: card.IsActive
+                        isFloating: card.IsActive,
+                        tooltipGameObject
                     );
 
                     var cardRect = dc.gameObject.GetComponent<RectTransform>();
@@ -113,6 +115,7 @@ namespace Assets.Behaviours
 
         protected override void VerifyFields()
         {
+            if (this.tooltipGameObject == null) throw new InvalidOperationException($"{nameof(tooltipGameObject)} game object is expected to be set");
             if (this.CardPrefab == null) throw new InvalidOperationException($"{nameof(CardPrefab)} prefab is expected to be passed. Call '{nameof(Init)}' method");
             if (this.laneID == null) throw new InvalidOperationException($"{nameof(laneID)} parameter is expected to be passed. Call '{nameof(Init)}' method");
         }

@@ -132,6 +132,8 @@ namespace Assets.Services
                         )
                         .ToDictionary(ci => ci.ID, ci => ci);
 
+                    MatchMappers.MapAndFillKeywordsAndEffects(dto.body, allCardInstances);
+
                     Debug.Log("GlobalStorage.OnCardInstancesUpdateAsync: Loaded");
                 }
             }

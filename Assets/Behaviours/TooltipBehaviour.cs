@@ -1,4 +1,5 @@
-﻿using TMPro;
+﻿using System;
+using TMPro;
 using UnityEngine;
 
 namespace Assets.Behaviours
@@ -28,7 +29,7 @@ namespace Assets.Behaviours
 
             textGameObject.text = text;
 
-            var size = new Vector2(textGameObject.preferredWidth + 25.0f, 50.0f);
+            var size = new Vector2(textGameObject.preferredWidth + 25.0f, Math.Max(50.0f, textGameObject.preferredHeight + 25.0f));
             rectTransform.sizeDelta = size;
         }
 

@@ -14,6 +14,7 @@ namespace Assets.Behaviours
     public class ProphecyCardBehaviour : AWithMatchStateSubscribtionBehaviour
     {
         [SerializeField] private CardBehaviour? cardPrefab;
+        [SerializeField] private TooltipBehaviour tooltipGameObject;
 
         private CardInstance? cardToShow = null;
 
@@ -35,7 +36,8 @@ namespace Assets.Behaviours
                 dc.UpdateDisplaySettings(
                     cardToShow,
                     playerType == PlayerType.Self ? CardDisplayMode.Full : CardDisplayMode.Cover,
-                    isFloating: false
+                    isFloating: false,
+                    tooltipGameObject
                 );
 
                 var cardRect = dc.gameObject.GetComponent<RectTransform>();
@@ -49,6 +51,7 @@ namespace Assets.Behaviours
 
         protected override void VerifyFields()
         {
+            if (this.tooltipGameObject == null) throw new InvalidOperationException($"{nameof(tooltipGameObject)} game object is expected to be set");
             if (cardPrefab == null) throw new InvalidOperationException($"ProphecyCardBehaviour: {nameof(cardPrefab)} prefab is not set");
         }
 

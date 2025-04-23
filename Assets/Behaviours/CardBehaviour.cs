@@ -6,7 +6,6 @@ using Assets.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -14,11 +13,12 @@ using UnityEngine.UI;
 
 namespace Assets.Behaviours
 {
-    public class CardBehaviour: MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler, IDropHandler
+    public class CardBehaviour: MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler, IDropHandler, IPointerEnterHandler, IPointerExitHandler
     {
         private CardInstance? cardInstance = null;
         private CardDisplayMode displayMode = CardDisplayMode.Cover;
         private bool isFloating = false;
+        private TooltipBehaviour? tooltipGameObject = null;
         private bool isReturnBackRequested = false;
 
         [SerializeField] private TextMeshProUGUI? nameText;
@@ -124,11 +124,12 @@ namespace Assets.Behaviours
             _ = destroyCancellationToken;
         }
 
-        public void UpdateDisplaySettings(CardInstance cardInstance, CardDisplayMode displayMode, bool isFloating)
+        public void UpdateDisplaySettings(CardInstance cardInstance, CardDisplayMode displayMode, bool isFloating, TooltipBehaviour tooltipGameObject)
         {
             this.cardInstance = cardInstance;
             this.displayMode = displayMode;
             this.isFloating = isFloating;
+            this.tooltipGameObject = tooltipGameObject;
 
             gameObjectsForCurrentMode =
                 modesToGameObjects.GetValueOrDefault(displayMode)?.ToHashSet() 
@@ -146,7 +147,7 @@ namespace Assets.Behaviours
                 go.SetActive(gameObjectsForCurrentMode.Contains(go));
             }
 
-            bool isGuard = cardInstance.Keywords.Contains(Keyword.Guard);
+            bool isGuard = cardInstance.Keywords.Any(kw => kw.Keyword == Keyword.Guard);
             bool showGuardBorder = isGuard && displayMode == CardDisplayMode.Light;
             borderGameObject!.SetActive(!showGuardBorder && gameObjectsForCurrentMode.Contains(borderGameObject));
             shadowGameObject!.SetActive(isFloating && !showGuardBorder); // No gameObjectsForCurrentMode because shadowGameObject is in borderGameObject
@@ -162,10 +163,10 @@ namespace Assets.Behaviours
                 healthTextGameObject!.text = cardInstance.Health.ToString();
                 costTextGameObject!.text = cardInstance.Cost.ToString();
 
-                bool isShackled = cardInstance.Effects.Contains(Effect.Shackled);
+                bool isShackled = cardInstance.Effects.Any(eff => eff.EffectType == EffectType.Shackled);
                 shackleGameObject!.SetActive(isShackled && gameObjectsForCurrentMode.Contains(shackleGameObject));
 
-                bool withCover = cardInstance.Effects.Contains(Effect.Cover);
+                bool withCover = cardInstance.Effects.Any(eff => eff.EffectType == EffectType.Cover);
                 coverGameObject!.SetActive(withCover && gameObjectsForCurrentMode.Contains(coverGameObject));
             }
 
@@ -184,6 +185,48 @@ namespace Assets.Behaviours
                 {
                     actionLineGameObject.enabled = false;
                 }
+            }
+        }
+        public void OnPointerEnter(PointerEventData eventData)
+        {
+            if (displayMode == CardDisplayMode.Light)
+            {
+                var tooltipStr = $"{cardInstance!.Card.ScriptableObject.name}\n{cardInstance.Card.ScriptableObject.description}";
+                if (cardInstance.Keywords.Length > 0)
+                {
+                    var keywordsStr =
+                        string.Join(
+                            '\n',
+                            cardInstance!.Keywords.Select(kw => 
+                                kw.SourceCardInstance != null
+                                ? $"{kw.SourceCardInstance.Card.ScriptableObject.cardName}: {Enum.GetName(typeof(Keyword), kw.Keyword)}"
+                                : Enum.GetName(typeof(Keyword), kw.Keyword)
+                            )
+                        );
+                    tooltipStr = $"{tooltipStr}\n{keywordsStr}";
+                };
+                if (cardInstance.Effects.Length > 0)
+                {
+                    var effectsStr =
+                        string.Join(
+                            '\n',
+                            cardInstance!.Effects.Select(eff =>
+                                eff.SourceCardInstance != null
+                                ? $"{eff.SourceCardInstance.Card.ScriptableObject.cardName}: {eff.Description}"
+                                : eff.Description
+                            )
+                        );
+                    tooltipStr = $"{tooltipStr}\n{effectsStr}";
+                };
+                tooltipGameObject!.Show(tooltipStr);
+            }
+        }
+
+        public void OnPointerExit(PointerEventData eventData)
+        {
+            if (displayMode == CardDisplayMode.Light)
+            {
+                tooltipGameObject!.Hide();
             }
         }
 
